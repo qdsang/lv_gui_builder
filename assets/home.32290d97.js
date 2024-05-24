@@ -1,0 +1,1 @@
+/* empty css                  */import{d as s,o as t,c as o,a,w as e,b as r,u as d,E as n}from"./index.9113114d.js";const u={class:"home"},i=s({__name:"home",setup(s){const i=d(),c=()=>{i.push("/editor2")};return i.push("/editor2"),(s,d)=>{const i=n;return t(),o("div",u,[a(i,{onClick:c},{default:e((()=>[r("Editor")])),_:1})])}}});export{i as default};
