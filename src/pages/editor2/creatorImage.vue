@@ -1,6 +1,6 @@
 <template>
   <el-table :data="tableData" style="width: 100%">
-    <el-table-column fixed prop="imageid" label="ID" width="50" />
+    <el-table-column fixed prop="imageid" label="ID" width="100" />
     <el-table-column prop="title" label="Title" width="140" />
     <el-table-column prop="path" label="Path" />
 <!--     
