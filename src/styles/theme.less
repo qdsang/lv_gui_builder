@@ -1,0 +1,45 @@
+/*
+基础变量
+Vant 中的 CSS 变量分为 `基础变量` 和 `组件变量`。组件变量会继承基础变量，因此在修改基础变量后，会影响所有相关的组件。
+
+修改变量
+由于 CSS 变量继承机制的原因，两者的修改方式有一定差异：
+基础变量只能通过 root 选择器 修改，不能通过 ConfigProvider 组件 修改。(1)
+组件变量可以通过 root 选择器 和 ConfigProvider 组件 修改。
+
+选择 :root 选择器修改
+
+但是由于样式引用顺序问题：
+不管使用'vite-plugin-style-import'还是'unplugin-vue-components/vite'插件，都是按需引入组件/样式
+导致引用顺序为：基础样式 -> theme.less -> 组件样式 (最先引入基础样式是通过theme.less中:root可覆盖基础变量推断而来)
+所以theme.less中使用`:root选择器`不能覆盖组件变量
+解决：
+方案一：使用#app代替:root选择器，通过提高选择器的权重来覆盖组件变量
+
+方案二：
+1. 在vite.config.ts中通过'VantResolver({ importStyle: false })'关闭自动按需引入样式
+2. 在main.ts中全量引入组件样式: import 'vant/lib/index.css' // 必须在theme.less之前
+3. 在theme.less中可以正常使用:root选择器覆盖基础/组件变量了
+缺点：全量引入组件样式会导致打包后体积变大，大了100多k，
+但是：
+Vant 中有个别组件是以函数的形式提供的，包括 Toast，Dialog，Notify 和 ImagePreview 组件。
+在使用函数组件时，unplugin-vue-components 无法自动引入对应的样式，因此需要手动引入样式。
+手动引入单独的样式: import 'vant/es/toast/style' 等非常麻烦
+不如直接全量引入所有组件样式: import 'vant/lib/index.css'
+
+综上
+如使用'vite-plugin-style-import'插件按需引入，则可直接采用方案一
+如使用'unplugin-vue-components/vite'插件按需引入，则采用方案二
+
+'unplugin-vue-components/vite'插件虽然要全量引入样式文件导致build体积变大(没有大太多)，但是可自动导入组件，免去手动导入的麻烦
+对包体积大小没有特殊要求的话，建议选择'unplugin-vue-components/vite'
+
+*/
+
+:root {
+  --van-nav-bar-icon-color: @font-color;
+}
+
+.van-toast {
+  min-width: 350px;
+}
