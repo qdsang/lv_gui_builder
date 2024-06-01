@@ -21,6 +21,8 @@
         <!-- <el-icon><Clock color="#ff0000"/></el-icon> -->
         <span>{{ node.label }}</span>
         <div class="node-right">
+          <el-button class="btn" v-show="!(data.show == false)" icon="el-icon-view" circle @click.stop @click="hide(node, data)"></el-button>
+          <el-button class="btn" v-show="data.show == false" icon="el-icon-hide" circle @click.stop @click="show(node, data)"></el-button>
           <el-button class="btn" icon="el-icon-copy-document" circle @click.stop @click="copy(node, data)"></el-button>
           <el-button class="btn" icon="el-icon-delete" circle @click.stop @click="remove(node, data)"></el-button>
         </div>
@@ -58,6 +60,12 @@ export default {
     },
     remove: function (node, data) {
       this.$emit('event', 'delete', node, data);
+    },
+    show: function (node, data) {
+      this.$emit('event', 'show', node, data);
+    },
+    hide: function (node, data) {
+      this.$emit('event', 'hide', node, data);
     },
   },
 };

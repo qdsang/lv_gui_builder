@@ -82,6 +82,13 @@ export const wrap_delete = (id) => {
     mp_js_do_str(`${id}.delete()`);
 }
 
+export const wrap_show = (id) => {
+    mp_js_do_str(`${id}.clear_flag(1)`);
+}
+
+export const wrap_hide = (id) => {
+    mp_js_do_str(`${id}.add_flag(1)`);
+}
 
 export const wrap_query_attr = (id, type_s) => {
     mp_js_do_str(`query_attr(${id},"${id}","${type_s}")`);

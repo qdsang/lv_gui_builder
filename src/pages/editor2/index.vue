@@ -182,6 +182,7 @@
     wrap_rename,
 
     wrap_create_v2,
+    wrap_show, wrap_hide,
     wrap_style_setter_v2,
     wrap_attr_setter_v2,
     wrap_timeline_load,
@@ -520,6 +521,7 @@
           id: widget_name,
           label: widget_name,
           widgetType: widgetType,
+          show: true,
           children: [],
         };
         let parentNode = this.getTreeChildren(this.widget_tree[0], parentId);
@@ -600,6 +602,12 @@
           console.log('copy', node, data, info);
 
           let id2 = this.copyWidget(info);
+        } else if (event == 'show') {
+          data.show = true;
+          wrap_show(id);
+        } else if (event == 'hide') {
+          data.show = false;
+          wrap_hide(id);
         } else if (event == 'click') {
           this.activeNode(id);
         }

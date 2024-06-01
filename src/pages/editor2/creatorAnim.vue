@@ -35,9 +35,9 @@
                 </el-table-column>
                 <el-table-column fixed="right" label="Operations" width="150">
                   <template #default="props2">
-                    <el-button link type="primary" size="small" v-if="props2.row.iseditor" @click="save(props2)">保存</el-button>
-                    <el-button link type="primary" size="small" v-if="!props2.row.iseditor" @click="edit(props2)">编辑</el-button>
-                    <el-button link type="primary" size="small" @click="objRemove(props2, props.row)">删除</el-button>
+                    <el-button link type="primary" size="small" v-if="props2.row.iseditor" @click="save(props2)">Save</el-button>
+                    <el-button link type="primary" size="small" v-if="!props2.row.iseditor" @click="edit(props2)">Edit</el-button>
+                    <el-button link type="primary" size="small" @click="objRemove(props2, props.row)">Delete</el-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -100,10 +100,10 @@
         </el-table-column>
         <el-table-column fixed="right" label="Operations" width="150">
           <template #default="props">
-            <el-button link type="primary" size="small" v-if="props.row.iseditor" @click="save(props)">保存</el-button>
-            <el-button link type="primary" size="small" v-if="!props.row.iseditor" @click="edit(props)">编辑</el-button>
-            <el-button link type="primary" size="small" @click="animCopy(props, timeline)">复制</el-button>
-            <el-button link type="primary" size="small" @click="animRemove(props, timeline)">删除</el-button>
+            <el-button link type="primary" size="small" v-if="props.row.iseditor" @click="save(props)">Save</el-button>
+            <el-button link type="primary" size="small" v-if="!props.row.iseditor" @click="edit(props)">Edit</el-button>
+            <el-button link type="primary" size="small" @click="animCopy(props, timeline)">Copy</el-button>
+            <el-button link type="primary" size="small" @click="animRemove(props, timeline)">Delete</el-button>
           </template>
         </el-table-column>
       </el-table>

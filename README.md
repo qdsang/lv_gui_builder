@@ -53,7 +53,7 @@ open http://localhost:5173/#/editor2
 - https://github.com/CURTLab/LVGLBuilder
 - https://github.com/lvgl/lv_gui_builder
 - https://sim.lvgl.io/v8.3/micropython/ports/javascript/index.html
-
+- https://github.com/nishad2m8/T-Display-S3-YT/tree/master
 
 ## TODO
 v1  
