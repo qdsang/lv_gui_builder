@@ -26,7 +26,8 @@
           v-model="arg.value"
           :predefine="predefineColors"
           @change="checkArgs()"
-        ></el-color-picker>
+        > {{ arg.value }}
+      </el-color-picker>
         <el-select
           v-else-if="arg.type === `font_t`"
           size="small"

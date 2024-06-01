@@ -14,19 +14,19 @@
     </div>
   </div>
   <el-table :data="tableData" style="width: 100%">
-    <el-table-column prop="imageid" label="ID" width="150">
+    <el-table-column prop="imageid" label="ID Path" width="150">
       <template #default="props">
         <input type="text" v-show="props.row.iseditor" style="width: 100%;" v-model="props.row.imageid" />
         <span v-show="!props.row.iseditor">{{props.row.imageid}}</span>
       </template>
     </el-table-column>
-    <el-table-column prop="title" label="title" width="150">
+    <el-table-column prop="title" label="title">
       <template #default="props">
         <input type="text" v-show="props.row.iseditor" style="width: 100%;" v-model="props.row.title" />
         <span v-show="!props.row.iseditor">{{props.row.title}}</span>
       </template>
     </el-table-column>
-    <el-table-column prop="type" label="Type" width="100">
+    <el-table-column prop="type" label="Type" width="140">
       <template #default="props">
         <el-select
           v-show="props.row.iseditor"
@@ -41,12 +41,12 @@
         <span v-show="!props.row.iseditor">{{props.row.type}}</span>
       </template>
     </el-table-column>
-    <el-table-column prop="path" label="Path" width="200">
+    <!-- <el-table-column prop="path" label="Path" width="200">
       <template #default="props">
         <input type="text" v-show="props.row.iseditor" style="width: 100%;" v-model="props.row.path" />
         <span v-show="!props.row.iseditor">{{props.row.path}}</span>
       </template>
-    </el-table-column>
+    </el-table-column> -->
 <!--     
     <el-table-column label="Image" width="120">
       <template #default>
@@ -64,7 +64,7 @@
       <template #default="props">
         <el-button link type="primary" size="small" v-if="props.row.iseditor" @click="save(props)">Save</el-button>
         <el-button link type="primary" size="small" v-if="!props.row.iseditor" @click="edit(props)">Edit</el-button>
-        <el-button link type="primary" size="small" @click="editImage(props)">Cropper</el-button>
+        <el-button link type="primary" size="small" @click="handleImageCropper(props)">Cropper</el-button>
         <el-button link type="primary" size="small" @click="handleDelete(props)">Delete</el-button>
       </template>
     </el-table-column>
@@ -159,6 +159,9 @@ export default {
         console.log('handleImgTypeChange', props.row.type, base64, props.row.base64);
         props.row.base64 = base64;
       }
+    },
+    handleImageCropper() {
+
     },
     handleClick() {
       

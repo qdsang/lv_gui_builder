@@ -182,7 +182,7 @@
     wrap_rename,
 
     wrap_create_v2,
-    wrap_show, wrap_hide,
+    wrap_show, wrap_hide, wrap_set_index,
     wrap_style_setter_v2,
     wrap_attr_setter_v2,
     wrap_timeline_load,
@@ -379,15 +379,19 @@
       restorePageData() {
         let vm = this;
         let InfoPool = this.InfoPool;
-        for (let key in InfoPool) {
-          let info = InfoPool[key];
-          info.id = key;
-          // this.InfoPool[key].data = pageData.WidgetPool[key];
-          if (key !== 'screen') {
+        for (let id in InfoPool) {
+          let info = InfoPool[id];
+          info.id = id;
+          // this.InfoPool[id].data = pageData.WidgetPool[id];
+          if (id !== 'screen') {
             wrap_create_v2(info, false);
           }
           wrap_attr_setter_v2(info);
           wrap_style_setter_v2(info);
+
+          if (info.data.index) {
+            wrap_set_index(id, info.data.index);
+          }
         }
         wrap_timeline_load(this.timelines);
         
@@ -593,7 +597,7 @@
       },
 
       handleTreeEvent(event, node, data) {
-        let id = data.label;
+        let id = data ? data.label : '';
         // console.log('handleTreeEvent', event, id, data);
         if (event == 'delete') {
           this.deleteNode(node, data);
@@ -610,9 +614,21 @@
           wrap_hide(id);
         } else if (event == 'click') {
           this.activeNode(id);
+        } else if (event == 'sort') {
+          this.sortNode(this.widget_tree);
         }
       },
-      
+      sortNode(nodes) {
+        let index = 1;
+        for (let i = nodes.length - 1; i >= 0; i--) {
+          let id = nodes[i].label;
+          let info = this.InfoPool[id];
+          info.data.index = index;
+          wrap_set_index(id, info.data.index);
+          index++;
+          this.sortNode(nodes[i].children);
+        }
+      },
       activeNode: function (id = 'screen') {
         let info = this.InfoPool[id];
         this.$refs.simulator.activeFrame(info);

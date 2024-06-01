@@ -86,6 +86,10 @@ export const wrap_show = (id) => {
     mp_js_do_str(`${id}.clear_flag(1)`);
 }
 
+export const wrap_set_index = (id, index) => {
+    mp_js_do_str(`${id}.move_to_index(${index})`);
+}
+
 export const wrap_hide = (id) => {
     mp_js_do_str(`${id}.add_flag(1)`);
 }

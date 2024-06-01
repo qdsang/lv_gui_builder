@@ -128,7 +128,7 @@ let widgetMap = {
   qrcode: { group: '' },
   roller: { group: 'controller' },
   screen: { group: '' },
-  slider: { group: 'controller' },
+  slider: { group: 'controller', parts: ['MAIN', 'INDICATOR', 'KNOB'] },
   spangroup: { group: '' },
   spinbox: { group: 'controller' },
   spinner: { group: 'visualiser' },

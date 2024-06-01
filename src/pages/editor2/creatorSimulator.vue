@@ -220,6 +220,10 @@ export default {
         this.activeInfo = null;
         return;
       }
+      let attrs = ['x', 'y', 'width', 'height'];
+      for (let key of attrs) {
+        info.data[key] = parseInt(info.data[key], 10) || 0;
+      }
       
       this.transformFrameInfo = info.data;
       this.renderFrame(info.data);
@@ -230,8 +234,8 @@ export default {
       let { x, y, width, height } = data;
       let style = this.$refs.transform.style;
       let canvas = this.$refs.canvas;
-      style.left = x + canvas.offsetLeft + 'px';
-      style.top = y + canvas.offsetTop + 'px';
+      style.left = parseInt(x, 10) + canvas.offsetLeft + 'px';
+      style.top = parseInt(y, 10) + canvas.offsetTop + 'px';
       style.width = width + 'px';
       style.height = height + 'px';
     },

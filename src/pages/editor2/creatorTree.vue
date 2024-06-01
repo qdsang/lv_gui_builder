@@ -5,6 +5,7 @@
     highlight-current
     default-expand-all
     draggable
+    @node-drop="handleDrop"
     :expand-on-click-node="false"
     node-key="label"
     :current-node-key="nodeKey"
@@ -66,6 +67,10 @@ export default {
     },
     hide: function (node, data) {
       this.$emit('event', 'hide', node, data);
+    },
+    handleDrop ( draggingNode, dropNode, dropType, ev) {
+      console.log('tree drop:', dropNode.label, dropType);
+      this.$emit('event', 'sort');
     },
   },
 };
