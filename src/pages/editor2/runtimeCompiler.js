@@ -1,6 +1,6 @@
 /* generate the C or Python code to a file */
 import { template_py_create, template_py_cb, template_py_setter_simple, template_py_api_simple, template_py_style_simple, template_py_styles, template_py_timeline } from './runtimeTemplatePython.js';
-import { template_c_create, template_c_setter_simple, template_c_cb, template_c_style_simple, template_c_api_simple, template_c_all } from './runtimeTemplateC.js';
+import { template_c_create, template_c_setter_simple, template_c_cb, template_c_style_simple, template_c_api_simple, template_c_all, template_c_styles } from './runtimeTemplateC.js';
 
 export function python_generator(screen, actFileName) {
     let code = [];
@@ -130,28 +130,8 @@ export function c_generator(screen, actFileName) {
         }
 
         //styles
-        const styles = info[key].styles;
-        for (let index = 0; index < styles.length; index++) {
-            let styleApi = styles[index];
-            let value = data[styleApi];
-            const bindStyleName = `${id}_style`;
-            if (index == 0) {
-                //begin
-                body.push(`    lv_style_t ${bindStyleName};`)
-                body.push(`    lv_style_init(&${bindStyleName});`)
-            }
-            // content
-            if (value) {
-                body.push(template_c_style_simple(id, styleApi, value, bindStyleName));
-            }
-            if (index == styles.length - 1) {
-                //last
-                body.push(`    lv_obj_add_style(${id}, &${bindStyleName}, 0);`);
-            }
-        }
-        if (info[key].cb) {
-            body.push(`    lv_obj_add_event_cb(${id}, ${id}_event_cb, LV_EVENT_ALL, NULL);`)
-        }
+        let codeStyle = template_c_styles(info[key]);
+        body.push(codeStyle);
 
         body.push("");
 

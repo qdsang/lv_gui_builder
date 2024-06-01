@@ -92,3 +92,47 @@ ${body}
 #endif /*${actFileName.toUpperCase()}_H*/
 `
 }
+
+
+export const template_c_styles = (node)=>{
+    let id = node.id;
+    
+    var partGroup = {};
+    for (let api of node.styles) {
+        let api2 = api.split('.');
+        let part = 'MAIN';
+        let key = api;
+        if (api2.length == 2) {
+            part = api2[0];
+            key = api2[1];
+        }
+        if (!partGroup[part]) {
+            partGroup[part] = [];
+        }
+        partGroup[part].push(key);
+    }
+
+    let code = [];
+    for (let part in partGroup) {
+        let styleid = `${id}_style_${part}`;
+        code.push(``);
+        code.push(`    lv_style_t ${styleid};`)
+        code.push(`    lv_style_init(&${styleid});`)
+
+        let styles = partGroup[part];
+        for (let api of styles) {
+            let param = node.data[part+ '.' + api];
+            if (param) {
+                code.push(template_c_style_simple(id, api, param, styleid));
+            }
+        }
+        
+        let partStr = 'LV_PART_' + part;
+        code.push(`    lv_obj_add_style(${id}, &${styleid}, ${partStr});`);
+    }
+
+    if (node.cb) {
+        code.push(`    lv_obj_add_event_cb(${id}, ${id}_event_cb, LV_EVENT_ALL, NULL);`)
+    }
+    return code.join('\n');
+}
