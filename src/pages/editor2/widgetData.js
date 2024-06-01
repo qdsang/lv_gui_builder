@@ -273,9 +273,29 @@ export let imageLibrary = [
   { imageid: 'demo-starstruck.jpg', title: 'starstruck', path: 'https://qdsang.github.io/lv_gui_builder/demo-starstruck.jpg', size: 1000, width: 800, height: 800, data: '' },
 ]
 
+let imageJson = localStorage.getItem("lvgl_image");
+if (imageJson) {
+  imageLibrary = JSON.parse(imageJson);
+}
+
+export function imageLibrarySave() {
+  localStorage.setItem("lvgl_image", JSON.stringify(imageLibrary));
+}
+
 export function imageLibraryOption() {
   return imageLibrary;
 }
+
+export function imageLibraryGet(id) {
+  for (let i = 0; i < imageLibrary.length; i++) {
+    if (imageLibrary[i].imageid == id) {
+      return imageLibrary[i];
+    }
+  }
+  return null;
+}
+
+
 
 export let timeline_anim_def = { objs: [], start_time: 0, valueMin: 0, valueMax: 100, time: 1000, playback_delay: 100, playback_time: 300, repeat_delay: 500, repeat_count: -1, path_cb: '', custom_exec_cb: '' };
 export let timeline_obj_def = { id: 'arc_0', attr: 'value' };

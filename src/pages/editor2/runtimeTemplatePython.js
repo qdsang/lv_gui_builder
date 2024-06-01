@@ -1,5 +1,6 @@
 /* template: generate the related code and return as string */
 import { color_convert } from './runtimeWrapper.js';
+import * as WidgetData from "./widgetData.js";
 
 export const template_py_create = (id, parent_id, type) => {
     return `${id} = lv.${type}(${parent_id})`;
@@ -49,19 +50,49 @@ function GenNonDuplicateID(){
     return idStr
 }
 
+function b64toBlob2(dataURI) {
+    var byteString = atob(dataURI.split(',')[1]);
+    var ab = new ArrayBuffer(byteString.length);
+    var ia = [];//new Uint8Array(ab);
+    
+    for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+    return ia;
+    return new Blob([ab], { type: 'image/jpeg' });
+}
+
 function GenImageCode(url){
     let imgId = 'i' + GenNonDuplicateID().substring(0, 10);
     let code = [
 `
 img_data = None
 ${imgId} = None
+`];
+
+    let img = WidgetData.imageLibraryGet(url);
+    if (img) {
+        let base64 = b64toBlob2(img.base64);
+        let base64str = 'bytes([' + base64.join(', ') + '])'
+code.push(`
+try:
+    img_data = ${base64str}
+except:
+    print("Could not img base64 ${url}")
+`);
+    } else {
+code.push(`
 try:
     with open('${url}','rb') as f:
         img_data = f.read()
+        print(type(img_data))
 except:
     print("Could not find ${url}")
     # sys.exit()
+`);
+    }
 
+code.push(`
 print("img_data: " + str(len(img_data)))
 
 if img_data:
@@ -71,8 +102,7 @@ if img_data:
     })
 
 print("img ok")
-`
-    ];
+`);
     return {imgId, code: code.join('\n')};
 }
 
