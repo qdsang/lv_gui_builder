@@ -13,7 +13,7 @@
     >
     </canvas>
 
-    <div class="lv-widget-transform" ref="transform" v-show="isTransform" style="width: 52px; height: 52px; left: 240px; top: 190px;">
+    <div class="lv-widget-transform" ref="transform" v-show="isTransform" style="width: 52px; height: 52px; left: 240px; top: 190px;" @click.stop  @mousedown="dragStart" @mouseup="dragEnd">
       <div draggable="false" class="lv-widget-transform-resize lv-widget-transform-cursor-nw" data-position="top-left"></div>
       <div draggable="false" class="lv-widget-transform-resize lv-widget-transform-cursor-n" data-position="top"></div>
       <div draggable="false" class="lv-widget-transform-resize lv-widget-transform-cursor-ne" data-position="top-right"></div>
@@ -70,6 +70,8 @@ export default {
 
       isTransform: false,
       activeInfo: null,
+      transformFrameInfo: null,
+      transformInfo: {startX: 0, startY: 0, },
     }
   },
   created() {
@@ -77,6 +79,7 @@ export default {
   },
   destroyed() {
     window.removeEventListener("resize", this.resizeEventHandler);
+    window.removeEventListener("mousemove", this.dragging);
   },
   mounted() {
     MicroPython.run();
@@ -106,6 +109,73 @@ export default {
     );
   },
   methods: {
+    dragStart(event) {
+      // 获取元素初始位置和鼠标按下时的坐标
+      this.transformInfo.startX = event.clientX;
+      this.transformInfo.startY = event.clientY;
+      this.transformInfo.position = event.target.dataset.position;
+      let frameInfo = this.transformFrameInfo;
+      this.transformInfo.info = {x: frameInfo.x, y: frameInfo.y, width: frameInfo.width, height: frameInfo.height};
+      
+      // Object.assign(this.transformInfo.info, this.transformFrameInfo);
+
+      // 绑定mousemove事件
+      document.removeEventListener('mousemove', this.dragging);
+      document.addEventListener('mousemove', this.dragging);
+    },
+    dragging(event) {
+      if (event.which == 0) {
+        return this.dragEnd();
+      }
+      // 计算鼠标移动了多少距离
+      let tinfo = this.transformInfo;
+      let info = Object.assign({}, tinfo.info);
+      const deltaX = event.clientX - tinfo.startX;
+      const deltaY = event.clientY - tinfo.startY;
+      let position = tinfo.position;
+
+      if (position == 'top-left') {
+        info.x += deltaX;
+        info.width -= deltaX;
+        info.y += deltaY;
+        info.height -= deltaY;
+      } else if (position == 'top') {
+        info.y += deltaY;
+        info.height -= deltaY;
+      } else if (position == 'top-right') {
+        info.width += deltaX;
+        info.y += deltaY;
+        info.height -= deltaY;
+      } else if (position == 'right') {
+        info.width += deltaX;
+      } else if (position == 'bottom-right') {
+        info.width += deltaX;
+        info.height += deltaY;
+      } else if (position == 'bottom') {
+        info.height += deltaY;
+      } else if (position == 'bottom-left') {
+        info.x += deltaX;
+        info.width -= deltaX;
+        info.height += deltaY;
+      } else if (position == 'left') {
+        info.x += deltaX;
+        info.width -= deltaX;
+      }
+
+      let eventData = {action: 'frame', id: this.activeInfo.id, data: info };
+      for (let attribute in eventData.data) {
+        let value = eventData.data[attribute];
+        wrap_simple_setter(eventData.id, attribute, value);
+      }
+
+      console.log('dragging', info, eventData);
+      this.$emit('event', eventData);
+      this.renderFrame(info);
+    },
+    dragEnd() {
+      document.removeEventListener('mousemove', this.dragging);
+    },
+
     initVM() {
       MicroPython.canvas = document.getElementById('canvas');
 
@@ -151,15 +221,19 @@ export default {
         return;
       }
       
-      let { x, y, width, height } = info.data;
+      this.transformFrameInfo = info.data;
+      this.renderFrame(info.data);
+      this.isTransform = true;
+      this.activeInfo = info;
+    },
+    renderFrame(data) {
+      let { x, y, width, height } = data;
       let style = this.$refs.transform.style;
       let canvas = this.$refs.canvas;
       style.left = x + canvas.offsetLeft + 'px';
       style.top = y + canvas.offsetTop + 'px';
       style.width = width + 'px';
       style.height = height + 'px';
-      this.isTransform = true;
-      this.activeInfo = info;
     },
     resizeEventHandler() {
       if (this.isTransform) {
