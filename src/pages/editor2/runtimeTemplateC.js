@@ -22,22 +22,17 @@ export const template_c_style_simple = (id, styleApi, param, bindStyleName) => {
         return `    lv_style_set_${styleApi}(&${bindStyleName},lv_color_hex(${hexColor}));`
     }
     if (styleApi.includes('_img_src')) {
-        let code = [
-            `    //LV_IMG_DECLARE(${param});`,
-            `    //lv_style_set_${styleApi}(${id}, &${param});`,
-            `    lv_style_set_${styleApi}(${id}, "A:${param}");`,
-            "",
-        ];
-        return code.join('\n');
+        return template_c_img_api(id, 'style', `set_${styleApi}`, param);
     }
     return `    lv_style_set_${styleApi}(&${bindStyleName},${param});`;
 }
 
 export const template_c_img_api = (id, type, api, param, par_id) => {
+    let paramskey = param.replace(/[ \.]/g, '_');
     let code = [
-        `    //LV_IMG_DECLARE(${param});`,
-        `    //lv_${type}_${api}(${id}, &${param});`,
-        `    lv_${type}_${api}(${id}, "A:${param}");`,
+        `    //LV_IMG_DECLARE(${paramskey});`,
+        `    //lv_${type}_${api}(${id}, &${paramskey});`,
+        `    lv_${type}_${api}(${id}, "A:/${paramskey}");`,
         "",
     ];
     return code.join('\n');

@@ -72,7 +72,16 @@
           <el-tab-pane label="Code" name="code">
             <creator-editor ref="editor"></creator-editor>
           </el-tab-pane>
-          <el-tab-pane label="Project" name="Project">							
+          <el-tab-pane label="Project" name="Project">    
+            <el-switch
+              style="padding: 0 10px;"
+              v-model="is_c_mode"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              active-text="C"
+              inactive-text="Python"
+              @change="generateCode"
+            ></el-switch>
           </el-tab-pane>
         </el-tabs>
 

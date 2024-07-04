@@ -16,7 +16,7 @@
     <template #default="{ node, data }">
       <el-tooltip
         effect="dark"
-        :content="'类型：' + data.widgetType"
+        :content="'Type：' + data.widgetType"
         placement="right-start">
       <div class="custom-tree-node">
         <!-- <el-icon><Clock color="#ff0000"/></el-icon> -->

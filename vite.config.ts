@@ -96,6 +96,13 @@ export default ({ command, mode }) => {
         },
       },
       chunkSizeWarningLimit: 1500, // chunk 大小警告的限制（以 kbs 为单位）
+      // rollupOptions: {
+      //     output: {
+      //         entryFileNames: `assets/[name].js`,
+      //         chunkFileNames: `assets/[name].js`,
+      //         assetFileNames: `assets/[name].[ext]`,
+      //     }
+      // },
     },
     css: {
       preprocessorOptions: {

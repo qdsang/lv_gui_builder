@@ -12,6 +12,7 @@
     "build:dev": "npm run build -- --mode development",
     "build:test": "npm run build -- --mode test",
     "build:pro": "npm run build -- --mode production",
+    "build:vscode": "npm run build -- --mode vscode",
     "preview": "vite preview",
     "lint": "eslint --ext .js,.vue,.ts src --fix"
   },

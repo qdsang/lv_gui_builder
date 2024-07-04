@@ -96,6 +96,11 @@ Thank you to all the people who already contributed to Builder!
 
 <a href="https://github.com/qdsang/lv_gui_builder/graphs/contributors"><img src="https://contrib.rocks/image?repo=qdsang/lv_gui_builder" /></a>
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=qdsang/lv_gui_builder&type=Date)](https://star-history.com/#qdsang/lv_gui_builder&Date)
+
+
 ## License
 
 [MIT](https://opensource.org/licenses/MIT)

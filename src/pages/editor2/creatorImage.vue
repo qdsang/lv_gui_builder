@@ -84,10 +84,10 @@ function compressImg(file) {
     read.onload = function(res) {
       let base64 = res.target.result;
       var img = new Image()
-      img.src = base64;
+      img.src = base64.toString();
       let type = file.raw.type;
       img.onload = function() {
-        resolve({ imageid: id, title: id, path: id, type, size, width: this.width, height: this.height, base64 });
+        resolve({ imageid: id, title: id, path: id, type, size, width: img.width, height: img.height, base64 });
       }
     }
   })
