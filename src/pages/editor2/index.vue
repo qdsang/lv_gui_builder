@@ -1,52 +1,95 @@
 <template>
   <el-container class="main">
     <el-header class="header-container">
-      <el-menu class="el-menu-demo" mode="horizontal">
-        <el-menu-item index="1">
-          <h2>LVGL</h2>
-        </el-menu-item>
-        <el-sub-menu index="2">
-          <template slot="title">Help</template>
-          <el-menu-item index="2-1">
-            <el-link href="https://docs.lvgl.io/master/index.html" target="_blank">Docs</el-link>
-          </el-menu-item>
-          <el-menu-item index="2-2">
-            <el-link href="https://sim.lvgl.io/v8.3/micropython/ports/javascript/index.html" target="_blank">Sim</el-link>
-          </el-menu-item>
-        </el-sub-menu>
-        <!-- <el-menu-item index="3" disabled>More</el-menu-item> -->
-        <!-- <el-menu-item>
-          <el-button icon="el-icon-camera-solid" @click="screenshot"></el-button>
-          <el-divider direction="vertical"></el-divider>
-        </el-menu-item> -->
-        <!-- <el-menu-item>
-          <el-button round @click="build">编译</el-button>
-          <el-button round @click="run">下载</el-button>
-          <el-button round @click="dialogSettingVisible = true">设置</el-button>
-        </el-menu-item> -->
-      </el-menu>
+      <div class="header-left">
+        <div class="logo-section">
+          <h1 class="logo-text">
+            <span class="logo-brand">LVGL</span>
+            <el-divider direction="vertical" />
+            <span class="logo-product">GUI Builder</span>
+          </h1>
+        </div>
+
+        <el-menu class="header-menu" mode="horizontal">
+          <el-sub-menu index="file">
+            <template #title>
+              <el-icon><Document /></el-icon>
+              <span>File</span>
+            </template>
+            <el-menu-item @click="exportCodeAsFile">
+              <el-icon><Download /></el-icon>
+              Export Code
+            </el-menu-item>
+            <el-menu-item @click="exportCodeAsLV">
+              <el-icon><FolderOpened /></el-icon>
+              Save Project
+            </el-menu-item>
+            <el-menu-item @click="savePage">
+              <el-icon><Select /></el-icon>
+              Save Changes
+            </el-menu-item>
+          </el-sub-menu>
+
+          <el-sub-menu index="help">
+            <template #title>
+              <el-icon><QuestionFilled /></el-icon>
+              <span>Help</span>
+            </template>
+            <el-menu-item>
+              <el-link href="https://docs.lvgl.io/master/index.html" target="_blank">
+                <el-icon><Link /></el-icon>
+                Documentation
+              </el-link>
+            </el-menu-item>
+            <el-menu-item>
+              <el-link href="https://sim.lvgl.io/v8.3/micropython/ports/javascript/index.html" target="_blank">
+                <el-icon><Monitor /></el-icon>
+                Simulator
+              </el-link>
+            </el-menu-item>
+          </el-sub-menu>
+        </el-menu>
+      </div>
 
       <div class="header-right">
-        <el-switch
-          style="padding: 0 10px;"
-          v-model="is_c_mode"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          active-text="C"
-          inactive-text="Python"
-          @change="generateCode"
-        ></el-switch>
-        <el-button-group >
-          <el-button type="success" round @click="exportCodeAsFile">Export</el-button>
-          <el-button type="primary" round @click="generateCode">Generate</el-button>
-          <el-button type="primary" round @click="exportCodeAsLV">SaveFile</el-button>
-          <el-button type="success" round @click="savePage">Save</el-button>
+        <div class="mode-switch">
+          <el-tooltip content="Switch between C and Python mode" placement="bottom">
+            <el-switch
+              v-model="is_c_mode"
+              active-color="#13ce66"
+              inactive-color="#409EFF"
+              active-text="C"
+              inactive-text="Python"
+              @change="generateCode"
+            />
+          </el-tooltip>
+        </div>
+
+        <el-button-group class="action-buttons">
+          <el-tooltip content="Generate Code" placement="bottom">
+            <el-button type="primary" @click="generateCode">
+              <el-icon><DocumentAdd /></el-icon>
+              Generate
+            </el-button>
+          </el-tooltip>
+          <el-tooltip content="Export Project" placement="bottom">
+            <el-button type="success" @click="exportCodeAsFile">
+              <el-icon><Download /></el-icon>
+              Export
+            </el-button>
+          </el-tooltip>
+          <el-tooltip content="Save Project" placement="bottom">
+            <el-button type="warning" @click="exportCodeAsLV">
+              <el-icon><FolderOpened /></el-icon>
+              Save Project
+            </el-button>
+          </el-tooltip>
         </el-button-group>
       </div>
     </el-header>
 
     <el-container class="main-container">
-      <el-aside width="15%">
+      <el-aside width="15%" style="border-right: 1px solid var(--el-border-color);">
         <creator-widgets @create="Creator"></creator-widgets>
 
         <el-divider></el-divider>
@@ -55,7 +98,7 @@
       </el-aside>
 
       <el-main style="padding: 0">
-        <el-tabs type="border-card" v-model="activeTab" @tab-change="handleTabChange">
+        <el-tabs type="border-card" v-model="activeTab" @tab-change="handleTabChange" style="border: none;">
           <el-tab-pane label="Simulator" name="simulator">
             <creator-simulator ref="simulator" @cursor="cursorXY" @event="handleSimulatorEvent" @console="handleSimulatorConsole"></creator-simulator>
             <creator-anim-console :timelines="timelines"></creator-anim-console>
@@ -929,19 +972,106 @@
   height: 100%;
   font-size: 14px;
 }
+
 .header-container {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);
-  margin: 0;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  height: 60px;
+  background: var(--el-bg-color);
+  border-bottom: 1px solid var(--el-border-color-lighter);
+  box-shadow: var(--el-box-shadow-lighter);
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+
+    .logo-section {
+      .logo-text {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 0;
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+
+        .logo-brand {
+          color: var(--el-color-primary);
+          background: linear-gradient(45deg, var(--el-color-primary), var(--el-color-primary-light-3));
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+
+        .logo-product {
+          color: var(--el-text-color-regular);
+          font-weight: 500;
+          font-size: 20px;
+        }
+
+        :deep(.el-divider--vertical) {
+          margin: 0 4px;
+          height: 24px;
+        }
+      }
+    }
+
+    .header-menu {
+      border-bottom: none;
+      background: transparent;
+
+      :deep(.el-menu-item),
+      :deep(.el-sub-menu__title) {
+        height: 60px;
+        line-height: 60px;
+        
+        .el-icon {
+          margin-right: 4px;
+          font-size: 16px;
+        }
+      }
+    }
+  }
 
   .header-right {
     display: flex;
-    justify-content: flex-end;
     align-items: center;
-    flex-grow: 1;
+    gap: 24px;
+
+    .mode-switch {
+      padding: 0 12px;
+      border-right: 1px solid var(--el-border-color-lighter);
+
+      :deep(.el-switch__label) {
+        color: var(--el-text-color-regular);
+        font-weight: 500;
+      }
+    }
+
+    .action-buttons {
+      .el-button {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 8px 16px;
+        
+        .el-icon {
+          font-size: 16px;
+        }
+      }
+    }
   }
 }
+
+// 暗色主题适配
+:deep(.dark) {
+  .header-container {
+    background: var(--el-bg-color-overlay);
+  }
+}
+
 .main-container {
   height: 100%;
 

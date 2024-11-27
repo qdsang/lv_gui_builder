@@ -1,77 +1,286 @@
 <template>
-  <div class="lv-anim-console" ref="console">
-    <el-row>
-      <el-col :span="8" class="lv-anim-console-item" v-for="timeline in timelines" :key="timeline.id">
-        <el-switch
-          class="lv-anim-switch"
-          v-model="switchValue[timeline.id]"
-          :inactive-text="timeline.id"
-          @change="handleSwitch(timeline.id)"
-        />
-        <el-slider class="lv-anim-slider" v-model="sliderValue[timeline.id]" :max="65535" @input="handleSlider(timeline.id)" />
-      </el-col>
-    </el-row>
+  <div class="anim-console-wrapper">
+    <el-button 
+      class="toggle-button"
+      type="primary"
+      circle
+      @click="showConsole = !showConsole"
+    >
+      <el-icon><VideoCameraFilled /></el-icon>
+    </el-button>
+
+    <div class="anim-console" :class="{ 'is-visible': showConsole }">
+      <div class="console-header" @mousedown="startDrag">
+        <div class="title-group">
+          <el-icon><VideoCameraFilled /></el-icon>
+          <span>Animation Control</span>
+        </div>
+        <div class="header-actions">
+          <el-button-group>
+            <el-tooltip content="Play All" placement="top">
+              <el-button type="primary" size="small" icon="el-icon-video-play" @click="playAll"></el-button>
+            </el-tooltip>
+            <el-tooltip content="Pause All" placement="top">  
+              <el-button type="warning" size="small" icon="el-icon-video-pause" @click="pauseAll"></el-button>
+            </el-tooltip>
+          </el-button-group>
+          <el-button 
+            circle 
+            size="small"
+            @click="showConsole = false"
+          >
+            <el-icon><Close /></el-icon>
+          </el-button>
+        </div>
+      </div>
+
+      <div class="timeline-list">
+        <div v-for="timeline in timelines" 
+             :key="timeline.id" 
+             class="timeline-item"
+        >
+          <div class="timeline-row">
+            <div class="timeline-info">
+              <el-tooltip :content="timeline.id" placement="top">
+                <span class="timeline-name text-ellipsis">{{ timeline.id }}</span>
+              </el-tooltip>
+              <el-switch
+                v-model="switchValue[timeline.id]"
+                @change="handleSwitch(timeline.id)"
+                size="small"
+              />
+            </div>
+            
+            <div class="timeline-progress">
+              <el-slider
+                v-model="sliderValue[timeline.id]"
+                :show-tooltip="false"
+                @input="handleSlider(timeline.id)"
+                size="small"
+              />
+            </div>
+
+            <div class="timeline-status">
+              <el-tag size="small" :type="switchValue[timeline.id] ? 'success' : 'info'">
+                {{ switchValue[timeline.id] ? 'Playing' : 'Paused' }}
+              </el-tag>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
-<script lang="ts">
-import {
-  wrap_timeline_start,
-  wrap_timeline_pause,
-  wrap_timeline_progress,
-} from './runtimeWrapper.js';
+<script>
+import { ref } from 'vue'
+import { wrap_timeline_start, wrap_timeline_pause, wrap_timeline_progress } from './runtimeWrapper.js';
+import { VideoCameraFilled, Close } from '@element-plus/icons-vue'
 
 export default {
-  name : 'creator-anim-console',
+  name: 'creator-anim-console',
+  components: {
+    VideoCameraFilled,
+    Close
+  },
   props: ['timelines'],
   emits: ['save'],
-  data: function() {
-      return {
-        switchValue: {},
-        sliderValue: {},
+  data() {
+    return {
+      switchValue: {},
+      sliderValue: {},
+      showConsole: false,
+      position: {
+        x: 20,
+        y: 20
       }
-  },
-  watch: {
-  },
-  mounted() {
+    };
   },
   methods: {
     handleSwitch(id) {
-      let value = this.switchValue[id];
-      if (value == true) {
+      const value = this.switchValue[id];
+      if (value) {
         wrap_timeline_start(id);
       } else {
         wrap_timeline_pause(id);
       }
-      // console.log('handleSwitch', id, value);
     },
     handleSlider(id) {
-      let value = this.sliderValue[id];
-      // console.log('handleSlider', id, value);
+      const value = this.sliderValue[id];
       wrap_timeline_progress(id, value);
     },
-    handleClick() {
 
+    playAll() {
+      this.timelines.forEach(timeline => {
+        this.switchValue[timeline.id] = true;
+        wrap_timeline_start(timeline.id);
+      });
+    },
+
+    pauseAll() {
+      this.timelines.forEach(timeline => {
+        this.switchValue[timeline.id] = false;
+        wrap_timeline_pause(timeline.id);
+      });
+    },
+
+    startDrag(event) {
+      const consoleEl = event.currentTarget.parentElement
+      const startX = event.clientX - this.position.x
+      const startY = event.clientY - this.position.y
+
+      const mousemove = (e) => {
+        this.position.x = e.clientX - startX
+        this.position.y = e.clientY - startY
+        consoleEl.style.transform = `translate(${this.position.x}px, ${this.position.y}px)`
+      }
+
+      const mouseup = () => {
+        document.removeEventListener('mousemove', mousemove)
+        document.removeEventListener('mouseup', mouseup)
+      }
+
+      document.addEventListener('mousemove', mousemove)
+      document.addEventListener('mouseup', mouseup)
     }
-  },
+  }
 };
 </script>
+
 <style lang="less" scoped>
-.lv-anim-console {
-  .lv-anim-console-item {
-    display: flex;
-    align-items: center;
-    padding: 0 10px 0 0;
-  }
-  .lv-anim-switch {
-    padding: 0 10px 0 10px;
-  }
-  .lv-anim-slider {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
+.anim-console-wrapper {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2000;
+
+  .toggle-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 2001;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    
+    .el-icon {
+      font-size: 16px;
+    }
   }
 }
-</style>
-<style lang="less">
+
+.anim-console {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  width: 400px;
+  padding: 8px;
+  background: var(--el-bg-color-overlay);
+  border-radius: 8px;
+  box-shadow: var(--el-box-shadow-light);
+  font-size: 12px;
+  transform: translate(0, 0);
+  transition: all 0.3s;
+  opacity: 0;
+  visibility: hidden;
+  
+  &.is-visible {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .console-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--el-border-color-lighter);
+    cursor: move;
+
+    .title-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--el-text-color-primary);
+      font-weight: 500;
+      
+      .el-icon {
+        font-size: 16px;
+      }
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  }
+
+  .timeline-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .timeline-item {
+    background: var(--el-bg-color);
+    border-radius: 4px;
+    border: 1px solid var(--el-border-color-lighter);
+
+    .timeline-row {
+      display: flex;
+      align-items: center;
+      padding: 6px 8px;
+      gap: 12px;
+    }
+
+    .timeline-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 120px;
+      
+      .timeline-name {
+        max-width: 80px;
+      }
+    }
+
+    .timeline-progress {
+      flex: 1;
+      min-width: 100px;
+      
+      :deep(.el-slider__runway) {
+        height: 4px;
+        margin: 8px 0;
+      }
+
+      :deep(.el-slider__bar) {
+        height: 4px;
+      }
+
+      :deep(.el-slider__button) {
+        width: 12px;
+        height: 12px;
+      }
+    }
+
+    .timeline-status {
+      min-width: 60px;
+    }
+  }
+}
+
+.text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// 暗色主题适配
+:deep(.dark) {
+  .anim-console {
+    background: var(--el-bg-color);
+  }
+}
 </style>
