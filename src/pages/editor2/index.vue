@@ -28,13 +28,6 @@
               <el-icon><Select /></el-icon>
               Save Changes
             </el-menu-item>
-          </el-sub-menu>
-
-          <el-sub-menu index="help">
-            <template #title>
-              <el-icon><QuestionFilled /></el-icon>
-              <span>Help</span>
-            </template>
             <el-menu-item>
               <el-link href="https://docs.lvgl.io/master/index.html" target="_blank">
                 <el-icon><Link /></el-icon>
@@ -115,16 +108,11 @@
           <el-tab-pane label="Code" name="code">
             <creator-editor ref="editor"></creator-editor>
           </el-tab-pane>
-          <el-tab-pane label="Project" name="Project">    
-            <el-switch
-              style="padding: 0 10px;"
-              v-model="is_c_mode"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
-              active-text="C"
-              inactive-text="Python"
-              @change="generateCode"
-            ></el-switch>
+          <el-tab-pane label="Project" name="project">
+            <creator-project-settings 
+              ref="projectSettings"
+              @save="handleProjectSettingsChange"
+            />
           </el-tab-pane>
         </el-tabs>
 
@@ -260,6 +248,7 @@
   import creatorAnimConsole from './creatorAnimConsole.vue';
   import creatorFont from './creatorFont.vue';
   import creatorImage from './creatorImage.vue';
+  import creatorProjectSettings from './creatorProjectSettings.vue';
 
   import testData from './testData.json';
 
@@ -285,6 +274,7 @@
       creatorAnim,
       creatorFont,
       creatorImage,
+      creatorProjectSettings,
     },
     data() {
       return {
@@ -362,6 +352,9 @@
 
         // tabs
         activeTab: 'simulator',
+
+        // 添加项目配置
+        projectConfig: null,
       };
     },
 
@@ -402,6 +395,8 @@
         this.mpylvInit();
         this.restorePageData();
 
+        // 加载项目配置
+        this.loadProjectConfig();
       }, 2000);
       
     },
@@ -448,6 +443,11 @@
         wrap_timeline_load(this.timelines);
         
         this.activeNode('screen');
+
+        // 恢复项目配置
+        if (this.projectConfig) {
+          this.applyProjectConfig(this.projectConfig);
+        }
       },
       getWidgetById(id) {
         return this.InfoPool[id];
@@ -768,17 +768,23 @@
       // Generate the code and print them to the editor.
       generateCode: async function () {
         let preview_code = '';
-        let screen = {info: this.InfoPool, timelines: this.timelines };
+        let screen = {
+          info: this.InfoPool, 
+          timelines: this.timelines,
+          config: this.projectConfig // 添加项目配置
+        };
+        
         if (this.is_c_mode) {
-          preview_code = c_generator(screen, this.act_FileName);
+          preview_code = c_generator(screen, this.projectConfig?.name || this.act_FileName);
         } else {
-          preview_code = python_generator(screen, this.act_FileName);
+          preview_code = python_generator(screen, this.projectConfig?.name || this.act_FileName);
         }
+        
         await this.$refs.editor.setValue(preview_code);
         this.activeTab = 'code';
         this.$message({
-          message: 'Generate code sucessfully',
-          type: 'success',
+          message: 'Generate code successfully',
+          type: 'success'
         });
       },
 
@@ -899,17 +905,19 @@
 
       // Save code to lvgl file.
       savePage: async function (event, msg = MSG_SAVE_PAGE_SUCC) {
-        let lvgl_data = {};
-        lvgl_data[`version`] = this.version;
-        lvgl_data[`versionCode`] = this.versionCode;
-        lvgl_data[`InfoPool`] = this.InfoPool;
-        lvgl_data[`timelines`] = this.timelines;
-        lvgl_data[`widget_tree`] = this.widget_tree;
-        lvgl_data[`selectedType`] = this.selectedType;
-        lvgl_data[`widgetNum`] = this.widgetNum;
-        lvgl_data[`Count`] = this.Count;
-        lvgl_data[`term_visible`] = this.term_visible;
-        lvgl_data[`is_c_mode`] = this.is_c_mode;
+        let lvgl_data = {
+          version: this.version,
+          versionCode: this.versionCode,
+          InfoPool: this.InfoPool,
+          timelines: this.timelines,
+          widget_tree: this.widget_tree,
+          selectedType: this.selectedType,
+          widgetNum: this.widgetNum,
+          Count: this.Count,
+          term_visible: this.term_visible,
+          is_c_mode: this.is_c_mode,
+          projectConfig: this.projectConfig // 添加项目配置
+        };
 
         localStorage.setItem("lvgl_data", JSON.stringify(lvgl_data));
 
@@ -918,16 +926,15 @@
         if (res.data) {
           this.$message({
             message: msg,
-            type: 'success',
+            type: 'success'
           });
         } else {
           this.$message({
             message: 'Save failed',
-            type: 'error',
+            type: 'error'
           });
         }
         return lvgl_data;
-        return res.data;
       },
 
       handleTabChange(name) {
@@ -962,6 +969,59 @@
         })
         .catch(() => {
         })
+      },
+
+      // 加载项目配置
+      loadProjectConfig() {
+        const config = localStorage.getItem('project_config');
+        if (config) {
+          this.projectConfig = JSON.parse(config);
+          this.applyProjectConfig(this.projectConfig);
+        }
+      },
+
+      // 应用项目配置
+      applyProjectConfig(config) {
+        if (!config) return;
+
+        // 应用屏幕尺寸
+        if (config.screenSize) {
+          this.screenWidth = config.screenSize.width;
+          this.screenHeight = config.screenSize.height;
+        }
+
+        // 应用代码生成格式
+        if (config.outputFormat) {
+          this.is_c_mode = config.outputFormat === 'c';
+        }
+
+        // 应用其他配置...
+      },
+
+      // 处理项目设置变更
+      handleProjectSettingsChange(config) {
+        this.projectConfig = config;
+        
+        // 应用新配置
+        this.applyProjectConfig(config);
+
+        // 提示保存成功
+        this.$message({
+          message: 'Project settings saved successfully',
+          type: 'success'
+        });
+
+        // 如果屏幕尺寸改变,需要重新初始化模拟器
+        if (config.screenSize.width !== this.screenWidth || 
+            config.screenSize.height !== this.screenHeight) {
+          this.$confirm('Screen size changed. The page needs to be reloaded. Continue?', 'Warning', {
+            confirmButtonText: 'OK',
+            cancelButtonText: 'Cancel',
+            type: 'warning'
+          }).then(() => {
+            window.location.reload();
+          });
+        }
       },
     },
   };
