@@ -74,6 +74,7 @@
 
 <script lang="ts">
 import * as WidgetData from "./widgetData.js";
+import { projectStore } from './store/projectStore';
 
 function compressImg(file) {
   let id = file.name;
@@ -127,13 +128,14 @@ export default {
   emits: ['node-click', 'event'],
   data: function() {
       return {
-        tableData: WidgetData.imageLibrary,
-        fileList: [],
+        tableData: []
       }
   },
   watch: {
   },
   mounted() {
+    // 从 projectStore 加载图片数据
+    this.tableData = projectStore.getAllAssets('images');
   },
   methods: {
     edit(props) {
@@ -141,17 +143,17 @@ export default {
     },
     save(props) {
       props.row.iseditor = false;
-      WidgetData.imageLibrarySave();
+      projectStore.updateAsset('images', props.row.id, props.row);
     },
-    async handFileChange(file, fileList) {
-      let data = await compressImg(file);
-      this.tableData.push(data);
-      console.log('handFileChange', file, fileList, data);
-      WidgetData.imageLibrarySave();
+    async handFileChange(file) {
+      let imageData = await compressImg(file);
+      // 使用 projectStore 添加图片
+      const id = projectStore.addAsset('images', imageData);
+      this.tableData = projectStore.getAllAssets('images');
     },
     handleDelete(props) {
-      this.tableData.splice(props.$index, 1);
-      WidgetData.imageLibrarySave();
+      projectStore.deleteAsset('images', props.row.id);
+      this.tableData = projectStore.getAllAssets('images');
     },
     async handleImgTypeChange(props) {
       let base64 = await convertImage(props.row.base64, props.row.type);

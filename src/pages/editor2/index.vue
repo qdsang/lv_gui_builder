@@ -232,7 +232,7 @@
   import { Categorize, Data_Changed_Event, MSG_AUTO_SAVE_PAGE_SUCC, MSG_SAVE_PAGE_SUCC } from  './constant.js';
   import { CMD } from  './cmd.js';
 
-  import * as Store from './store.js';
+  import { projectStore } from './store/projectStore';
 
   import lvglAttrAlign from './lvglAttrAlign.vue';
   import lvglAttrSetter2 from './lvglAttrSetter2.vue';
@@ -368,7 +368,6 @@
 
     mounted() {
       // console.log('mounted', this, Store.getTreeList());
-      window.vue2 = this;
       
       let pageData = {};
       let json = localStorage.getItem("lvgl_data");
@@ -385,7 +384,10 @@
           pageData = {};
         }
         Object.assign(vm.$data, pageData);
-
+        this.InfoPool = pageData.components.pool;
+        this.widget_tree = pageData.components.tree;
+        this.timelines = pageData.animations.timelines;
+        
         if (!this.InfoPool['screen']) {
           this.addInfo('screen', '', 'screen');
           let screen = this.getWidgetById('screen');
@@ -905,6 +907,20 @@
 
       // Save code to lvgl file.
       savePage: async function (event, msg = MSG_SAVE_PAGE_SUCC) {
+        // 更新 projectStore 数据
+        projectStore.projectData.components.pool = this.InfoPool;
+        projectStore.projectData.components.tree = this.widget_tree;
+        projectStore.projectData.animations.timelines = this.timelines;
+        projectStore.projectData.settings.screen = {
+          width: this.screenWidth,
+          height: this.screenHeight
+        };
+        projectStore.projectData.settings.output.format = this.is_c_mode ? 'c' : 'python';
+        
+        // 保存项目数据
+        projectStore.saveProject();
+        
+        // 为了兼容性保留原有的保存逻辑
         let lvgl_data = {
           version: this.version,
           versionCode: this.versionCode,
@@ -916,11 +932,11 @@
           Count: this.Count,
           term_visible: this.term_visible,
           is_c_mode: this.is_c_mode,
-          projectConfig: this.projectConfig // 添加项目配置
+          projectConfig: this.projectConfig
         };
 
         localStorage.setItem("lvgl_data", JSON.stringify(lvgl_data));
-
+        
         console.log('save', lvgl_data);
         const res = await this.sendMessage(CMD.savePage, lvgl_data);
         if (res.data) {

@@ -1,7 +1,7 @@
 <template>
   <el-table :data="tableData" style="width: 100%">
-    <el-table-column fixed prop="value" label="value" width="300" />
-    <el-table-column prop="label" label="label" width="120" />
+    <el-table-column fixed prop="name" label="name" width="120" />
+    <el-table-column prop="path" label="path" width="300" />
     <el-table-column fixed="right" label="Operations" width="120">
       <template #default>
         <el-button link type="primary" size="small" @click="handleClick">
@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts">
-import * as WidgetData from "./widgetData.js";
+import { projectStore } from './store/projectStore';
 
 export default {
   name : 'creator-font',
@@ -22,16 +22,17 @@ export default {
   emits: ['node-click', 'event'],
   data: function() {
       return {
-        tableData: WidgetData.fonts,
+        tableData: []
       }
   },
   watch: {
   },
   mounted() {
+    this.tableData = projectStore.getAllAssets('fonts');
   },
   methods: {
-    handleClick() {
-
+    handleClick(font) {
+      projectStore.updateAsset('fonts', font.id, font);
     }
   },
 };

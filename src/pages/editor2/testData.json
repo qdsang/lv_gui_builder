@@ -1,483 +1,544 @@
 {
+  "id": "default",
+  "name": "Demo Project",
+  "description": "LVGL GUI Builder Demo Project",
   "version": "1.0.0",
   "versionCode": 1,
-  "InfoPool": {
-    "screen": {
-      "parent": "",
-      "id": "screen",
-      "type": "screen",
-      "zindex": 0,
-      "cb": false,
-      "attributes": ["x", "y", "width", "height"],
-      "apis": [],
-      "styles": ["MAIN.bg_color"],
-      "data": {
-        "width": 480,
-        "height": 480,
-        "x": "0",
-        "y": "0",
-        "MAIN.bg_img_src": "",
-        "MAIN.bg_color": "#000000"
+
+  "components": {
+    "tree": [
+      {
+        "id": "screen",
+        "label": "screen",
+        "widgetType": "screen",
+        "children": [
+          { "id": "obj_3", "label": "obj_3", "widgetType": "obj", "children": [] },
+          { "id": "arc_0", "label": "arc_0", "widgetType": "arc", "children": [] },
+          { "id": "arc_left", "label": "arc_left", "widgetType": "arc", "children": [] },
+          { "id": "arc_right", "label": "arc_right", "widgetType": "arc", "children": [] },
+          { "id": "label_speed", "label": "label_speed", "widgetType": "label", "children": [] },
+          { "id": "label_soc", "label": "label_soc", "widgetType": "label", "children": [] },
+          { "id": "label_kw", "label": "label_kw", "widgetType": "label", "children": [] },
+          { "id": "label_c", "label": "label_c", "widgetType": "label", "children": [] },
+          {
+            "id": "btn_15",
+            "label": "btn_15",
+            "widgetType": "btn",
+            "children": [
+              { "id": "label_16", "label": "label_16", "widgetType": "label", "children": [] }
+            ]
+          },
+          { "id": "checkbox_18", "label": "checkbox_18", "widgetType": "checkbox", "children": [] },
+          { "id": "slider_19", "label": "slider_19", "widgetType": "slider", "children": [] },
+          { "id": "switch_1b", "label": "switch_1b", "widgetType": "switch", "children": [] },
+          { "id": "textarea_1f", "label": "textarea_1f", "widgetType": "textarea", "children": [] },
+          { "id": "img_20", "label": "img_20", "widgetType": "img", "children": [] },
+          { "id": "img_21", "label": "img_21", "widgetType": "img", "children": [] },
+          { "id": "img_22", "label": "img_22", "widgetType": "img", "children": [] }
+        ]
       }
-    },
-    "obj_3": {
-      "parent": "screen",
-      "id": "obj_3",
-      "type": "obj",
-      "zindex": 0,
-      "cb": false,
-      "attributes": ["x", "y", "width", "height"],
-      "apis": [],
-      "styles": ["MAIN.radius", "MAIN.bg_color", "MAIN.border_width"],
-      "data": {
-        "y": 35,
-        "x": 35,
-        "height": "210",
-        "width": "210",
-        "MAIN.arc_rounded": "False",
-        "MAIN.radius": "333",
-        "MAIN.bg_color": "#605F5F",
-        "MAIN.border_width": "0"
-      }
-    },
-    "arc_0": {
-      "parent": "screen",
-      "id": "arc_0",
-      "type": "arc",
-      "zindex": 0,
-      "cb": false,
-      "attributes": ["x", "y", "width", "height"],
-      "apis": [
-        "set_start_angle",
-        "set_end_angle",
-        "set_bg_start_angle",
-        "set_bg_end_angle",
-        "set_value"
-      ],
-      "styles": [
-        "INDICATOR.arc_width",
-        "INDICATOR.text_font",
-        "KNOB.bg_opa",
-        "INDICATOR.arc_rounded",
-        "MAIN.arc_width",
-        "INDICATOR.arc_color",
-        "MAIN.arc_rounded",
-        "MAIN.arc_color"
-      ],
-      "data": {
-        "y": 40,
-        "x": 40,
-        "height": "200",
-        "width": "200",
-        "set_start_angle": "135",
-        "set_end_angle": "45",
-        "set_bg_start_angle": "135",
-        "set_bg_end_angle": "45",
-        "set_value": "60",
-        "INDICATOR.arc_img_src": "",
-        "INDICATOR.arc_width": "22",
-        "INDICATOR.text_font": "lv.font_montserrat_16",
-        "KNOB.bg_opa": "0",
-        "INDICATOR.arc_rounded": "False",
-        "MAIN.bg_opa": "",
-        "MAIN.arc_width": "22",
-        "INDICATOR.arc_color": "#589EF8",
-        "MAIN.arc_rounded": "False",
-        "MAIN.arc_color": "#E3E3E3"
-      }
-    },
-    "label_speed": {
-      "parent": "screen",
-      "id": "label_speed",
-      "type": "label",
-      "zindex": 0,
-      "cb": false,
-      "attributes": ["x", "y", "width", "height"],
-      "apis": ["set_text"],
-      "styles": ["MAIN.text_font", "MAIN.text_color"],
-      "data": {
-        "y": "135",
-        "x": "103",
-        "height": 30,
-        "width": 100,
-        "set_text": "\"100KM/H\"",
-        "MAIN.text_font": "lv.font_montserrat_16",
-        "MAIN.text_color": "#FFFFFF"
-      }
-    },
-    "label_soc": {
-      "parent": "screen",
-      "id": "label_soc",
-      "type": "label",
-      "zindex": 0,
-      "cb": false,
-      "attributes": ["x", "y", "width", "height"],
-      "apis": ["set_text"],
-      "styles": ["MAIN.text_color", "MAIN.text_font"],
-      "data": {
-        "y": "240",
-        "x": "90",
-        "height": 40,
-        "width": 100,
-        "MAIN.text_color": "#FFFFFF",
-        "MAIN.text_font": "lv.font_montserrat_16",
-        "set_text": "\"99%\""
-      }
-    },
-    "label_kw": {
-      "parent": "screen",
-      "id": "label_kw",
-      "type": "label",
-      "zindex": 0,
-      "cb": false,
-      "attributes": ["x", "y", "width", "height"],
-      "apis": ["set_text"],
-      "styles": ["MAIN.text_color", "MAIN.text_font"],
-      "data": {
-        "y": "240",
-        "x": "140",
-        "height": 40,
-        "width": 100,
-        "MAIN.text_color": "#FFFFFF",
-        "MAIN.text_font": "lv.font_montserrat_16",
-        "set_text": "\"99.9KW\""
-      }
-    },
-    "label_c": {
-      "parent": "screen",
-      "id": "label_c",
-      "type": "label",
-      "zindex": 0,
-      "cb": false,
-      "attributes": ["x", "y", "width", "height"],
-      "apis": ["set_text"],
-      "styles": ["MAIN.text_color", "MAIN.text_font"],
-      "data": {
-        "y": "40",
-        "x": "20",
-        "height": 40,
-        "width": 100,
-        "MAIN.text_color": "#FFFFFF",
-        "MAIN.text_font": "lv.font_montserrat_16",
-        "set_text": "\"36.6°\""
-      }
-    },
-    "arc_right": {
-      "parent": "screen",
-      "id": "arc_right",
-      "type": "arc",
-      "zindex": 0,
-      "cb": false,
-      "attributes": ["x", "y", "width", "height"],
-      "apis": [
-        "set_start_angle",
-        "set_end_angle",
-        "set_bg_start_angle",
-        "set_bg_end_angle",
-        "set_value",
-        "set_mode"
-      ],
-      "styles": [
-        "KNOB.bg_opa",
-        "MAIN.arc_rounded",
-        "MAIN.arc_width",
-        "MAIN.arc_color",
-        "INDICATOR.arc_rounded",
-        "INDICATOR.arc_width",
-        "INDICATOR.arc_color"
-      ],
-      "data": {
-        "y": "30",
-        "x": "30",
-        "height": "240",
-        "width": "240",
-        "set_start_angle": "30",
-        "set_end_angle": "60",
-        "KNOB.bg_opa": "0",
-        "set_bg_start_angle": "30",
-        "set_bg_end_angle": "60",
-        "set_value": "60",
-        "MAIN.arc_rounded": "False",
-        "MAIN.arc_width": "22",
-        "MAIN.arc_color": "#316131",
-        "INDICATOR.arc_rounded": "False",
-        "INDICATOR.arc_width": "22",
-        "INDICATOR.arc_color": "#65C266",
-        "set_range": ",",
-        "set_mode": "2"
-      }
-    },
-    "arc_left": {
-      "parent": "screen",
-      "id": "arc_left",
-      "type": "arc",
-      "zindex": 0,
-      "cb": false,
-      "attributes": ["x", "y", "width", "height"],
-      "apis": [
-        "set_start_angle",
-        "set_end_angle",
-        "set_bg_start_angle",
-        "set_bg_end_angle",
-        "set_value",
-        "set_mode"
-      ],
-      "styles": [
-        "KNOB.bg_opa",
-        "MAIN.arc_rounded",
-        "MAIN.arc_width",
-        "MAIN.arc_color",
-        "INDICATOR.arc_rounded",
-        "INDICATOR.arc_width",
-        "INDICATOR.arc_color"
-      ],
-      "data": {
-        "y": 30,
-        "x": 10,
-        "height": 240,
-        "width": 240,
-        "set_start_angle": "120",
-        "set_end_angle": "150",
-        "KNOB.bg_opa": "0",
-        "set_bg_start_angle": "120",
-        "set_bg_end_angle": "150",
-        "set_value": "80",
-        "MAIN.arc_rounded": "False",
-        "MAIN.arc_width": "22",
-        "MAIN.arc_color": "#316131",
-        "INDICATOR.arc_rounded": "False",
-        "INDICATOR.arc_width": "22",
-        "INDICATOR.arc_color": "#65C266",
-        "set_mode": "0"
-      }
-    },
-    "btn_15": {
-      "parent": "screen",
-      "id": "btn_15",
-      "type": "btn",
-      "zindex": 0,
-      "cb": false,
-      "attributes": ["x", "y", "width", "height"],
-      "apis": [],
-      "styles": [],
-      "data": { "y": 27, "x": 286, "height": 40, "width": 60 }
-    },
-    "label_16": {
-      "parent": "btn_15",
-      "id": "label_16",
-      "type": "label",
-      "zindex": 0,
-      "cb": false,
-      "attributes": ["x", "y", "width", "height"],
-      "apis": ["set_text"],
-      "styles": [],
-      "data": { "y": 2, "x": 0, "height": 16, "width": 27, "set_text": "\"Btn\"" }
-    },
-    "checkbox_18": {
-      "parent": "screen",
-      "id": "checkbox_18",
-      "type": "checkbox",
-      "zindex": 0,
-      "cb": false,
-      "attributes": ["x", "y", "width", "height"],
-      "apis": [],
-      "styles": ["MAIN.text_color"],
-      "data": { "y": 89, "x": 295, "height": 20, "width": 105, "MAIN.text_color": "#FFFFFF" }
-    },
-    "slider_19": {
-      "parent": "screen",
-      "id": "slider_19",
-      "type": "slider",
-      "zindex": 0,
-      "cb": false,
-      "attributes": ["x", "y", "width", "height"],
-      "apis": [],
-      "styles": [],
-      "data": { "y": 131, "x": 299, "height": 13, "width": 100 }
-    },
-    "switch_1b": {
-      "parent": "screen",
-      "id": "switch_1b",
-      "type": "switch",
-      "zindex": 0,
-      "cb": false,
-      "attributes": ["x", "y", "width", "height"],
-      "apis": [],
-      "styles": [],
-      "data": { "y": 168, "x": 295, "height": 30, "width": 52 }
-    },
-    "textarea_1f": {
-      "parent": "screen",
-      "id": "textarea_1f",
-      "type": "textarea",
-      "zindex": 0,
-      "cb": false,
-      "attributes": ["x", "y", "width", "height"],
-      "apis": [],
-      "styles": [],
-      "data": { "y": 220, "x": 293, "height": 60, "width": 100 }
-    },
-    "img_20": {
-      "parent": "screen",
-      "id": "img_20",
-      "type": "img",
-      "zindex": 0,
-      "cb": false,
-      "attributes": ["x", "y", "width", "height"],
-      "apis": ["set_src"],
-      "styles": [],
-      "data": {
-        "y": 310,
-        "x": 41,
-        "height": 100,
-        "width": 100,
-        "set_src": "https://qdsang.github.io/lv_gui_builder/demo-arctic-code.jpg"
-      }
-    },
-    "img_21": {
-      "parent": "screen",
-      "id": "img_21",
-      "type": "img",
-      "zindex": 0,
-      "cb": false,
-      "attributes": ["x", "y", "width", "height"],
-      "apis": ["set_src", "set_angle", "set_zoom"],
-      "styles": [],
-      "data": {
-        "y": 310,
-        "x": 324,
-        "height": 100,
-        "width": 100,
-        "set_src": "https://qdsang.github.io/lv_gui_builder/demo-starstruck.jpg",
-        "set_angle": "0",
-        "set_zoom": ""
-      }
-    },
-    "img_22": {
-      "parent": "screen",
-      "id": "img_22",
-      "type": "img",
-      "zindex": 0,
-      "cb": false,
-      "attributes": ["x", "y", "width", "height"],
-      "apis": ["set_src"],
-      "styles": [],
-      "data": {
-        "y": 310,
-        "x": 176,
-        "height": 100,
-        "width": 100,
-        "set_src": "https://qdsang.github.io/lv_gui_builder/demo-pull-shark.jpg"
+    ],
+    "pool": {
+      "screen": {
+        "parent": "",
+        "id": "screen",
+        "type": "screen",
+        "zindex": 0,
+        "cb": false,
+        "attributes": ["x", "y", "width", "height"],
+        "apis": [],
+        "styles": ["MAIN.bg_color"],
+        "data": {
+          "width": 480,
+          "height": 480,
+          "x": "0",
+          "y": "0",
+          "MAIN.bg_img_src": "",
+          "MAIN.bg_color": "#000000"
+        }
+      },
+      "obj_3": {
+        "parent": "screen",
+        "id": "obj_3",
+        "type": "obj",
+        "zindex": 0,
+        "cb": false,
+        "attributes": ["x", "y", "width", "height"],
+        "apis": [],
+        "styles": ["MAIN.radius", "MAIN.bg_color", "MAIN.border_width"],
+        "data": {
+          "y": 35,
+          "x": 35,
+          "height": "210",
+          "width": "210",
+          "MAIN.arc_rounded": "False",
+          "MAIN.radius": "333",
+          "MAIN.bg_color": "#605F5F",
+          "MAIN.border_width": "0"
+        }
+      },
+      "arc_0": {
+        "parent": "screen",
+        "id": "arc_0",
+        "type": "arc",
+        "zindex": 0,
+        "cb": false,
+        "attributes": ["x", "y", "width", "height"],
+        "apis": [
+          "set_start_angle",
+          "set_end_angle",
+          "set_bg_start_angle",
+          "set_bg_end_angle",
+          "set_value"
+        ],
+        "styles": [
+          "INDICATOR.arc_width",
+          "INDICATOR.text_font",
+          "KNOB.bg_opa",
+          "INDICATOR.arc_rounded",
+          "MAIN.arc_width",
+          "INDICATOR.arc_color",
+          "MAIN.arc_rounded",
+          "MAIN.arc_color"
+        ],
+        "data": {
+          "y": 40,
+          "x": 40,
+          "height": "200",
+          "width": "200",
+          "set_start_angle": "135",
+          "set_end_angle": "45",
+          "set_bg_start_angle": "135",
+          "set_bg_end_angle": "45",
+          "set_value": "60",
+          "INDICATOR.arc_img_src": "",
+          "INDICATOR.arc_width": "22",
+          "INDICATOR.text_font": "lv.font_montserrat_16",
+          "KNOB.bg_opa": "0",
+          "INDICATOR.arc_rounded": "False",
+          "MAIN.bg_opa": "",
+          "MAIN.arc_width": "22",
+          "INDICATOR.arc_color": "#589EF8",
+          "MAIN.arc_rounded": "False",
+          "MAIN.arc_color": "#E3E3E3"
+        }
+      },
+      "label_speed": {
+        "parent": "screen",
+        "id": "label_speed",
+        "type": "label",
+        "zindex": 0,
+        "cb": false,
+        "attributes": ["x", "y", "width", "height"],
+        "apis": ["set_text"],
+        "styles": ["MAIN.text_font", "MAIN.text_color"],
+        "data": {
+          "y": "135",
+          "x": "103",
+          "height": 30,
+          "width": 100,
+          "set_text": "\"100KM/H\"",
+          "MAIN.text_font": "lv.font_montserrat_16",
+          "MAIN.text_color": "#FFFFFF"
+        }
+      },
+      "label_soc": {
+        "parent": "screen",
+        "id": "label_soc",
+        "type": "label",
+        "zindex": 0,
+        "cb": false,
+        "attributes": ["x", "y", "width", "height"],
+        "apis": ["set_text"],
+        "styles": ["MAIN.text_color", "MAIN.text_font"],
+        "data": {
+          "y": "240",
+          "x": "90",
+          "height": 40,
+          "width": 100,
+          "MAIN.text_color": "#FFFFFF",
+          "MAIN.text_font": "lv.font_montserrat_16",
+          "set_text": "\"99%\""
+        }
+      },
+      "label_kw": {
+        "parent": "screen",
+        "id": "label_kw",
+        "type": "label",
+        "zindex": 0,
+        "cb": false,
+        "attributes": ["x", "y", "width", "height"],
+        "apis": ["set_text"],
+        "styles": ["MAIN.text_color", "MAIN.text_font"],
+        "data": {
+          "y": "240",
+          "x": "140",
+          "height": 40,
+          "width": 100,
+          "MAIN.text_color": "#FFFFFF",
+          "MAIN.text_font": "lv.font_montserrat_16",
+          "set_text": "\"99.9KW\""
+        }
+      },
+      "label_c": {
+        "parent": "screen",
+        "id": "label_c",
+        "type": "label",
+        "zindex": 0,
+        "cb": false,
+        "attributes": ["x", "y", "width", "height"],
+        "apis": ["set_text"],
+        "styles": ["MAIN.text_color", "MAIN.text_font"],
+        "data": {
+          "y": "40",
+          "x": "20",
+          "height": 40,
+          "width": 100,
+          "MAIN.text_color": "#FFFFFF",
+          "MAIN.text_font": "lv.font_montserrat_16",
+          "set_text": "\"36.6°\""
+        }
+      },
+      "arc_right": {
+        "parent": "screen",
+        "id": "arc_right",
+        "type": "arc",
+        "zindex": 0,
+        "cb": false,
+        "attributes": ["x", "y", "width", "height"],
+        "apis": [
+          "set_start_angle",
+          "set_end_angle",
+          "set_bg_start_angle",
+          "set_bg_end_angle",
+          "set_value",
+          "set_mode"
+        ],
+        "styles": [
+          "KNOB.bg_opa",
+          "MAIN.arc_rounded",
+          "MAIN.arc_width",
+          "MAIN.arc_color",
+          "INDICATOR.arc_rounded",
+          "INDICATOR.arc_width",
+          "INDICATOR.arc_color"
+        ],
+        "data": {
+          "y": "30",
+          "x": "30",
+          "height": "240",
+          "width": "240",
+          "set_start_angle": "30",
+          "set_end_angle": "60",
+          "KNOB.bg_opa": "0",
+          "set_bg_start_angle": "30",
+          "set_bg_end_angle": "60",
+          "set_value": "60",
+          "MAIN.arc_rounded": "False",
+          "MAIN.arc_width": "22",
+          "MAIN.arc_color": "#316131",
+          "INDICATOR.arc_rounded": "False",
+          "INDICATOR.arc_width": "22",
+          "INDICATOR.arc_color": "#65C266",
+          "set_range": ",",
+          "set_mode": "2"
+        }
+      },
+      "arc_left": {
+        "parent": "screen",
+        "id": "arc_left",
+        "type": "arc",
+        "zindex": 0,
+        "cb": false,
+        "attributes": ["x", "y", "width", "height"],
+        "apis": [
+          "set_start_angle",
+          "set_end_angle",
+          "set_bg_start_angle",
+          "set_bg_end_angle",
+          "set_value",
+          "set_mode"
+        ],
+        "styles": [
+          "KNOB.bg_opa",
+          "MAIN.arc_rounded",
+          "MAIN.arc_width",
+          "MAIN.arc_color",
+          "INDICATOR.arc_rounded",
+          "INDICATOR.arc_width",
+          "INDICATOR.arc_color"
+        ],
+        "data": {
+          "y": 30,
+          "x": 10,
+          "height": 240,
+          "width": 240,
+          "set_start_angle": "120",
+          "set_end_angle": "150",
+          "KNOB.bg_opa": "0",
+          "set_bg_start_angle": "120",
+          "set_bg_end_angle": "150",
+          "set_value": "80",
+          "MAIN.arc_rounded": "False",
+          "MAIN.arc_width": "22",
+          "MAIN.arc_color": "#316131",
+          "INDICATOR.arc_rounded": "False",
+          "INDICATOR.arc_width": "22",
+          "INDICATOR.arc_color": "#65C266",
+          "set_mode": "0"
+        }
+      },
+      "btn_15": {
+        "parent": "screen",
+        "id": "btn_15",
+        "type": "btn",
+        "zindex": 0,
+        "cb": false,
+        "attributes": ["x", "y", "width", "height"],
+        "apis": [],
+        "styles": [],
+        "data": { "y": 27, "x": 286, "height": 40, "width": 60 }
+      },
+      "label_16": {
+        "parent": "btn_15",
+        "id": "label_16",
+        "type": "label",
+        "zindex": 0,
+        "cb": false,
+        "attributes": ["x", "y", "width", "height"],
+        "apis": ["set_text"],
+        "styles": [],
+        "data": { "y": 2, "x": 0, "height": 16, "width": 27, "set_text": "\"Btn\"" }
+      },
+      "checkbox_18": {
+        "parent": "screen",
+        "id": "checkbox_18",
+        "type": "checkbox",
+        "zindex": 0,
+        "cb": false,
+        "attributes": ["x", "y", "width", "height"],
+        "apis": [],
+        "styles": ["MAIN.text_color"],
+        "data": { "y": 89, "x": 295, "height": 20, "width": 105, "MAIN.text_color": "#FFFFFF" }
+      },
+      "slider_19": {
+        "parent": "screen",
+        "id": "slider_19",
+        "type": "slider",
+        "zindex": 0,
+        "cb": false,
+        "attributes": ["x", "y", "width", "height"],
+        "apis": [],
+        "styles": [],
+        "data": { "y": 131, "x": 299, "height": 13, "width": 100 }
+      },
+      "switch_1b": {
+        "parent": "screen",
+        "id": "switch_1b",
+        "type": "switch",
+        "zindex": 0,
+        "cb": false,
+        "attributes": ["x", "y", "width", "height"],
+        "apis": [],
+        "styles": [],
+        "data": { "y": 168, "x": 295, "height": 30, "width": 52 }
+      },
+      "textarea_1f": {
+        "parent": "screen",
+        "id": "textarea_1f",
+        "type": "textarea",
+        "zindex": 0,
+        "cb": false,
+        "attributes": ["x", "y", "width", "height"],
+        "apis": [],
+        "styles": [],
+        "data": { "y": 220, "x": 293, "height": 60, "width": 100 }
+      },
+      "img_20": {
+        "parent": "screen",
+        "id": "img_20",
+        "type": "img",
+        "zindex": 0,
+        "cb": false,
+        "attributes": ["x", "y", "width", "height"],
+        "apis": ["set_src"],
+        "styles": [],
+        "data": {
+          "y": 310,
+          "x": 41,
+          "height": 100,
+          "width": 100,
+          "set_src": "https://qdsang.github.io/lv_gui_builder/demo-arctic-code.jpg"
+        }
+      },
+      "img_21": {
+        "parent": "screen",
+        "id": "img_21",
+        "type": "img",
+        "zindex": 0,
+        "cb": false,
+        "attributes": ["x", "y", "width", "height"],
+        "apis": ["set_src", "set_angle", "set_zoom"],
+        "styles": [],
+        "data": {
+          "y": 310,
+          "x": 324,
+          "height": 100,
+          "width": 100,
+          "set_src": "https://qdsang.github.io/lv_gui_builder/demo-starstruck.jpg",
+          "set_angle": "0",
+          "set_zoom": ""
+        }
+      },
+      "img_22": {
+        "parent": "screen",
+        "id": "img_22",
+        "type": "img",
+        "zindex": 0,
+        "cb": false,
+        "attributes": ["x", "y", "width", "height"],
+        "apis": ["set_src"],
+        "styles": [],
+        "data": {
+          "y": 310,
+          "x": 176,
+          "height": 100,
+          "width": 100,
+          "set_src": "https://qdsang.github.io/lv_gui_builder/demo-pull-shark.jpg"
+        }
       }
     }
   },
-  "timelines": [
-    {
-      "id": "timeline_1",
-      "title": "",
-      "anims": [
-        {
-          "objs": [{ "id": "arc_0", "attr": "value" }],
-          "start_time": "100",
-          "valueMin": 0,
-          "valueMax": 100,
-          "time": 1000,
-          "playback_delay": 100,
-          "playback_time": 300,
-          "repeat_delay": 500,
-          "repeat_count": "30",
-          "path_cb": "",
-          "custom_exec_cb": "",
-          "iseditor": false
-        },
-        {
-          "objs": [{ "id": "arc_right", "attr": "value", "iseditor": false }],
-          "start_time": "0",
-          "valueMin": 0,
-          "valueMax": 100,
-          "time": 1000,
-          "playback_delay": 100,
-          "playback_time": 300,
-          "repeat_delay": 500,
-          "repeat_count": "1",
-          "path_cb": "",
-          "custom_exec_cb": "",
-          "iseditor": false
-        },
-        {
-          "objs": [{ "id": "arc_left", "attr": "value", "iseditor": false }],
-          "start_time": "50",
-          "valueMin": 0,
-          "valueMax": 100,
-          "time": 1000,
-          "playback_delay": 100,
-          "playback_time": 300,
-          "repeat_delay": 500,
-          "repeat_count": "3",
-          "path_cb": "",
-          "custom_exec_cb": "",
-          "iseditor": false
-        }
-      ]
+
+  "animations": {
+    "timelines": [
+      {
+        "id": "timeline_1",
+        "title": "",
+        "anims": [
+          {
+            "objs": [{ "id": "arc_0", "attr": "value" }],
+            "start_time": "100",
+            "valueMin": 0,
+            "valueMax": 100,
+            "time": 1000,
+            "playback_delay": 100,
+            "playback_time": 300,
+            "repeat_delay": 500,
+            "repeat_count": "30",
+            "path_cb": "",
+            "custom_exec_cb": "",
+            "iseditor": false
+          },
+          {
+            "objs": [{ "id": "arc_right", "attr": "value", "iseditor": false }],
+            "start_time": "0",
+            "valueMin": 0,
+            "valueMax": 100,
+            "time": 1000,
+            "playback_delay": 100,
+            "playback_time": 300,
+            "repeat_delay": 500,
+            "repeat_count": "1",
+            "path_cb": "",
+            "custom_exec_cb": "",
+            "iseditor": false
+          },
+          {
+            "objs": [{ "id": "arc_left", "attr": "value", "iseditor": false }],
+            "start_time": "50",
+            "valueMin": 0,
+            "valueMax": 100,
+            "time": 1000,
+            "playback_delay": 100,
+            "playback_time": 300,
+            "repeat_delay": 500,
+            "repeat_count": "3",
+            "path_cb": "",
+            "custom_exec_cb": "",
+            "iseditor": false
+          }
+        ]
+      },
+      {
+        "id": "timeline_2",
+        "title": "",
+        "anims": [
+          {
+            "objs": [
+              { "id": "img_21", "attr": "angle", "iseditor": false },
+              { "id": "img_21", "attr": "zoom", "iseditor": false }
+            ],
+            "start_time": 0,
+            "valueMin": 0,
+            "valueMax": 100,
+            "time": 1000,
+            "playback_delay": 100,
+            "playback_time": 300,
+            "repeat_delay": 500,
+            "repeat_count": -1,
+            "path_cb": "",
+            "custom_exec_cb": ""
+          }
+        ]
+      }
+    ],
+    "sequences": []
+  },
+
+  "assets": {
+    "images": [
+      { "imageid": "demo-arctic-code.jpg", "title": "arctic code", "path": "https://qdsang.github.io/lv_gui_builder/demo-arctic-code.jpg", "size": 1000, "width": 800, "height": 800, "data": "" },
+      { "imageid": "demo-pull-shark.jpg", "title": "pull shark", "path": "https://qdsang.github.io/lv_gui_builder/demo-pull-shark.jpg", "size": 1000, "width": 800, "height": 800, "data": "" },
+      { "imageid": "demo-starstruck.jpg", "title": "starstruck", "path": "https://qdsang.github.io/lv_gui_builder/demo-starstruck.jpg", "size": 1000, "width": 800, "height": 800, "data": "" }
+    ],
+    "fonts": [
+      {
+        "id": "montserrat_24",
+        "name": "Montserrat 24",
+        "path": "lv.font_montserrat_24"
+      },
+      {
+        "id": "montserrat_22",
+        "name": "Montserrat 22",
+        "path": "lv.font_montserrat_22"
+      },
+      {
+        "id": "montserrat_20",
+        "name": "Montserrat 20",
+        "path": "lv.font_montserrat_20"
+      },
+      {
+        "id": "montserrat_18",
+        "name": "Montserrat 18",
+        "path": "lv.font_montserrat_18"
+      },
+      {
+        "id": "montserrat_16",
+        "name": "Montserrat 16",
+        "path": "lv.font_montserrat_16"
+      },
+      {
+        "id": "montserrat_14", 
+        "name": "Montserrat 14",
+        "path": "lv.font_montserrat_14"
+      }
+    ],
+    "themes": []
+  },
+
+  "settings": {
+    "screen": {
+      "width": 480,
+      "height": 320
     },
-    {
-      "id": "timeline_2",
-      "title": "",
-      "anims": [
-        {
-          "objs": [
-            { "id": "img_21", "attr": "angle", "iseditor": false },
-            { "id": "img_21", "attr": "zoom", "iseditor": false }
-          ],
-          "start_time": 0,
-          "valueMin": 0,
-          "valueMax": 100,
-          "time": 1000,
-          "playback_delay": 100,
-          "playback_time": 300,
-          "repeat_delay": 500,
-          "repeat_count": -1,
-          "path_cb": "",
-          "custom_exec_cb": ""
-        }
-      ]
+    "output": {
+      "format": "python",
+      "path": ""
+    },
+    "lvgl": {
+      "version": "8.3.0",
+      "colorDepth": 16
     }
-  ],
-  "widget_tree": [
-    {
-      "id": "screen",
-      "label": "screen",
-      "widgetType": "screen",
-      "children": [
-        { "id": "obj_3", "label": "obj_3", "widgetType": "obj", "children": [] },
-        { "id": "arc_0", "label": "arc_0", "widgetType": "arc", "children": [] },
-        { "id": "arc_left", "label": "arc_left", "widgetType": "arc", "children": [] },
-        { "id": "arc_right", "label": "arc_right", "widgetType": "arc", "children": [] },
-        { "id": "label_speed", "label": "label_speed", "widgetType": "label", "children": [] },
-        { "id": "label_soc", "label": "label_soc", "widgetType": "label", "children": [] },
-        { "id": "label_kw", "label": "label_kw", "widgetType": "label", "children": [] },
-        { "id": "label_c", "label": "label_c", "widgetType": "label", "children": [] },
-        {
-          "id": "btn_15",
-          "label": "btn_15",
-          "widgetType": "btn",
-          "children": [
-            { "id": "label_16", "label": "label_16", "widgetType": "label", "children": [] }
-          ]
-        },
-        { "id": "checkbox_18", "label": "checkbox_18", "widgetType": "checkbox", "children": [] },
-        { "id": "slider_19", "label": "slider_19", "widgetType": "slider", "children": [] },
-        { "id": "switch_1b", "label": "switch_1b", "widgetType": "switch", "children": [] },
-        { "id": "textarea_1f", "label": "textarea_1f", "widgetType": "textarea", "children": [] },
-        { "id": "img_20", "label": "img_20", "widgetType": "img", "children": [] },
-        { "id": "img_21", "label": "img_21", "widgetType": "img", "children": [] },
-        { "id": "img_22", "label": "img_22", "widgetType": "img", "children": [] }
-      ]
-    }
-  ],
-  "selectedType": "",
-  "widgetNum": 18,
-  "Count": 35,
-  "term_visible": true,
-  "is_c_mode": false
+  }
 }
