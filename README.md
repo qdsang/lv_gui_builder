@@ -45,16 +45,6 @@ open http://localhost:5173/#/editor2
 
 
 
-## Reference
-- https://github.com/kaiakz/lv_gui_designer
-- https://github.com/kaiakz/walv/tree/master
-- https://forum.littlevgl.com/t/wysiwyg-editor-for-littlevgl/642
-- https://github.com/rohmer/LVGL_UI_Creator
-- https://github.com/CURTLab/LVGLBuilder
-- https://github.com/lvgl/lv_gui_builder
-- https://sim.lvgl.io/v8.3/micropython/ports/javascript/index.html
-- https://github.com/nishad2m8/T-Display-S3-YT/tree/master
-
 ## TODO
 v1  
 - [x] Emulator
@@ -66,15 +56,15 @@ v1
 - [x] Modify ID
 - [x] Component property styles
 - [ ] Align
-- [ ] Component sorting (zindex)
-- [ ] Component size drag
+- [X] Component sorting (zindex)
+- [X] Component size drag
 - [ ] Style grouping
 - [ ] Generate C
-- [ ] Shortcuts
-- [ ] Window Layout [golden-layout](https://golden-layout.com/) [vue-grid-layout](https://jbaysolutions.github.io/vue-grid-layout/guide/04-allow-ignore.html)
+- [!] Shortcuts
+- [!] Window Layout [golden-layout](https://golden-layout.com/) [vue-grid-layout](https://jbaysolutions.github.io/vue-grid-layout/guide/04-allow-ignore.html)
 
 v2  
-- [ ] Project settings
+- [X] Project settings
 - [ ] Events
 - [ ] Font library https://lvgl.io/tools/font_conv_v5_3
 - [ ] Image library https://lvgl.io/tools/imageconverter_v9
@@ -86,6 +76,17 @@ v3
 - [ ] VSCode Extension https://github.com/microsoft/vscode-extension-samples/tree/main/custom-editor-sample
 - [ ] Low Code
 - [ ] LVGL Version Manager
+
+
+## Reference
+- https://github.com/kaiakz/lv_gui_designer
+- https://github.com/kaiakz/walv/tree/master
+- https://forum.littlevgl.com/t/wysiwyg-editor-for-littlevgl/642
+- https://github.com/rohmer/LVGL_UI_Creator
+- https://github.com/CURTLab/LVGLBuilder
+- https://github.com/lvgl/lv_gui_builder
+- https://sim.lvgl.io/v8.3/micropython/ports/javascript/index.html
+- https://github.com/nishad2m8/T-Display-S3-YT/tree/master
 
 
 ## Contribution

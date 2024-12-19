@@ -320,7 +320,7 @@
     },
     methods: {
       initProject() {
-        const id = this.$route.params.id;
+        const id = this.$route.params.id || 'demo1';
         console.log('initProject', id);
         const key = `lvgl_project_${id}`;
         let savedData = localStorage.getItem(key);
