@@ -3,10 +3,11 @@
     <div class="mode-switch">
       <el-tooltip content="Switch between C and Python mode" placement="bottom">
         <el-radio-group v-model="config.format" @change="generateCode">
+          <el-radio disabled value="cpp">C++</el-radio>
           <el-radio value="c">C</el-radio>
           <el-radio value="python">Python</el-radio>
         </el-radio-group>
-      </el-tooltip>
+      </el-tooltip> &nbsp;
 
       <el-button @click="exportCodeAsFile">
         <el-icon><Download /></el-icon>
@@ -19,7 +20,7 @@
       @init="editorInit"
       value=""
       :lang="'python'"
-    :options="{
+      :options="{
         enableBasicAutocompletion: true,
         enableSnippets: true,
         enableLiveAutocompletion: true,
@@ -27,7 +28,7 @@
         tabSize: 2,
         showPrintMargin: false,
         highlightActiveLine: true,
-    }"
+      }"
       style="height: 420px" @click.stop @mousedown.stop @mouseup.stop @keypress.stop @keyup.stop @keydown.stop @contextmenu.stop />
   </div>
 </template>
@@ -92,8 +93,6 @@ export default {
       editor.setOptions({ maxLines: '200px' });
 
       this.editor = editor;
-      // this.py_edit_mode = py_edit_mode;
-      // this.c_edit_mode = c_edit_mode;
     },
     setValue(text) {
       this.editor.setValue(text);

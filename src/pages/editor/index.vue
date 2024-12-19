@@ -18,11 +18,11 @@
             </template>
             <el-menu-item @click="exportCodeAsLV">
               <el-icon><FolderOpened /></el-icon>
-              Save Project
+              Save File
             </el-menu-item>
             <el-menu-item @click="savePage">
               <el-icon><Select /></el-icon>
-              Save Changes
+              Save
             </el-menu-item>
             <el-menu-item>
               <el-link href="https://docs.lvgl.io/master/index.html" target="_blank">
@@ -95,19 +95,19 @@
             <creator-simulator ref="simulator" @cursor="cursorXY" @event="handleSimulatorEvent" @console="handleSimulatorConsole"></creator-simulator>
             <creator-anim-console></creator-anim-console>
           </el-tab-pane>
-          <el-tab-pane label="Anim" name="anim">
+          <el-tab-pane label="Anim" name="anim" :lazy="true">
             <creator-anim @save="handleAnimSave"></creator-anim>
           </el-tab-pane>
-          <el-tab-pane label="Font" name="font">
+          <el-tab-pane label="Font" name="font" :lazy="true">
             <creator-font></creator-font>
           </el-tab-pane>
-          <el-tab-pane label="Image" name="image">
+          <el-tab-pane label="Image" name="image" :lazy="true">
             <creator-image></creator-image>
           </el-tab-pane>
-          <el-tab-pane label="Code" name="code">
+          <el-tab-pane label="Code" name="code" :lazy="true">
             <creator-editor ref="editor" @event="generateCode"></creator-editor>
           </el-tab-pane>
-          <el-tab-pane label="Project" name="project">
+          <el-tab-pane label="Project" name="project" :lazy="true">
             <creator-project-settings 
               ref="projectSettings"
               @save="handleProjectSettingsChange"
@@ -362,7 +362,7 @@
     mounted() {
       let vm = this;
       
-      // projectStore.initProject('lvgl_data');
+      projectStore.initProject('lvgl_data');
       // 加载项目配置
       this.loadProjectConfig();
 

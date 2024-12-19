@@ -6,8 +6,8 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/pages/home.vue'),
   },
   {
-    path: '/editor2',
-    component: () => import('@/pages/editor2/index.vue'),
+    path: '/lv/editor',
+    component: () => import('@/pages/editor/index.vue'),
   },
 ];
 

@@ -53,8 +53,7 @@ export default {
   },
   computed: {
     treeData: function () {
-      let data = projectStore.projectData;
-      return data.components.tree;
+      return projectStore.componentTree;
     }
   },
   methods: {

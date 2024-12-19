@@ -7,7 +7,35 @@ import { reactive } from 'vue'  // Vue 3
 class ProjectStore {
   constructor() {
     this.currentProject = null;
-    // this.projectData = reactive(this.getInitialState());
+    this.componentTree = reactive([]);
+    this.projectData = reactive({
+      components: {
+        pool: {},
+      },
+      animations: {
+        timelines: [],
+        sequences: []
+      },
+      assets: {
+        images: [],
+        fonts: [],
+        themes: []
+      },
+      settings: {
+        screen: {
+          width: 480,
+          height: 320
+        },
+        lvgl: {
+          version: '8.3.0',
+          colorDepth: 16
+        },
+        output: {
+          format: 'python',
+          path: ''
+        }
+      }
+    });
   }
 
   // 获取初始状态
@@ -27,7 +55,7 @@ class ProjectStore {
   // 从localStorage加载项目数据
   loadProject() {
     if (!this.currentProject) {
-      this.projectData = reactive(this.getInitialState());
+      Object.assign(this.projectData, this.getInitialState());
       return;
     }
     
@@ -40,13 +68,14 @@ class ProjectStore {
     
     try {
       const data = JSON.parse(savedData);
-      this.projectData = reactive({
+
+      Object.assign(this.projectData, {
         ...this.getInitialState(),
         ...data
       });
     } catch (error) {
       console.error('Failed to parse project data:', error);
-      this.projectData = reactive(this.getInitialState());
+      Object.assign(this.projectData, this.getInitialState());
     }
   }
 
@@ -173,14 +202,14 @@ class ProjectStore {
     }
     trees.sort((a, b) => a.zindex - b.zindex);
 
-    this.projectData.components.tree.splice(0, this.projectData.components.tree.length);
-    this.projectData.components.tree.push(...trees);
-    console.log('updateTree', this.projectData.components.tree);
+    this.componentTree.splice(0, this.componentTree.length);
+    this.componentTree.push(...trees);
+    console.log('updateTree', this.componentTree);
   }
 
   updateWidgetTreeIndex() {
     let change = [];
-    let tree = this.projectData.components.tree;
+    let tree = this.componentTree;
     let pool = this.projectData.components.pool;
     let index = 0;
     function updateIndex(node, zindex) {
@@ -309,14 +338,6 @@ class ProjectStore {
       versionCode: oldData.versionCode || 1,
 
       components: {
-        tree: oldData.widget_tree || [
-          {
-            id: 'screen',
-            label: 'screen',
-            widgetType: 'screen',
-            children: []
-          }
-        ],
         pool: oldData.InfoPool || {}
       },
 
@@ -363,4 +384,4 @@ class ProjectStore {
 export const projectStore = new ProjectStore();
 
 // 初始化默认项目
-projectStore.initProject('default'); 
+// projectStore.initProject('default'); 
