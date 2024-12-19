@@ -45,6 +45,7 @@ export default ({ command, mode }) => {
         resolvers: [ElementPlusResolver()],
         eslintrc: {
           enabled: true,
+          filepath: pathResolve('src/eslintrc-auto-import.json')
         },
       }),
 

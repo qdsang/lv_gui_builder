@@ -1,4 +1,9 @@
 {
+  "id": "default",
+  "name": "Demo2 Project",
+  "description": "LVGL GUI Builder Demo Project",
+  "version": "1.0.0",
+  "versionCode": 1,
   "components": {
       "pool": {
           "screen": {
@@ -389,36 +394,6 @@
                       "iseditor": false
                   }
               ]
-          },
-          {
-              "id": "timeline_2",
-              "title": "",
-              "anims": [
-                  {
-                      "objs": [
-                          {
-                              "id": "img_21",
-                              "attr": "angle",
-                              "iseditor": false
-                          },
-                          {
-                              "id": "img_21",
-                              "attr": "zoom",
-                              "iseditor": false
-                          }
-                      ],
-                      "start_time": 0,
-                      "valueMin": 0,
-                      "valueMax": 100,
-                      "time": 1000,
-                      "playback_delay": 100,
-                      "playback_time": 300,
-                      "repeat_delay": 500,
-                      "repeat_count": -1,
-                      "path_cb": "",
-                      "custom_exec_cb": ""
-                  }
-              ]
           }
       ],
       "sequences": []
@@ -509,10 +484,5 @@
           "version": "8.3.0",
           "colorDepth": 16
       }
-  },
-  "id": "default",
-  "name": "Demo2 Project",
-  "description": "LVGL GUI Builder Demo Project",
-  "version": "1.0.0",
-  "versionCode": 1
+  }
 }
