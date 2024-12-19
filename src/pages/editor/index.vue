@@ -41,8 +41,13 @@
             <template #title>
               <span>Demo</span>
             </template>
-            <el-menu-item>Demo1</el-menu-item>
-            <el-menu-item>Demo2</el-menu-item>
+
+            <el-menu-item>
+              <el-link href="#/lv/editor/demo1">Demo1</el-link>
+            </el-menu-item>
+            <el-menu-item>
+              <el-link href="#/lv/editor/demo2">Demo2</el-link>
+            </el-menu-item>
           </el-sub-menu>
         </el-menu>
       </div>
@@ -239,6 +244,7 @@
   import { python_generator, c_generator } from './runtimeCompiler.js';
 
   import { projectStore } from './store/projectStore';
+  import { initDemo, initDemoProject } from './store/demo';
 
   import creatorWidgets from './creatorWidgets.vue';
   import creatorTree from './creatorTree.vue';
@@ -342,8 +348,8 @@
         // 添加项目配置
         projectConfig: null,
 
-        leftWidth: 220,  // 左侧面板宽度
-        rightWidth: 320, // 右侧面板宽度
+        leftWidth: 200,  // 左侧面板宽度
+        rightWidth: 220, // 右侧面板宽度
         leftCollapsed: false,  // 左侧面板折叠状态
         rightCollapsed: false, // 右侧面板折叠状态
         leftWidthBeforeCollapse: 280,  // 记录折叠前的宽度
@@ -357,15 +363,18 @@
         
         // this.$refs.TreeView.setCurrentKey(this.currentWidget.id);
       },
+      // 添加对路由参数的监听
+      '$route.params.id': {
+        handler: async function(newId, oldId) {
+          this.initProject();
+          this.initWidgets();
+        },
+        immediate: false // 组件首次加载时不触发
+      }
     },
     
     mounted() {
       let vm = this;
-      
-      projectStore.initProject('lvgl_data');
-      // 加载项目配置
-      this.loadProjectConfig();
-
       window.addEventListener(
         Data_Changed_Event,
         (e) => {
@@ -376,21 +385,36 @@
         false
       );
 
+      initDemo();
+      this.initProject();
       this.mpylvInit();
     },
     methods: {
+      initProject() {
+        const id = this.$route.params.id;
+        console.log('initProject', id);
+        const key = `lvgl_project_${id}`;
+        let savedData = localStorage.getItem(key);
+        if (!savedData) {
+          initDemoProject(id);
+        }
+
+        this.clearSimulatorWidgets();
+        projectStore.initProject(id);
+      },
       async mpylvInit() {
         await this.$refs.simulator.initialComplete();
 
-        let vm = this;
         let screen = this.getWidgetById('screen');
         const width = screen.data?.width;
         const height = screen.data?.height;
-        vm.screenWidth = width;
-        vm.screenHeight = height;
+        this.screenWidth = width;
+        this.screenHeight = height;
 
         this.$refs.simulator.initScreen({width: width, height: height});
-
+        this.initWidgets();
+      },
+      initWidgets() {
         let widgets = projectStore.getComponents();
         for (let id in widgets) {
           let info = widgets[id];
@@ -409,6 +433,24 @@
         wrap_timeline_load(projectStore.getTimelines());
 
         this.activeNode('screen');
+      },
+      clearSimulatorWidgets() {
+        try {
+          let widgets = projectStore.getComponents();
+          for (let id in widgets) {
+            try {
+              if (id == 'screen') {
+                continue;
+              }
+              wrap_delete(id);
+            } catch (error) {
+              console.error(error);
+            }
+          }
+          wrap_timeline_stop_all();
+        } catch (error) {
+          console.error(error);
+        }
       },
       getWidgetById(id) {
         return projectStore.getWidgetById(id);
@@ -457,14 +499,14 @@
       handleCreator: function (type) {
         let parent_id = this.selectNodeId;
         if (parent_id === null) {
-          this.$message({
+          this.message({
             message: 'You must choose a widget!',
             type: 'error',
           });
           return;
         }
         if (parent_id == '') {
-          this.$message({
+          this.message({
             message: 'You created a widget invisible',
             type: 'warning',
           });
@@ -492,7 +534,7 @@
         const id = data.id;
 
         if (id == 'screen' || id == '') {
-          this.$message({
+          this.message({
             message: "You can't delete the screen or nothing!",
             type: 'error',
           });
@@ -507,7 +549,9 @@
         
         this.activeNode('screen');
 
-        this.$message({
+        this.message({
+          showClose: true,
+          grouping: true,
           message: 'Delete sucessfully',
           type: 'success',
         });
@@ -607,17 +651,17 @@
         
         await this.$refs.editor.setValue(preview_code);
         this.activeTab = 'code';
-        this.$message({
+        this.message({
           message: 'Generate code successfully',
           type: 'success'
         });
       },
       async exportCodeAsLV() {
         let json = await this.savePage();
-        let code = JSON.stringify(json, 0, 4);
+        let code = JSON.stringify(json, null, 2);
         let blob = new Blob([code], {type: "text/plain;charset=utf-8"});
         let fileName = +new Date();
-        saveAs(blob, `lvgl_gui_builder_${fileName}.lv`);
+        saveAs(blob, `lv_gui_${fileName}.lv`);
       },
 
       // Set the style
@@ -656,7 +700,7 @@
         if (this.savePage({}, MSG_SAVE_PAGE_SUCC)) {
           window.location.reload();
         } else {
-          this.$message({
+          this.message({
             message: 'Change failed',
             type: 'error',
           });
@@ -748,44 +792,19 @@
         })
       },
 
-      // 加载项目配置
-      loadProjectConfig() {
-        const config = localStorage.getItem('project_config');
-        if (config) {
-          this.projectConfig = JSON.parse(config);
-          this.applyProjectConfig(this.projectConfig);
-        }
-      },
-
-      // 应用项目配置
-      applyProjectConfig(config) {
-        if (!config) return;
-
-        // 应用屏幕尺寸
-        if (config.screenSize) {
-          this.screenWidth = config.screenSize.width;
-          this.screenHeight = config.screenSize.height;
-        }
-
-        // 应用其他配置...
-      },
-
       // 处理项目设置变更
       handleProjectSettingsChange(config) {
         this.projectConfig = config;
-        
-        // 应用新配置
-        this.applyProjectConfig(config);
 
         // 提示保存成功
-        this.$message({
+        this.message({
           message: 'Project settings saved successfully',
           type: 'success'
         });
 
         // 如果屏幕尺寸改变,需要重新初始化模拟器
-        if (config.screenSize.width !== this.screenWidth || 
-            config.screenSize.height !== this.screenHeight) {
+        if (config.settings.screen.width !== this.screenWidth || 
+            config.settings.screen.height !== this.screenHeight) {
           this.$confirm('Screen size changed. The page needs to be reloaded. Continue?', 'Warning', {
             confirmButtonText: 'OK',
             cancelButtonText: 'Cancel',
@@ -806,10 +825,10 @@
           const delta = e.clientX - startX;
           if (side === 'left') {
             const newWidth = startWidth + delta;
-            this.leftWidth = Math.max(200, Math.min(newWidth, 600)); // 限制最小/最大宽度
+            this.leftWidth = Math.max(100, Math.min(newWidth, 600)); // 限制最小/最大宽度
           } else {
             const newWidth = startWidth - delta;
-            this.rightWidth = Math.max(200, Math.min(newWidth, 600));
+            this.rightWidth = Math.max(100, Math.min(newWidth, 600));
           }
         };
         
@@ -842,6 +861,13 @@
           this.rightWidth = 0;
         }
         this.rightCollapsed = !this.rightCollapsed;
+      },
+      message(msg) {
+        this.$message({
+          showClose: true,
+          grouping: true,
+          ...msg
+        });
       }
     },
   };

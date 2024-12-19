@@ -1,7 +1,5 @@
 import { dispatch_data_changed_event } from '../utils.js';
-import testData from '../testData.json';
 import { reactive } from 'vue'  // Vue 3
-
 
 // 项目状态管理
 class ProjectStore {
@@ -9,6 +7,11 @@ class ProjectStore {
     this.currentProject = null;
     this.componentTree = reactive([]);
     this.projectData = reactive({
+      "id": "",
+      "name": "Project",
+      "description": "",
+      "version": "1.0.0",
+      "versionCode": 1,
       components: {
         pool: {},
       },
@@ -40,7 +43,7 @@ class ProjectStore {
 
   // 获取初始状态
   getInitialState() {
-    return testData;
+    return {};
   }
 
   // 初始化/加载项目
@@ -117,7 +120,7 @@ class ProjectStore {
       data: {},
       ...widget
     };
-    this.projectData.components.pool[id] = widgetInfo;
+    this.projectData.components.pool[widgetInfo.id] = widgetInfo;
 
     this.updateTree();
     return widgetInfo;

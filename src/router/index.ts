@@ -9,6 +9,10 @@ const routes: Array<RouteRecordRaw> = [
     path: '/lv/editor',
     component: () => import('@/pages/editor/index.vue'),
   },
+  {
+    path: '/lv/editor/:id',
+    component: () => import('@/pages/editor/index.vue'),
+  },
 ];
 
 const router = createRouter({

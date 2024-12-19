@@ -3,7 +3,7 @@
   <el-collapse v-model="collapseModel">
     <el-collapse-item  v-for="(item, index) in creator_options" :key="item.value" :title="item.label" :name="item.value">
       <el-row v-if="item.children">
-        <el-col v-for="(item2, index2) in item.children" :key="item2.label" :sm="12" :lg="8" style="text-align: center; cursor: pointer;" @click="handleClick(item2)">
+        <el-col v-for="(item2, index2) in item.children" :key="item2.label" :sm="8" :lg="8" style="text-align: center; cursor: pointer;" @click="handleClick(item2)">
           <div>
             <img
               :src="imageMap[item2.img]"
@@ -57,7 +57,7 @@ export default {
         creator_options: WidgetData.WidgetsOption,
         selectedType: '',
         imageMap: imageMap,
-        collapseModel: '', //'basics',
+        collapseModel: 'basics',
       }
   },
   mounted() {

@@ -54,7 +54,7 @@
             <el-form-item label="LVGL Version">
               <el-select v-model="config.lvglVersion">
                 <el-option label="v8.3.0" value="8.3.0" />
-                <el-option label="v8.2.0" value="8.2.0" />
+                <el-option label="v8.2.0" value="8.2.0" disabled/>
               </el-select>
             </el-form-item>
             <el-form-item label="Screen Size">

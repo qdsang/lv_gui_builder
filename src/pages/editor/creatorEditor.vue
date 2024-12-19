@@ -74,7 +74,7 @@ export default {
     }
   },
   mounted() {
-    
+    this.generateCode();
   },
   methods: {
     // Init the ace editor

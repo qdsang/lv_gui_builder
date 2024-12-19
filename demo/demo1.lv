@@ -6,38 +6,6 @@
   "versionCode": 1,
 
   "components": {
-    "tree": [
-      {
-        "id": "screen",
-        "label": "screen",
-        "widgetType": "screen",
-        "children": [
-          { "id": "obj_3", "label": "obj_3", "widgetType": "obj", "children": [] },
-          { "id": "arc_0", "label": "arc_0", "widgetType": "arc", "children": [] },
-          { "id": "arc_left", "label": "arc_left", "widgetType": "arc", "children": [] },
-          { "id": "arc_right", "label": "arc_right", "widgetType": "arc", "children": [] },
-          { "id": "label_speed", "label": "label_speed", "widgetType": "label", "children": [] },
-          { "id": "label_soc", "label": "label_soc", "widgetType": "label", "children": [] },
-          { "id": "label_kw", "label": "label_kw", "widgetType": "label", "children": [] },
-          { "id": "label_c", "label": "label_c", "widgetType": "label", "children": [] },
-          {
-            "id": "btn_15",
-            "label": "btn_15",
-            "widgetType": "btn",
-            "children": [
-              { "id": "label_16", "label": "label_16", "widgetType": "label", "children": [] }
-            ]
-          },
-          { "id": "checkbox_18", "label": "checkbox_18", "widgetType": "checkbox", "children": [] },
-          { "id": "slider_19", "label": "slider_19", "widgetType": "slider", "children": [] },
-          { "id": "switch_1b", "label": "switch_1b", "widgetType": "switch", "children": [] },
-          { "id": "textarea_1f", "label": "textarea_1f", "widgetType": "textarea", "children": [] },
-          { "id": "img_20", "label": "img_20", "widgetType": "img", "children": [] },
-          { "id": "img_21", "label": "img_21", "widgetType": "img", "children": [] },
-          { "id": "img_22", "label": "img_22", "widgetType": "img", "children": [] }
-        ]
-      }
-    ],
     "pool": {
       "screen": {
         "parent": "",

@@ -351,6 +351,9 @@ print('indev_drv init')
 # Create a screen with a button and a label
 screen = lv.obj()
 
+screen.set_scrollbar_mode(lv.SCROLLBAR_MODE.OFF)  # 禁用滚动条
+screen.clear_flag(lv.obj.FLAG.SCROLLABLE)         # 禁用滚动功能
+
 # Load the screen
 lv.scr_load(screen)
 baseAttr = dir(lv.obj)
