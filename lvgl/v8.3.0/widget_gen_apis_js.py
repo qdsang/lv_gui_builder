@@ -44,11 +44,11 @@ def get_style_input_type(func_name):
 
 def get_style_desc(func_name):
     dist = {
-        "set_style_bg_color":"背景颜色",
-        "set_style_bg_img_src":"背景图片",
-        "set_style_text_font":"文字大小",
-        "set_style_text_color":"文字颜色",
-        }
+        "set_style_bg_color": "background color",
+        "set_style_bg_img_src": "background image",
+        "set_style_text_font": "text font",
+        "set_style_text_color": "text color",
+    }
     if func_name not in dist:
         return ""
     for item, value in dist.items():

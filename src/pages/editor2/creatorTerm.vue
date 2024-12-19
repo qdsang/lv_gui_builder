@@ -14,10 +14,6 @@ import '@xterm/xterm/css/xterm.css';
 
 
 import {
-    MicroPython,
-    mp_js_init,
-    mp_js_do_str,
-    mp_js_init_repl,
     mp_js_process_char,
   } from './micropython.js';
 

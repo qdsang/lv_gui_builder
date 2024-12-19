@@ -90,141 +90,142 @@
 
 <script lang="ts">
 import * as WidgetData from "./widgetData.js";
+import { projectStore } from './store/projectStore.js';
 
-  export default {
-    name: 'lvgl-attr-setter',
-    props: ['id', 'mode', 'part', 'name', 'body', 'infpool'],
-    emits: ['change'],
-    data: function () {
-      return {
-        args: [] as Array<any>,
-        isCheck: false,
-        argSpan: 22,
-        list: [],
-        defaultFonts: WidgetData.fonts,
-        imageLibrary: [],
-        predefineColors: WidgetData.predefineColors,
-      };
-    },
-    watch: {
-      id: function () {
-        this.init();
-      },
-    },
-    created() {
-
-    },
-    mounted() {
+export default {
+  name: 'lvgl-attr-setter',
+  props: ['id', 'mode', 'part', 'name', 'body'],
+  emits: ['change'],
+  data: function () {
+    return {
+      args: [] as Array<any>,
+      isCheck: false,
+      argSpan: 22,
+      list: [],
+      defaultFonts: WidgetData.fonts,
+      imageLibrary: [],
+      predefineColors: WidgetData.predefineColors,
+    };
+  },
+  watch: {
+    id: function () {
       this.init();
     },
-    methods: {
-      init() {
-        let id = this.id;
-        let node = this.infpool[id];
-        let attrKey = this.body.api;
-        if (this.part) {
-          attrKey = this.part + '.' + this.body.api;
-        }
+  },
+  created() {
 
-        let vals = [];
-        if (typeof node.data[attrKey] == 'string') {
-          vals = node.data[attrKey].split(',');
-        } else {
-          vals.push(node.data[attrKey]);
-        }
+  },
+  mounted() {
+    this.init();
+  },
+  methods: {
+    init() {
+      let id = this.id;
+      let node = projectStore.getWidgetById(this.id);
+      let attrKey = this.body.api;
+      if (this.part) {
+        attrKey = this.part + '.' + this.body.api;
+      }
 
-        let args = JSON.parse(JSON.stringify(this.body.args));
-        this.args = [];
-        for (let i = 0; i < args.length; i++) {
-          let arg = args[i];
-          arg['value'] = ''; // args: [{"name": '', "type": '', "value": ''}]
-          let val = vals[i];
-          if (val) {
-            if (arg['type'] === 'char*') {
-              arg['value'] = val.slice(1, val.length - 1);
-            } else if (arg['type'] === 'bool') {
-              arg['value'] = val === 'True' ? true : false;
-            } else {
-              arg['value'] = val;
-            }
-          }
-          this.args.push(arg);
-        }
+      let vals = [];
+      if (typeof node.data[attrKey] == 'string') {
+        vals = node.data[attrKey].split(',');
+      } else {
+        vals.push(node.data[attrKey]);
+      }
 
-        if (this.mode == 'styles') {
-          this.list = this.infpool[id].styles;
-        } else {
-          this.list = this.infpool[id].apis;
-        }
-
-        this.isCheck = this.list.indexOf(attrKey) > -1;
-        this.argSpan = parseInt('' + ((22 - 1 - this.args.length)  / this.args.length), 10);
-        if (this.argSpan < 6) {
-          this.argSpan = 6;
-        }
-
-        this.imageLibrary = WidgetData.imageLibraryOption();
-      },
-      handleCheck: function () {
-        let attrKey = this.body.api;
-        if (this.part) {
-          attrKey = this.part + '.' + this.body.api;
-        }
-
-        if (this.isCheck == false) {
-          let index = this.list.indexOf(attrKey);
-          if (index !== -1) {
-            this.list.splice(index, 1);
-          }
-        }
-      },
-      checkArgs: function () {
-        let attrKey = this.body.api;
-        if (this.part) {
-          attrKey = this.part + '.' + this.body.api;
-        }
-
-        let args_list = [];
-        for (const arg of this.args) {
-          // if (arg['value'] === "") {
-          //     continue
-          // }
+      let args = JSON.parse(JSON.stringify(this.body.args));
+      this.args = [];
+      for (let i = 0; i < args.length; i++) {
+        let arg = args[i];
+        arg['value'] = ''; // args: [{"name": '', "type": '', "value": ''}]
+        let val = vals[i];
+        if (val) {
           if (arg['type'] === 'char*') {
-            args_list.push(`"${arg['value']}"`);
+            arg['value'] = val.slice(1, val.length - 1);
           } else if (arg['type'] === 'bool') {
-            if (arg['value'] === true) {
-              args_list.push('True');
-            } else {
-              args_list.push('False');
-            }
+            arg['value'] = val === 'True' ? true : false;
           } else {
-            args_list.push(arg.value);
+            arg['value'] = val;
           }
-          // TODO: We can check each value's type here
         }
+        this.args.push(arg);
+      }
 
-        console.log('checkArgs', this.id, this, this.infpool);
-        let id = this.id;
-        let node = this.infpool[id];
-        let data = node.data; // this.widgpool[id];
+      if (this.mode == 'styles') {
+        this.list = node.styles;
+      } else {
+        this.list = node.apis;
+      }
 
-        let index = this.list.indexOf(attrKey);
-        if (index == -1) {
-          this.list.push(attrKey);
-        }
-        
-        // if (!node.data) node.data = {};
-        
-        // node.data[attrKey] = this.args;
-        node.data[attrKey] = args_list.toString();
-        // data[attrKey] = args_list.toString();
-        // wrap_setter_str(id, this.body.api, args_list.toString());
-        this.$emit('change', { id, name: this.name, mode: this.mode });
+      this.isCheck = this.list.indexOf(attrKey) > -1;
+      this.argSpan = parseInt('' + ((22 - 1 - this.args.length)  / this.args.length), 10);
+      if (this.argSpan < 6) {
+        this.argSpan = 6;
+      }
 
-        this.isCheck = this.list.indexOf(attrKey) > -1;
-      },
+      this.imageLibrary = WidgetData.imageLibraryOption();
     },
-  };
+    handleCheck: function () {
+      let attrKey = this.body.api;
+      if (this.part) {
+        attrKey = this.part + '.' + this.body.api;
+      }
+
+      if (this.isCheck == false) {
+        let index = this.list.indexOf(attrKey);
+        if (index !== -1) {
+          this.list.splice(index, 1);
+        }
+      }
+    },
+    checkArgs: function () {
+      let attrKey = this.body.api;
+      if (this.part) {
+        attrKey = this.part + '.' + this.body.api;
+      }
+
+      let args_list = [];
+      for (const arg of this.args) {
+        // if (arg['value'] === "") {
+        //     continue
+        // }
+        if (arg['type'] === 'char*') {
+          args_list.push(`"${arg['value']}"`);
+        } else if (arg['type'] === 'bool') {
+          if (arg['value'] === true) {
+            args_list.push('True');
+          } else {
+            args_list.push('False');
+          }
+        } else {
+          args_list.push(arg.value);
+        }
+        // TODO: We can check each value's type here
+      }
+
+      console.log('checkArgs', this.id, this);
+      let id = this.id;
+      let node = projectStore.getWidgetById(this.id);
+      let data = node.data; // this.widgpool[id];
+
+      let index = this.list.indexOf(attrKey);
+      if (index == -1) {
+        this.list.push(attrKey);
+      }
+      
+      // if (!node.data) node.data = {};
+      
+      // node.data[attrKey] = this.args;
+      node.data[attrKey] = args_list.toString();
+      // data[attrKey] = args_list.toString();
+      // wrap_setter_str(id, this.body.api, args_list.toString());
+      this.$emit('change', { id, name: this.name, mode: this.mode });
+
+      this.isCheck = this.list.indexOf(attrKey) > -1;
+    },
+  },
+};
 </script>
 <style lang="less" scoped></style>
 

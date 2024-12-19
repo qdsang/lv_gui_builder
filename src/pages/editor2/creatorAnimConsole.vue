@@ -53,6 +53,9 @@
             
             <div class="timeline-progress">
               <el-slider
+                :min="0"
+                :max="1"
+                :step="0.01"
                 v-model="sliderValue[timeline.id]"
                 :show-tooltip="false"
                 @input="handleSlider(timeline.id)"
@@ -76,6 +79,7 @@
 import { ref } from 'vue'
 import { wrap_timeline_start, wrap_timeline_pause, wrap_timeline_progress } from './runtimeWrapper.js';
 import { VideoCameraFilled, Close } from '@element-plus/icons-vue'
+import { projectStore } from './store/projectStore.js';
 
 export default {
   name: 'creator-anim-console',
@@ -83,7 +87,6 @@ export default {
     VideoCameraFilled,
     Close
   },
-  props: ['timelines'],
   emits: ['save'],
   data() {
     return {
@@ -96,6 +99,11 @@ export default {
       }
     };
   },
+  computed: {
+    timelines() {
+      return projectStore.projectData.animations.timelines;
+    }
+  },
   methods: {
     handleSwitch(id) {
       const value = this.switchValue[id];
@@ -107,6 +115,7 @@ export default {
     },
     handleSlider(id) {
       const value = this.sliderValue[id];
+      // console.log('handleSlider', id, value);
       wrap_timeline_progress(id, value);
     },
 

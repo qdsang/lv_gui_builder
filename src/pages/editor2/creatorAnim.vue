@@ -205,16 +205,21 @@
 
 <script lang="ts">
 import * as WidgetData from "./widgetData.js";
+import { projectStore } from './store/projectStore.js';
 
 export default {
   name : 'creator-anim',
-  props: ['timelines'],
   emits: ['save'],
   data: function() {
       return {
       }
   },
   watch: {
+  },
+  computed: {
+    timelines() {
+      return projectStore.projectData.animations.timelines;
+    }
   },
   mounted() {
   },

@@ -4,7 +4,7 @@
       <el-form-item label="ID">
         <el-row>
           <el-col :span="24">
-            <em> {{ id }} </em>
+            <em> {{ id }} </em> &nbsp;
             <el-button icon="el-icon-edit" circle @click="editID"></el-button>
           </el-col>
           <!-- <el-col :span="7">
@@ -12,13 +12,13 @@
             </el-col> -->
         </el-row>
       </el-form-item>
-      <el-form-item label="CB">
+      <!-- <el-form-item label="CB"> -->
         <!-- <el-button type="warning" icon="el-icon-plus" @click="enableCBInfo(id)">CB</el-button> -->
-        <el-switch
-          :value="infoPool[id]?.cb"
+        <!-- <el-switch
+          :value="currentWidget?.cb"
           @change="enableCBInfo(id)"
         ></el-switch>
-      </el-form-item>
+      </el-form-item> -->
       <!-- <el-form-item label="align">
         <el-row>
           <el-col :span="12">
@@ -97,7 +97,6 @@
             :mode="'apis'"
             :name="name"
             :body="body"
-            :infpool="infoPool"
             @change="handleSetterChange"
           >
           </lvgl-attr-setter2>
@@ -107,7 +106,6 @@
       <div style="padding-left: 10px">
         <lvgl-style-setter2
           :id="id"
-          :infpool="infoPool"
           @change="handleSetterChange"
         >
         </lvgl-style-setter2>
@@ -134,14 +132,18 @@ import {
 
 import * as api from './widgetApis.js';
 
+import lvglAttrAlign from './lvglAttrAlign.vue';
 import lvglAttrSetter2 from './lvglAttrSetter2.vue';
 import lvglStyleSetter2 from './lvglStyleSetter2.vue';
 
+import { projectStore } from './store/projectStore.js';
+
 export default {
   name : 'creator-attribute',
-  props: ['id', 'infoPool'],
+  props: ['id'],
   emits: ['change', 'change-id'],
   components: {
+    lvglAttrAlign,
     lvglAttrSetter2,
     lvglStyleSetter2,
   },
@@ -156,10 +158,10 @@ export default {
   },
   watch: {
     id: function () {
-      let id = this.id;
-      if (id) {
-        this.currentType = this.infoPool[id]['type'];
-        this.currentWidget = this.infoPool[id].data;
+      let widget = projectStore.getWidgetById(this.id);
+      if (widget) {
+        this.currentType = widget['type'];
+        this.currentWidget = widget.data;
       }
     },
   },
@@ -172,9 +174,10 @@ export default {
     },
     // User enable CallBack template
     enableCBInfo: function (id) {
+      let widget = projectStore.getWidgetById(id);
       // dispatch_data_changed_event();
 
-      this.infoPool[id].cb = !this.infoPool[id].cb;
+      widget.cb = !widget.cb;
     },
 
     // Apply change to the widget: number

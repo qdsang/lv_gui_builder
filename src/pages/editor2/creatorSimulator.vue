@@ -82,16 +82,8 @@ export default {
     window.removeEventListener("mousemove", this.dragging);
   },
   mounted() {
+    this.runTime = +new Date();
     MicroPython.run();
-    let runing = 0;
-    let timer = setInterval(() => {
-      runing += 10;
-      if (mp_js_init) {
-        console.log('VM init:', runing+'ms');
-        clearInterval(timer);
-        this.initVM();
-      }
-    }, 10);
 
     let vm = this;
     window.addEventListener(
@@ -177,6 +169,12 @@ export default {
     },
 
     initVM() {
+      if (this.isInit) {
+        return;
+      }
+      this.isInit = true;
+      console.log('VM init:', (+new Date() - this.runTime)+'ms');
+
       MicroPython.canvas = document.getElementById('canvas');
 
       /* Bind mp_js_stdout */
@@ -203,6 +201,12 @@ export default {
 
       /*Start the main loop, asynchronously.*/
       handle_pending();
+    },
+    async initialComplete() {
+      while (!mp_js_do_str) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+      this.initVM();
     },
     initScreen({ width, height}) {
       this.screen.width = width;

@@ -1,9 +1,24 @@
 <template>
-  <v-ace-editor
-    id="code-editor"
-    @init="editorInit"
-    value=""
-    :lang="'python'"
+  <div>
+    <div class="mode-switch">
+      <el-tooltip content="Switch between C and Python mode" placement="bottom">
+        <el-radio-group v-model="config.format" @change="generateCode">
+          <el-radio value="c">C</el-radio>
+          <el-radio value="python">Python</el-radio>
+        </el-radio-group>
+      </el-tooltip>
+
+      <el-button @click="exportCodeAsFile">
+        <el-icon><Download /></el-icon>
+        Export
+      </el-button>
+    </div>
+
+    <v-ace-editor
+      id="code-editor"
+      @init="editorInit"
+      value=""
+      :lang="'python'"
     :options="{
         enableBasicAutocompletion: true,
         enableSnippets: true,
@@ -13,7 +28,8 @@
         showPrintMargin: false,
         highlightActiveLine: true,
     }"
-    style="height: 420px" @click.stop @mousedown.stop @mouseup.stop @keypress.stop @keyup.stop @keydown.stop @contextmenu.stop />
+      style="height: 420px" @click.stop @mousedown.stop @mouseup.stop @keypress.stop @keyup.stop @keydown.stop @contextmenu.stop />
+  </div>
 </template>
 
 <script lang="ts">
@@ -38,16 +54,22 @@ import 'ace-builds/src-noconflict/snippets/less';
 // @ts-ignore
 ace.config.set('basePath', '/node_modules/ace-builds/src-min-noconflict');
 
+import { projectStore } from './store/projectStore';
+import { Download } from '@element-plus/icons-vue';
+import { saveAs } from './utils.js';
+
 export default {
   name : 'creator-editor',
   props: [],
-  emits: ['cursor'],
+  emits: ['event'],
   components: {
     VAceEditor,
+    Download,
   },
   data: function() {
     return {
       editor: null,
+      config: projectStore.projectData.settings.output,
     }
   },
   mounted() {
@@ -78,6 +100,29 @@ export default {
     },
     getValue() {
       return this.editor.getValue();
+    },
+    generateCode() {
+      projectStore.projectData.settings.output.format = this.config.format;
+      this.$emit('event', 'generateCode', this.config.format);
+    },
+
+    // Export the code in editor as a file.
+    exportCodeAsFile: async function () {
+      await this.generateCode();
+      let code = this.getValue();
+      // this.$message({
+      //     message: 'Export file sucessfully',
+      //     type: 'success'
+      // });
+      let blob = new Blob([code], {type: "text/plain;charset=utf-8"});
+      let fileName = this.act_FileName || ('' + +new Date());
+      if (projectStore.projectData.settings.output.format == 'c') {
+        saveAs(blob, `lvgl_lv_${fileName}.h`);
+        // this.sendMessage(CMD.exportCodeAsFile, { name: `lvgl_lv_${fileName}.h`, code });
+      } else {
+        saveAs(blob, `lvgl_lv_${fileName}.py`);
+        // this.sendMessage(CMD.exportCodeAsFile, { name: `lvgl_lv_${fileName}.py`, code });
+      }
     },
   },
 };

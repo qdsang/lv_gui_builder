@@ -12,7 +12,6 @@
               :mode="'styles'"
               :name="api.api"
               :body="api"
-              :infpool="infpool"
               @change="handleSetterChange"
             >
             </lvgl-attr-setter2>
@@ -24,57 +23,57 @@
 </template>
 
 <script lang="ts">
+import * as widgetData from './widgetData.js';
+import lvglAttrSetter2 from './lvglAttrSetter2.vue';
 
-  import * as widgetData from './widgetData.js';
+import { projectStore } from './store/projectStore.js';
 
-  import lvglAttrSetter2 from './lvglAttrSetter2.vue';
+export default {
+  name: 'lvgl-style-setter-v2',
+  props: ['id'],
+  emits: ['change'],
+  components: {
+    lvglAttrSetter2,
+  },
+  data: function () {
+    return {
+      parts: [],
+      styleGroups: [],
 
-  export default {
-    name: 'lvgl-style-setter-v2',
-    props: ['id', 'infpool'],
-    emits: ['change'],
-    components: {
-      lvglAttrSetter2,
-    },
-    data: function () {
-      return {
-        parts: [],
-        styleGroups: [],
-
-        collPart: '',
-        collStyles: '',
-      };
-    },
-    watch: {
-      id: function () {
-        this.init();
-      },
-    },
-    created() {
-    },
-    mounted() {
+      collPart: '',
+      collStyles: '',
+    };
+  },
+  watch: {
+    id: function () {
       this.init();
     },
-    methods: {
-      init() {
-        let node = this.infpool[this.id];
-        if (!node) {
-          return;
-        }
-        let widgetType = this.infpool[this.id].type;
-        let widget = widgetData.getWidget(widgetType);
-        if (!widget) {
-          console.error('Style Setter not found', this.id, widgetType);
-          return ;
-        }
-        this.parts = widget.parts;
-        this.styleGroups = widget.styleGroups;
-      },
-      handleSetterChange({ id, name, mode }) {
-        this.$emit('change', { id, name, mode });
-      },
+  },
+  created() {
+  },
+  mounted() {
+    this.init();
+  },
+  methods: {
+    init() {
+      let node = projectStore.getWidgetById(this.id);
+      if (!node) {
+        return;
+      }
+      let widgetType = node.type;
+      let widget = widgetData.getWidget(widgetType);
+      if (!widget) {
+        console.error('Style Setter not found', this.id, widgetType);
+        return ;
+      }
+      this.parts = widget.parts;
+      this.styleGroups = widget.styleGroups;
     },
-  };
+    handleSetterChange({ id, name, mode }) {
+      this.$emit('change', { id, name, mode });
+    },
+  },
+};
 </script>
 <style lang="less" scoped></style>
 

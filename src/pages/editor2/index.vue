@@ -4,7 +4,7 @@
       <div class="header-left">
         <div class="logo-section">
           <h1 class="logo-text">
-            <span class="logo-brand">LVGL</span>
+            <span class="logo-brand">LV</span>
             <el-divider direction="vertical" />
             <span class="logo-product">GUI Builder</span>
           </h1>
@@ -16,10 +16,6 @@
               <el-icon><Document /></el-icon>
               <span>File</span>
             </template>
-            <el-menu-item @click="exportCodeAsFile">
-              <el-icon><Download /></el-icon>
-              Export Code
-            </el-menu-item>
             <el-menu-item @click="exportCodeAsLV">
               <el-icon><FolderOpened /></el-icon>
               Save Project
@@ -41,40 +37,34 @@
               </el-link>
             </el-menu-item>
           </el-sub-menu>
+          <el-sub-menu index="demo">
+            <template #title>
+              <span>Demo</span>
+            </template>
+            <el-menu-item>Demo1</el-menu-item>
+            <el-menu-item>Demo2</el-menu-item>
+          </el-sub-menu>
         </el-menu>
       </div>
 
       <div class="header-right">
-        <div class="mode-switch">
-          <el-tooltip content="Switch between C and Python mode" placement="bottom">
-            <el-switch
-              v-model="is_c_mode"
-              active-color="#13ce66"
-              inactive-color="#409EFF"
-              active-text="C"
-              inactive-text="Python"
-              @change="generateCode"
-            />
-          </el-tooltip>
-        </div>
-
         <el-button-group class="action-buttons">
           <el-tooltip content="Generate Code" placement="bottom">
-            <el-button type="primary" @click="generateCode">
+            <el-button @click="generateCode">
               <el-icon><DocumentAdd /></el-icon>
               Generate
             </el-button>
           </el-tooltip>
-          <el-tooltip content="Export Project" placement="bottom">
-            <el-button type="success" @click="exportCodeAsFile">
-              <el-icon><Download /></el-icon>
-              Export
+          <el-tooltip content="Save Project" placement="bottom">
+            <el-button @click="savePage">
+              <el-icon><Select /></el-icon>
+              Save
             </el-button>
           </el-tooltip>
-          <el-tooltip content="Save Project" placement="bottom">
-            <el-button type="warning" @click="exportCodeAsLV">
+          <el-tooltip content="Export Project Lv File" placement="bottom">
+            <el-button @click="exportCodeAsLV">
               <el-icon><FolderOpened /></el-icon>
-              Save Project
+              Save File
             </el-button>
           </el-tooltip>
         </el-button-group>
@@ -82,22 +72,31 @@
     </el-header>
 
     <el-container class="main-container">
-      <el-aside width="15%" style="border-right: 1px solid var(--el-border-color);">
-        <creator-widgets @create="Creator"></creator-widgets>
-
-        <el-divider></el-divider>
-        <el-tag class="widget-name">{{ selectNode.id }}</el-tag>
-        <creator-tree :screen-layout="widget_tree" :node-key="selectNode.id" @event="handleTreeEvent"></creator-tree>
-      </el-aside>
+      <div class="aside-wrapper left" :class="{ 'is-collapsed': leftCollapsed }">
+        <el-aside :width="leftWidth + 'px'" class="resizable-aside">
+          <creator-widgets @create="handleCreator"></creator-widgets>
+          <el-divider></el-divider>
+          <el-tag class="widget-name">{{ selectNodeId }}</el-tag>
+          <creator-tree :node-key="selectNodeId" @event="handleTreeEvent"></creator-tree>
+        </el-aside>
+        <div class="resize-handle left" 
+          @mousedown="startResize($event, 'left')"
+        ></div>
+        <div class="collapse-handle left" @click="toggleLeftPanel">
+          <el-icon :class="{ 'is-collapsed': leftCollapsed }">
+            <CaretLeft />
+          </el-icon>
+        </div>
+      </div>
 
       <el-main style="padding: 0">
         <el-tabs type="border-card" v-model="activeTab" @tab-change="handleTabChange" style="border: none;">
           <el-tab-pane label="Simulator" name="simulator">
             <creator-simulator ref="simulator" @cursor="cursorXY" @event="handleSimulatorEvent" @console="handleSimulatorConsole"></creator-simulator>
-            <creator-anim-console :timelines="timelines"></creator-anim-console>
+            <creator-anim-console></creator-anim-console>
           </el-tab-pane>
           <el-tab-pane label="Anim" name="anim">
-            <creator-anim :timelines="timelines" @save="handleAnimSave"></creator-anim>
+            <creator-anim @save="handleAnimSave"></creator-anim>
           </el-tab-pane>
           <el-tab-pane label="Font" name="font">
             <creator-font></creator-font>
@@ -106,7 +105,7 @@
             <creator-image></creator-image>
           </el-tab-pane>
           <el-tab-pane label="Code" name="code">
-            <creator-editor ref="editor"></creator-editor>
+            <creator-editor ref="editor" @event="generateCode"></creator-editor>
           </el-tab-pane>
           <el-tab-pane label="Project" name="project">
             <creator-project-settings 
@@ -163,28 +162,36 @@
         <creator-term ref="term" :style="{ visibility: term_visible ? 'visible' : 'hidden' }"></creator-term>
       </el-main>
 
-      <el-aside width="20%" style="padding-right: 10px">
-
-        <el-tabs type="border-card" model-value="args" class="tab-full" style="height: 100%;">
-          <el-tab-pane label="Attr" name="args">
-            <creator-attribute :id="selectNode.id" :info-pool="InfoPool" @change-id="handleChangeID"
-            @change="handleSetterChange"></creator-attribute>
-          </el-tab-pane>
-          <el-tab-pane label="Event" name="event">
-            
-          </el-tab-pane>
-          <!-- <el-tab-pane label="样式" name="style" style="height: 800px;overflow: scroll">
-            <div style="padding-left: 10px">
-              <lvgl-style-setter2
-                :id="selectNode.id"
-                :infpool="InfoPool"
-                @change="handleSetterChange"
-              >
-              </lvgl-style-setter2>
-            </div>
-          </el-tab-pane> -->
-        </el-tabs>
-      </el-aside>
+      <div class="aside-wrapper right" :class="{ 'is-collapsed': rightCollapsed }">
+        <div class="collapse-handle right" @click="toggleRightPanel">
+          <el-icon :class="{ 'is-collapsed': rightCollapsed }">
+            <CaretRight />
+          </el-icon>
+        </div>
+        <div class="resize-handle right" 
+          @mousedown="startResize($event, 'right')"
+        ></div>
+        <el-aside :width="rightWidth + 'px'" class="resizable-aside">
+          <el-tabs type="border-card" model-value="args" class="tab-full" style="height: 100%;">
+            <el-tab-pane label="Attr" name="args">
+              <creator-attribute :id="selectNodeId" @change-id="handleChangeID"
+              @change="handleSetterChange"></creator-attribute>
+            </el-tab-pane>
+            <el-tab-pane label="Event" name="event">
+              
+            </el-tab-pane>
+            <!-- <el-tab-pane label="样式" name="style" style="height: 800px;overflow: scroll">
+              <div style="padding-left: 10px">
+                <lvgl-style-setter2
+                  :id="selectNodeId"
+                  @change="handleSetterChange"
+                >
+                </lvgl-style-setter2>
+              </div>
+            </el-tab-pane> -->
+          </el-tabs>
+        </el-aside>
+      </div>
     </el-container>
 
     <el-dialog width="80%" :visible.sync="dialogSettingVisible">
@@ -214,9 +221,10 @@
   import * as WidgetData from './widgetData.js';
   import * as api from './widgetApis.js';
   
-  import { reverse_del_node, pool_delete, setArgvs, dispatch_data_changed_event, debounceFun, saveAs } from './utils.js';
+  import { setArgvs, dispatch_data_changed_event, debounceFun, saveAs } from './utils.js';
+  import { Categorize, Data_Changed_Event, MSG_AUTO_SAVE_PAGE_SUCC, MSG_SAVE_PAGE_SUCC } from  './constant.js';
+  import { CMD } from  './cmd.js';
   import {
-    wrap_create,
     wrap_delete,
     wrap_setter_str,
     wrap_rename,
@@ -229,14 +237,8 @@
     wrap_timeline_stop_all,
   } from './runtimeWrapper.js';
   import { python_generator, c_generator } from './runtimeCompiler.js';
-  import { Categorize, Data_Changed_Event, MSG_AUTO_SAVE_PAGE_SUCC, MSG_SAVE_PAGE_SUCC } from  './constant.js';
-  import { CMD } from  './cmd.js';
 
   import { projectStore } from './store/projectStore';
-
-  import lvglAttrAlign from './lvglAttrAlign.vue';
-  import lvglAttrSetter2 from './lvglAttrSetter2.vue';
-  import lvglStyleSetter2 from './lvglStyleSetter2.vue';
 
   import creatorWidgets from './creatorWidgets.vue';
   import creatorTree from './creatorTree.vue';
@@ -250,7 +252,7 @@
   import creatorImage from './creatorImage.vue';
   import creatorProjectSettings from './creatorProjectSettings.vue';
 
-  import testData from './testData.json';
+  import { CaretLeft, CaretRight, Download, FolderOpened, Document, Monitor, DocumentAdd, Select, Link } from '@element-plus/icons-vue'
 
   
   export default {
@@ -259,10 +261,6 @@
       return {};
     },
     components: {
-      lvglAttrAlign,
-      lvglAttrSetter2,
-      lvglStyleSetter2,
-
       creatorWidgets,
       creatorTree,
       creatorSimulator,
@@ -275,6 +273,16 @@
       creatorFont,
       creatorImage,
       creatorProjectSettings,
+
+      CaretLeft,
+      CaretRight,
+      Download,
+      FolderOpened,
+      Document, 
+      Monitor,
+      DocumentAdd,
+      Select,
+      Link,
     },
     data() {
       return {
@@ -283,13 +291,9 @@
         editor: null,
         c_edit_mode: null,
         py_edit_mode: null,
-        is_c_mode: true, //true: c, false: python
 
         posJSON: {},
-        WidgetPool: {},
-        InfoPool: {},
         Api: {},
-        timelines: [],
 
         setter: api.setter,
 
@@ -302,31 +306,13 @@
         //Creator
         creator_options: WidgetData.WidgetsOption,
         props: { emitPath: false, expandTrigger: 'hover' },
-        widgetNum: 0,
-        Count: 0,
         act_FileName: '',
 
-        //TreeView
-        widget_tree: [
-          {
-            id: 'screen',
-            label: 'screen',
-            widgetType: 'screen',
-            children: [],
-          },
-        ],
-
         // Which node in TreeView was checked
-        selectNode: {
-          id: null,
-          obj: null,
-          // type: null,  // DEPRECATED
-        },
-        selectedType: '',
-        selectNodeData: {}, // The Attributes
+        selectNodeId: null,
 
         //Terminal
-        term_visible: false,
+        term_visible: true,
 
         // Style Editor
         style_visible: false,
@@ -355,6 +341,13 @@
 
         // 添加项目配置
         projectConfig: null,
+
+        leftWidth: 220,  // 左侧面板宽度
+        rightWidth: 320, // 右侧面板宽度
+        leftCollapsed: false,  // 左侧面板折叠状态
+        rightCollapsed: false, // 右侧面板折叠状态
+        leftWidthBeforeCollapse: 280,  // 记录折叠前的宽度
+        rightWidthBeforeCollapse: 320,
       };
     },
 
@@ -365,57 +358,31 @@
         // this.$refs.TreeView.setCurrentKey(this.currentWidget.id);
       },
     },
-
+    
     mounted() {
-      // console.log('mounted', this, Store.getTreeList());
+      let vm = this;
       
-      let pageData = {};
-      let json = localStorage.getItem("lvgl_data");
-      if (json) {
-        pageData = JSON.parse(json);
-      } else {
-        pageData = testData;
-      }
+      // projectStore.initProject('lvgl_data');
+      // 加载项目配置
+      this.loadProjectConfig();
 
-      setTimeout(() => {
-        let vm = this;
+      window.addEventListener(
+        Data_Changed_Event,
+        (e) => {
+          debounceFun(10 * 1000, function (v, v2) {
+            vm.savePage({}, MSG_AUTO_SAVE_PAGE_SUCC);
+          });
+        },
+        false
+      );
 
-        if (!pageData) {
-          pageData = {};
-        }
-        Object.assign(vm.$data, pageData);
-        this.InfoPool = pageData.components.pool;
-        this.widget_tree = pageData.components.tree;
-        this.timelines = pageData.animations.timelines;
-        
-        if (!this.InfoPool['screen']) {
-          this.addInfo('screen', '', 'screen');
-          let screen = this.getWidgetById('screen');
-          Object.assign(screen.data, { x: 0, y: 0, width: 480, height: 480 });
-        }
-
-        this.mpylvInit();
-        this.restorePageData();
-
-        // 加载项目配置
-        this.loadProjectConfig();
-      }, 2000);
-      
+      this.mpylvInit();
     },
     methods: {
-      mpylvInit() {
+      async mpylvInit() {
+        await this.$refs.simulator.initialComplete();
+
         let vm = this;
-
-        window.addEventListener(
-          Data_Changed_Event,
-          (e) => {
-            debounceFun(10 * 1000, function (v, v2) {
-              vm.savePage({}, MSG_AUTO_SAVE_PAGE_SUCC);
-            });
-          },
-          false
-        );
-
         let screen = this.getWidgetById('screen');
         const width = screen.data?.width;
         const height = screen.data?.height;
@@ -424,35 +391,27 @@
 
         this.$refs.simulator.initScreen({width: width, height: height});
 
-      },
-      restorePageData() {
-        let vm = this;
-        let InfoPool = this.InfoPool;
-        for (let id in InfoPool) {
-          let info = InfoPool[id];
+        let widgets = projectStore.getComponents();
+        for (let id in widgets) {
+          let info = widgets[id];
           info.id = id;
-          // this.InfoPool[id].data = pageData.WidgetPool[id];
+          
           if (id !== 'screen') {
             wrap_create_v2(info, false);
           }
           wrap_attr_setter_v2(info);
           wrap_style_setter_v2(info);
 
-          if (info.data.index) {
-            wrap_set_index(id, info.data.index);
+          if (info.zindex) {
+            wrap_set_index(id, info.zindex);
           }
         }
-        wrap_timeline_load(this.timelines);
-        
-        this.activeNode('screen');
+        wrap_timeline_load(projectStore.getTimelines());
 
-        // 恢复项目配置
-        if (this.projectConfig) {
-          this.applyProjectConfig(this.projectConfig);
-        }
+        this.activeNode('screen');
       },
       getWidgetById(id) {
-        return this.InfoPool[id];
+        return projectStore.getWidgetById(id);
       },
 
       handleSimulatorEvent(json) {
@@ -474,8 +433,6 @@
             this.changeInfo(id, key);
           }
 
-          this.selectNodeData = data;
-
           if (json.action == 'query_xy') {
             // this.drawRect(data.x, data.y, data.width, data.height);
             this.activeNode(id);
@@ -491,14 +448,14 @@
         dispatch_data_changed_event();
 
         wrap_timeline_stop_all();
-        wrap_timeline_load(this.timelines);
+        wrap_timeline_load(projectStore.getTimelines());
       },
       refreshTerm: function () {
         this.$refs.term.clear();
       },
 
-      Creator: function (selectedType) {
-        let parent_id = this.getCurrentID();
+      handleCreator: function (type) {
+        let parent_id = this.selectNodeId;
         if (parent_id === null) {
           this.$message({
             message: 'You must choose a widget!',
@@ -511,109 +468,28 @@
             message: 'You created a widget invisible',
             type: 'warning',
           });
+          return;
         }
-        this.createWidget(selectedType, parent_id);
-      },
+        
+        let widget = projectStore.createWidget({ type, parent: parent_id });
 
-      //Parametres are the String type
-      createWidget: function (type, strPar) {
-        var id = this.makeID(type);
-        var par = strPar;
-
-        this.appendNode(id, type, par);
-
-        //Store Info that a widget was created from.
-        this.addInfo(id, par, type);
-
-        wrap_create(id, par, type);
-
-        return id;
+        wrap_create_v2(widget, false);
       },
 
       //Parametres are the String type
       copyWidget: function (info2) {
-        var id = this.makeID(info2.type);
-        var par = info2.parent;
-        
-        let info = {}
-        Object.assign(info, JSON.parse(JSON.stringify(info2)));
-        info.id = id;
-        this.InfoPool[id] = info;
+        let widget = projectStore.copyWidget(info2);
 
-        //TODO: BUG
-        this.appendNode(id, info.type, par);
+        wrap_create_v2(widget, false);
+        wrap_attr_setter_v2(widget);
+        wrap_style_setter_v2(widget);
 
-        wrap_create_v2(info, false);
-        wrap_attr_setter_v2(info);
-        wrap_style_setter_v2(info);
-
-        return id;
+        return widget;
       },
 
-      // Increase by 1
-      makeID: function (type) {
-        let id = type + '_' + (this.Count++).toString(16);
-        this.widgetNum += 1;
-        return id;
-      },
-
-      // Add some information for the new widget to InfoPool
-      addInfo: function (id, par_name, type) {
-        let info = {
-          parent: par_name,
-          id: id,
-          type: type,
-          zindex: 0,
-          cb: false,
-          attributes: ['x', 'y', 'width', 'height'],
-          apis: [],
-          styles: [],
-          data: {},
-        };
-        this.InfoPool[id] = info;
-      },
-
-      // Append new node to TreeView
-      appendNode(widget_name, widgetType, parentId) {
-        let new_child = {
-          id: widget_name,
-          label: widget_name,
-          widgetType: widgetType,
-          show: true,
-          children: [],
-        };
-        let parentNode = this.getTreeChildren(this.widget_tree[0], parentId);
-        if (parentNode) {
-          parentNode.children.push(new_child);
-        }
-        console.log('appendNode', parentNode);
-        // let node = this.$refs.TreeView.getCurrentNode();
-        // if (node != null) {
-        //   node.children.push(new_child);
-        // }
-      },
-      getTreeChildren: function(tree, id) {
-        if (tree.label == id) {
-          return tree;
-        }
-        for (let i = 0; i < tree.children.length; i++) {
-          let item = tree.children[i];
-          if (item.label == id) {
-            return item;
-          }
-          if (item.children.length) {
-            let node = this.getTreeChildren(item, id);
-            if (node) {
-              return node;
-            }
-          }
-        }
-        return null;
-      },
       // Delete node and its childs(reverse)
       deleteNode: function (node, data) {
-        // const node = this.selectNode.obj;
-        const id = data.label;
+        const id = data.id;
 
         if (id == 'screen' || id == '') {
           this.$message({
@@ -622,27 +498,14 @@
           });
           return; // Not support delete screen now
         }
-        // delete child
-        let record = [id]; // Which child was deleted
-        reverse_del_node(node.data, record);
-
-        // delete itself
-        const children = node.parent.data.children;
-        const index = children.findIndex((d) => d.label === id);
-        wrap_delete(id);
-        children.splice(index, 1);
-        this.widgetNum -= record.length;
-
-        // Clear this.selectNode
-        this.selectNode.obj = null;
-        this.selectNode.id = null;
-
-        // Remove the related info
-        pool_delete(this.InfoPool, record);
+        
+        let widget = this.getWidgetById(id);
+        let list = projectStore.deleteWidget(widget);
+        for (const child of list) {
+          wrap_delete(child.id);
+        }
         
         this.activeNode('screen');
-
-        dispatch_data_changed_event();
 
         this.$message({
           message: 'Delete sucessfully',
@@ -651,91 +514,51 @@
       },
 
       handleTreeEvent(event, node, data) {
-        let id = data ? data.label : '';
+        let id = data ? data.id : '';
         // console.log('handleTreeEvent', event, id, data);
         if (event == 'delete') {
           this.deleteNode(node, data);
         } else if (event == 'copy') {
-          let info = this.InfoPool[id];
-          console.log('copy', node, data, info);
-
-          let id2 = this.copyWidget(info);
+          let info = this.getWidgetById(id);
+          let widget2 = this.copyWidget(info);
+          console.log('copy', node, data, info, widget2);
         } else if (event == 'show') {
           data.show = true;
-          wrap_show(id);
+          let list = projectStore.getWidgetChildrenList(id, true);
+          for (const child of list) {
+            wrap_show(child.id);
+          }
         } else if (event == 'hide') {
           data.show = false;
-          wrap_hide(id);
+          let list = projectStore.getWidgetChildrenList(id, true);
+          for (const child of list) {
+            wrap_hide(child.id);
+          }
         } else if (event == 'click') {
           this.activeNode(id);
         } else if (event == 'sort') {
-          this.sortNode(this.widget_tree);
-        }
-      },
-      sortNode(nodes) {
-        let index = 1;
-        for (let i = nodes.length - 1; i >= 0; i--) {
-          let id = nodes[i].label;
-          let info = this.InfoPool[id];
-          info.data.index = index;
-          wrap_set_index(id, info.data.index);
-          index++;
-          this.sortNode(nodes[i].children);
+          let change = projectStore.updateWidgetTreeIndex();
+          for (const item of change) {
+            wrap_set_index(item.id, item.zindex);
+          }
         }
       },
       activeNode: function (id = 'screen') {
-        let info = this.InfoPool[id];
+        let info = this.getWidgetById(id);
         this.$refs.simulator.activeFrame(info);
 
-        if (this.selectNode.id == id) {
+        if (this.selectNodeId == id) {
           return;
         }
 
-        let node = this.getTreeChildren(this.widget_tree[0], id);
-        if (!node) {
-          // NOTICE
-          return;
-        }
         console.log('selectNode', id);
-
-        this.selectNode.id = id;
-        this.selectNode.obj = node;
- 
-        // // If WidgetPool doesn't has infomation of the widget
-        // if (this.InfoPool[id] == undefined) {
-        //   let type = "'obj'";
-        //   if (id != 'screen') {
-        //     type = this.InfoPool[id]['type'];
-        //   }
-        //   wrap_query_attr(id, type);
-        //   return;
-        // }
-
-        // if (id != 'screen') {
-        //     this.selectNode.type = this.InfoPool[id]['type'];   // TODO
-        // } DEPRECATED
-        this.selectNodeData = node.data;
+        this.selectNodeId = id;
       },
 
-      // Get the id of recently checked node
-      getCurrentID: function () {
-        return this.selectNode.id;
-        // node = this.$refs.TreeView.getCurrentNode()
-        // if (node != null) {
-        //     return node.label;
-        // }
-        // return null;
-      },
-
-
-      // For text or number, save something in InfoPool
       changeInfo: function (id, attribute_name) {
-        if (id == 'screen' && this.InfoPool[id] == undefined) {
-          this.addInfo('screen', '', 'screen');
-        }
-        let index = this.InfoPool[id].attributes.indexOf(attribute_name);
+        let index = this.getWidgetById(id).attributes.indexOf(attribute_name);
         if (index == -1) {
-          this.InfoPool[id].attributes.push(attribute_name);
+          this.getWidgetById(id).attributes.push(attribute_name);
         }
       },
       
@@ -748,7 +571,7 @@
       handleSetterChange({ id, name, mode }) {
         console.log('handleSetterChange', id, name, mode);
         dispatch_data_changed_event();
-        let node = this.InfoPool[id];
+        let node = this.getWidgetById(id);
         let type = node.type;
 
         if (mode == 'styles') {
@@ -771,12 +594,12 @@
       generateCode: async function () {
         let preview_code = '';
         let screen = {
-          info: this.InfoPool, 
-          timelines: this.timelines,
+          info: projectStore.getComponents(),
+          timelines: projectStore.getTimelines(),
           config: this.projectConfig // 添加项目配置
         };
         
-        if (this.is_c_mode) {
+        if (projectStore.projectData.settings.output.format == 'c') {
           preview_code = c_generator(screen, this.projectConfig?.name || this.act_FileName);
         } else {
           preview_code = python_generator(screen, this.projectConfig?.name || this.act_FileName);
@@ -789,25 +612,6 @@
           type: 'success'
         });
       },
-
-      // Export the code in editor as a file.
-      exportCodeAsFile: async function () {
-        await this.generateCode();
-        let code = await this.$refs.editor.getValue();
-        // this.$message({
-        //     message: 'Export file sucessfully',
-        //     type: 'success'
-        // });
-        let blob = new Blob([code], {type: "text/plain;charset=utf-8"});
-        let fileName = this.act_FileName || ('' + +new Date());
-        if (this.is_c_mode) {
-          saveAs(blob, `lvgl_lv_${fileName}.h`);
-          // this.sendMessage(CMD.exportCodeAsFile, { name: `lvgl_lv_${fileName}.h`, code });
-        } else {
-          saveAs(blob, `lvgl_lv_${fileName}.py`);
-          // this.sendMessage(CMD.exportCodeAsFile, { name: `lvgl_lv_${fileName}.py`, code });
-        }
-      },
       async exportCodeAsLV() {
         let json = await this.savePage();
         let code = JSON.stringify(json, 0, 4);
@@ -818,7 +622,7 @@
 
       // Set the style
       makeStyle: function () {
-        wrap_simple_style(this.selectNode.id, this.style);
+        wrap_simple_style(this.selectNodeId, this.style);
       },
 
       //Highlight object
@@ -828,10 +632,6 @@
         ctx.lineWidth = 2;
         ctx.setLineDash([5, 5]);
         ctx.strokeRect(x, y, w, h);
-      },
-
-      setArgs: (args) => {
-        return setArgvs(args);
       },
 
       sendMessage(cmd, data) {
@@ -908,49 +708,14 @@
       // Save code to lvgl file.
       savePage: async function (event, msg = MSG_SAVE_PAGE_SUCC) {
         // 更新 projectStore 数据
-        projectStore.projectData.components.pool = this.InfoPool;
-        projectStore.projectData.components.tree = this.widget_tree;
-        projectStore.projectData.animations.timelines = this.timelines;
         projectStore.projectData.settings.screen = {
           width: this.screenWidth,
           height: this.screenHeight
         };
-        projectStore.projectData.settings.output.format = this.is_c_mode ? 'c' : 'python';
         
         // 保存项目数据
         projectStore.saveProject();
-        
-        // 为了兼容性保留原有的保存逻辑
-        let lvgl_data = {
-          version: this.version,
-          versionCode: this.versionCode,
-          InfoPool: this.InfoPool,
-          timelines: this.timelines,
-          widget_tree: this.widget_tree,
-          selectedType: this.selectedType,
-          widgetNum: this.widgetNum,
-          Count: this.Count,
-          term_visible: this.term_visible,
-          is_c_mode: this.is_c_mode,
-          projectConfig: this.projectConfig
-        };
-
-        localStorage.setItem("lvgl_data", JSON.stringify(lvgl_data));
-        
-        console.log('save', lvgl_data);
-        const res = await this.sendMessage(CMD.savePage, lvgl_data);
-        if (res.data) {
-          this.$message({
-            message: msg,
-            type: 'success'
-          });
-        } else {
-          this.$message({
-            message: 'Save failed',
-            type: 'error'
-          });
-        }
-        return lvgl_data;
+        return projectStore.projectData;
       },
 
       handleTabChange(name) {
@@ -967,18 +732,14 @@
         })
         .then(({ value }) => {
           let newid = value;
-          if (this.InfoPool[newid]) {
+          if (this.getWidgetById(newid)) {
             ElMessage({
               type: 'info',
               message: `Already exists:${value}`,
             })
           } else {
-            let treeNode = this.getTreeChildren(this.widget_tree[0], id);
-            this.InfoPool[newid] = this.InfoPool[id];
-            this.InfoPool[newid].id = newid;
-            treeNode.id = newid;
-            treeNode.label = newid;
-            delete this.InfoPool[id];
+            projectStore.changeWidgetId(this.getWidgetById(id), newid);
+
             wrap_rename(id, newid);
             this.activeNode(newid);
           }
@@ -1004,11 +765,6 @@
         if (config.screenSize) {
           this.screenWidth = config.screenSize.width;
           this.screenHeight = config.screenSize.height;
-        }
-
-        // 应用代码生成格式
-        if (config.outputFormat) {
-          this.is_c_mode = config.outputFormat === 'c';
         }
 
         // 应用其他配置...
@@ -1039,6 +795,54 @@
           });
         }
       },
+
+      // 开始拖拽调整宽度
+      startResize(event, side) {
+        event.preventDefault();
+        const startX = event.clientX;
+        const startWidth = side === 'left' ? this.leftWidth : this.rightWidth;
+        
+        const handleMouseMove = (e) => {
+          const delta = e.clientX - startX;
+          if (side === 'left') {
+            const newWidth = startWidth + delta;
+            this.leftWidth = Math.max(200, Math.min(newWidth, 600)); // 限制最小/最大宽度
+          } else {
+            const newWidth = startWidth - delta;
+            this.rightWidth = Math.max(200, Math.min(newWidth, 600));
+          }
+        };
+        
+        const handleMouseUp = () => {
+          document.removeEventListener('mousemove', handleMouseMove);
+          document.removeEventListener('mouseup', handleMouseUp);
+        };
+        
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', handleMouseUp);
+      },
+
+      // 切换左侧面板
+      toggleLeftPanel() {
+        if (this.leftCollapsed) {
+          this.leftWidth = this.leftWidthBeforeCollapse;
+        } else {
+          this.leftWidthBeforeCollapse = this.leftWidth;
+          this.leftWidth = 0;
+        }
+        this.leftCollapsed = !this.leftCollapsed;
+      },
+
+      // 切换右侧面板
+      toggleRightPanel() {
+        if (this.rightCollapsed) {
+          this.rightWidth = this.rightWidthBeforeCollapse;
+        } else {
+          this.rightWidthBeforeCollapse = this.rightWidth;
+          this.rightWidth = 0;
+        }
+        this.rightCollapsed = !this.rightCollapsed;
+      }
     },
   };
 </script>
@@ -1095,6 +899,7 @@
     }
 
     .header-menu {
+      width: 300px;
       border-bottom: none;
       background: transparent;
 
@@ -1149,8 +954,102 @@
 }
 
 .main-container {
+  position: relative;
   height: 100%;
+}
 
+.aside-wrapper {
+  position: relative;
+  height: 100%;
+  transition: transform 0.3s;
+
+  &.left {
+    &.is-collapsed {
+      transform: translateX(-100%);
+      
+      .collapse-handle {
+        transform: translateX(100%);
+      }
+    }
+  }
+
+  &.right {
+    &.is-collapsed {
+      transform: translateX(100%);
+      
+      .collapse-handle {
+        transform: translateX(-100%);
+      }
+    }
+  }
+}
+
+.resizable-aside {
+  height: 100%;
+  overflow: hidden;
+  background: var(--el-bg-color-overlay);
+  border-right: 1px solid var(--el-border-color-lighter);
+  transition: width 0.3s;
+}
+
+.resize-handle {
+  position: absolute;
+  top: 0;
+  width: 4px;
+  height: 100%;
+  cursor: col-resize;
+  background: transparent;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background: var(--el-color-primary-light-8);
+  }
+
+  &.left {
+    right: -2px;
+  }
+
+  &.right {
+    left: -2px;
+  }
+}
+
+.collapse-handle {
+  position: absolute;
+  top: 50%;
+  width: 16px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--el-bg-color);
+  border: 1px solid var(--el-border-color-lighter);
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s;
+
+  &:hover {
+    background: var(--el-color-primary-light-9);
+  }
+
+  &.left {
+    right: -16px;
+    border-left: none;
+  }
+
+  &.right {
+    left: -16px;
+    border-right: none;
+  }
+
+  .el-icon {
+    transition: transform 0.3s;
+    
+    &.is-collapsed {
+      transform: rotate(180deg);
+    }
+  }
 }
 </style>
 

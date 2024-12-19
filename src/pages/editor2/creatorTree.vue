@@ -1,7 +1,7 @@
 <template>
   <el-tree
     ref="TreeView"
-    :data="screenLayout"
+    :data="treeData"
     highlight-current
     default-expand-all
     draggable
@@ -34,6 +34,7 @@
 </template>
 
 <script lang="ts">
+import { projectStore } from './store/projectStore';
 
 export default {
   name : 'creator-tree',
@@ -46,10 +47,15 @@ export default {
   watch: {
     //Parse string to JSON
     nodeKey: function () {
-      // console.log('nodeKey: ', this.nodeKey);
 
       // this.$refs.TreeView.setCurrentKey(this.currentWidget.id);
-    },
+    }
+  },
+  computed: {
+    treeData: function () {
+      let data = projectStore.projectData;
+      return data.components.tree;
+    }
   },
   methods: {
     clickNode: function (data, obj, tree_obj) {

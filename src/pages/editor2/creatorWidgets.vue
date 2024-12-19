@@ -57,7 +57,7 @@ export default {
         creator_options: WidgetData.WidgetsOption,
         selectedType: '',
         imageMap: imageMap,
-        collapseModel: 'basics',
+        collapseModel: '', //'basics',
       }
   },
   mounted() {
