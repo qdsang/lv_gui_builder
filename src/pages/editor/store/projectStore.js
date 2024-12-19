@@ -7,11 +7,12 @@ class ProjectStore {
     this.currentProject = null;
     this.componentTree = reactive([]);
     this.projectData = reactive({
-      "id": "",
+      id: "",
       "name": "Project",
       "description": "",
       "version": "1.0.0",
       "versionCode": 1,
+      "author": "",
       components: {
         pool: {},
       },

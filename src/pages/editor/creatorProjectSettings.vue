@@ -53,6 +53,7 @@
           <el-form :model="config" label-width="120px">
             <el-form-item label="LVGL Version">
               <el-select v-model="config.lvglVersion">
+                <el-option label="v9.2.0" value="9.2.0" disabled />
                 <el-option label="v8.3.0" value="8.3.0" />
                 <el-option label="v8.2.0" value="8.2.0" disabled/>
               </el-select>
@@ -90,6 +91,7 @@
           <el-form :model="config" label-width="120px">
             <el-form-item label="Output Format">
               <el-radio-group v-model="config.outputFormat">
+                <el-radio value="cpp" disabled>C++</el-radio>
                 <el-radio value="c">C</el-radio>
                 <el-radio value="python">Python</el-radio>
               </el-radio-group>

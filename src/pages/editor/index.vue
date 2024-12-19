@@ -163,21 +163,6 @@
         </el-tabs>
       </template>
     </creator-window>
-
-    <el-dialog width="80%" :visible.sync="dialogSettingVisible">
-      <div class="setting_item">
-        编译脚本
-        <el-input placeholder="请选择编译脚本" v-model="buildScriptPath" @input="saveBuildScript">
-          <el-button slot="append" icon="el-icon-document" @click="selectBuildScript"> </el-button>
-        </el-input>
-      </div>
-      <div class="setting_item">
-        下载脚本
-        <el-input placeholder="请选择下载脚本" v-model="runScriptPath" @input="saveRunScript">
-          <el-button slot="append" icon="el-icon-document" @click="selectRunScript"> </el-button>
-        </el-input>
-      </div>
-    </el-dialog>
   </el-container>
 </template>
 
@@ -203,6 +188,7 @@
     wrap_show, wrap_hide, wrap_set_index,
     wrap_style_setter_v2,
     wrap_attr_setter_v2,
+    wrap_simple_setter,
     wrap_timeline_load,
     wrap_timeline_stop_all,
   } from './runtimeWrapper.js';
@@ -224,7 +210,7 @@
   import creatorImage from './creatorImage.vue';
   import creatorProjectSettings from './creatorProjectSettings.vue';
 
-  import { CaretLeft, CaretRight, Download, FolderOpened, Document, Monitor, DocumentAdd, Select, Link } from '@element-plus/icons-vue'
+  import { Download, FolderOpened, Document, Monitor, DocumentAdd, Select, Link } from '@element-plus/icons-vue'
 
   
   export default {
@@ -247,8 +233,6 @@
       creatorImage,
       creatorProjectSettings,
 
-      CaretLeft,
-      CaretRight,
       Download,
       FolderOpened,
       Document, 
@@ -259,17 +243,6 @@
     },
     data() {
       return {
-        version: '1.0.0',
-        versionCode: 1,
-        editor: null,
-        c_edit_mode: null,
-        py_edit_mode: null,
-
-        posJSON: {},
-        Api: {},
-
-        setter: api.setter,
-
         //Simulator
         screenWidth: 480,
         screenHeight: 320,
@@ -277,8 +250,6 @@
         cursorY: 0,
 
         //Creator
-        creator_options: WidgetData.WidgetsOption,
-        props: { emitPath: false, expandTrigger: 'hover' },
         act_FileName: '',
 
         // Which node in TreeView was checked
@@ -287,27 +258,7 @@
         //Terminal
         term_visible: true,
 
-        // Style Editor
-        style_visible: false,
-        style: {
-          body: {
-            main_color: null,
-            grad_color: null,
-          },
-          text: {
-            color: '#409EFF',
-            font: 'font_roboto_16',
-          },
-          image: {},
-          line: {},
-        },
-
         editScreenSize: false,
-
-        // setting dialog
-        dialogSettingVisible: false,
-        buildScriptPath: window.localStorage.getItem('buildScriptPath') || '',
-        runScriptPath: window.localStorage.getItem('runScriptPath') || '',
 
         // tabs
         activeTab: 'simulator',
@@ -316,15 +267,16 @@
         projectConfig: null,
           
         shortcuts: {
-          'ctrl+s': this.handleSave,
-          'ctrl+z': this.handleUndo,
-          'ctrl+y': this.handleRedo,
-          'ctrl+c': this.handleCopy,
-          'ctrl+v': this.handlePaste,
-          'ctrl+x': this.handleCut,
-          'delete': this.handleDelete,
-          'ctrl+g': this.handleGenerateCode,
-        }
+          // ... existing shortcuts ...
+          'arrowleft': this.handleMove('left', -1),
+          'arrowright': this.handleMove('right', 1),
+          'arrowup': this.handleMove('up', -1),
+          'arrowdown': this.handleMove('down', 1),
+          'shift+arrowleft': this.handleMove('left', -4),
+          'shift+arrowright': this.handleMove('right', 4),
+          'shift+arrowup': this.handleMove('up', -4),
+          'shift+arrowdown': this.handleMove('down', 4),
+        },
       };
     },
 
@@ -426,7 +378,6 @@
           }
           wrap_timeline_stop_all();
         } catch (error) {
-          console.error(error);
         }
       },
       getWidgetById(id) {
@@ -598,7 +549,7 @@
         if (mode == 'styles') {
           wrap_style_setter_v2(node);
         } else {
-          let body = this.setter[type][name];
+          let body = api.setter[type][name];
           let args_list = node.data[body.api];
           wrap_setter_str(id, body.api, args_list);
         }
@@ -641,11 +592,6 @@
         saveAs(blob, `lv_gui_${fileName}.lv`);
       },
 
-      // Set the style
-      makeStyle: function () {
-        wrap_simple_style(this.selectNodeId, this.style);
-      },
-
       //Highlight object
       drawRect: (x, y, w, h) => {
         let ctx = document.getElementById('canvas').getContext('2d');
@@ -653,20 +599,6 @@
         ctx.lineWidth = 2;
         ctx.setLineDash([5, 5]);
         ctx.strokeRect(x, y, w, h);
-      },
-
-      sendMessage(cmd, data) {
-        return { data: 1 };
-        // axios.post(`/index`, {cmd, data}).then(res => {
-        //     // console.log(`状态码: ${res.statusCode}`)
-        //     // console.log("client receive:", res.data)
-        // }).catch(error => {watch str_json
-        //     console.error(error);
-        // });
-
-        return axios.post(`/index`, { cmd, data }).catch((error) => {
-          console.error(error);
-        });
       },
 
       changeScreenSize() {
@@ -682,48 +614,6 @@
             type: 'error',
           });
         }
-      },
-
-      selectBuildScript() {
-        this.sendMessage(CMD.selectScript).then((v) => {
-          if (v && v.status === 200 && v.data) {
-            this.buildScriptPath = v.data;
-            this.saveBuildScript();
-          }
-        });
-      },
-
-      selectRunScript() {
-        this.sendMessage(CMD.selectScript).then((v) => {
-          if (v && v.status === 200 && v.data) {
-            this.runScriptPath = v.data;
-            this.saveRunScript();
-          }
-        });
-      },
-
-      build() {
-        if (this.buildScriptPath) {
-          this.sendMessage(CMD.build, this.buildScriptPath);
-        } else {
-          this.dialogSettingVisible = true;
-        }
-      },
-
-      run() {
-        if (this.runScriptPath) {
-          this.sendMessage(CMD.run, this.runScriptPath);
-        } else {
-          this.dialogSettingVisible = true;
-        }
-      },
-
-      saveBuildScript() {
-        window.localStorage.setItem('buildScriptPath', this.buildScriptPath);
-      },
-
-      saveRunScript() {
-        window.localStorage.setItem('runScriptPath', this.runScriptPath);
       },
 
       // Save code to lvgl file.
@@ -798,7 +688,81 @@
           grouping: true,
           ...msg
         });
-      }
+      },
+      handleMove(direction, speed = 1) {
+        let that = this;
+        function move() {
+          let widget = that.getWidgetById(that.selectNodeId);
+          if (widget.type == 'screen') {
+            return;
+          }
+          let id = widget.id;
+          if (direction == 'left' || direction == 'right') {
+            widget.data.x += speed;
+            // wrap_simple_setter(id, 'x', widget.data.x);
+          } else if (direction == 'up' || direction == 'down') {
+            widget.data.y += speed;
+            // wrap_simple_setter(id, 'y', widget.data.y);
+          }
+
+          wrap_attr_setter_v2(widget);
+          that.activeNode(id);
+          console.log('move', widget, direction, speed);
+        }
+        return move;
+      },
+      // 修改原有的 handleKeyDown 方法，增加对输入框的判断
+      handleKeyDown(event) {
+        // 如果焦点在输入框、文本框等元素上，不处理快捷键
+        if (this.isInputElement(event.target)) {
+          return;
+        }
+
+        // 获取按键组合
+        const key = this.getKeyCombo(event);
+        
+        // 检查是否有对应的快捷键处理函数
+        const handler = this.shortcuts[key];
+        if (handler) {
+          event.preventDefault(); // 阻止默认行为
+          handler();
+        }
+      },
+
+      // 判断是否是输入类元素
+      isInputElement(element) {
+        const tagName = element.tagName.toLowerCase();
+        const type = element.type?.toLowerCase();
+        
+        return (
+          tagName === 'input' ||
+          tagName === 'textarea' ||
+          tagName === 'select' ||
+          element.contentEditable === 'true'
+        );
+      },
+
+      // 更新 getKeyCombo 方法，使其支持方向键
+      getKeyCombo(event) {
+        const keys = [];
+        if (event.ctrlKey) keys.push('ctrl');
+        if (event.shiftKey) keys.push('shift');
+        if (event.altKey) keys.push('alt');
+        
+        // 处理特殊键
+        const keyMap = {
+          'ArrowLeft': 'arrowleft',
+          'ArrowRight': 'arrowright',
+          'ArrowUp': 'arrowup',
+          'ArrowDown': 'arrowdown'
+        };
+        
+        // 添加主键
+        const mainKey = keyMap[event.key] || event.key.toLowerCase();
+        keys.push(mainKey);
+        
+        return keys.join('+');
+      },
     },
   };
 </script>

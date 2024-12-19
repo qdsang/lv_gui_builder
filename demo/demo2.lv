@@ -50,10 +50,10 @@
           "MAIN.border_width"
         ],
         "data": {
-          "y": 35,
-          "x": 35,
-          "height": "210",
-          "width": "210",
+          "y": 30,
+          "x": 190,
+          "height": 420,
+          "width": 420,
           "MAIN.arc_rounded": "False",
           "MAIN.radius": "333",
           "MAIN.bg_color": "#605F5F",
@@ -91,9 +91,9 @@
         ],
         "data": {
           "y": 40,
-          "x": 40,
-          "height": "200",
-          "width": "200",
+          "x": 200,
+          "height": 400,
+          "width": 400,
           "set_start_angle": "135",
           "set_end_angle": "45",
           "set_bg_start_angle": "135",
@@ -131,8 +131,8 @@
           "MAIN.text_color"
         ],
         "data": {
-          "y": "135",
-          "x": "103",
+          "y": 223,
+          "x": 345,
           "height": 30,
           "width": 100,
           "set_text": "\"100KM/H\"",
@@ -160,8 +160,8 @@
           "MAIN.text_font"
         ],
         "data": {
-          "y": "240",
-          "x": "90",
+          "y": 439,
+          "x": 287,
           "height": 40,
           "width": 100,
           "MAIN.text_color": "#FFFFFF",
@@ -189,8 +189,8 @@
           "MAIN.text_font"
         ],
         "data": {
-          "y": "240",
-          "x": "140",
+          "y": 442,
+          "x": 465,
           "height": 40,
           "width": 100,
           "MAIN.text_color": "#FFFFFF",
@@ -218,10 +218,10 @@
           "MAIN.text_font"
         ],
         "data": {
-          "y": "40",
-          "x": "20",
-          "height": 40,
-          "width": 100,
+          "y": 56,
+          "x": 183,
+          "height": 26,
+          "width": 48,
           "MAIN.text_color": "#FFFFFF",
           "MAIN.text_font": "lv.font_montserrat_16",
           "set_text": "\"36.6°\""
@@ -257,10 +257,10 @@
           "INDICATOR.arc_color"
         ],
         "data": {
-          "y": "30",
-          "x": "30",
-          "height": "240",
-          "width": "240",
+          "y": 20,
+          "x": 190,
+          "height": 460,
+          "width": 460,
           "set_start_angle": "30",
           "set_end_angle": "60",
           "KNOB.bg_opa": "0",
@@ -307,10 +307,10 @@
           "INDICATOR.arc_color"
         ],
         "data": {
-          "y": 30,
-          "x": 10,
-          "height": 240,
-          "width": 240,
+          "y": 20,
+          "x": 150,
+          "height": 460,
+          "width": 460,
           "set_start_angle": "120",
           "set_end_angle": "150",
           "KNOB.bg_opa": "0",
@@ -473,16 +473,19 @@
   },
   "settings": {
     "screen": {
-      "width": 480,
+      "width": 800,
       "height": 480
     },
     "output": {
       "format": "python",
-      "path": ""
+      "path": "",
+      "prefix": "ui_"
     },
     "lvgl": {
       "version": "8.3.0",
-      "colorDepth": 16
+      "colorDepth": 16,
+      "defaultFont": "montserrat_16"
     }
-  }
+  },
+  "author": "Qdsang"
 }
