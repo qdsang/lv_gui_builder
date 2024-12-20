@@ -41,18 +41,6 @@
         <span v-show="!props.row.iseditor">{{props.row.type}}</span>
       </template>
     </el-table-column>
-    <!-- <el-table-column prop="path" label="Path" width="200">
-      <template #default="props">
-        <input type="text" v-show="props.row.iseditor" style="width: 100%;" v-model="props.row.path" />
-        <span v-show="!props.row.iseditor">{{props.row.path}}</span>
-      </template>
-    </el-table-column> -->
-<!--     
-    <el-table-column label="Image" width="120">
-      <template #default>
-        <img></img>
-      </template>
-    </el-table-column> -->
 
     <el-table-column label="Info">
       <template #default="props">
@@ -60,38 +48,92 @@
         <span>{{ props.row.width + 'x' + props.row.height }}</span>
       </template>
     </el-table-column>
-    <el-table-column fixed="right" label="Operations" width="180">
+    <el-table-column fixed="right" label="Operations" width="250">
       <template #default="props">
         <el-button link type="primary" size="small" v-if="props.row.iseditor" @click="save(props)">Save</el-button>
         <el-button link type="primary" size="small" v-if="!props.row.iseditor" @click="edit(props)">Edit</el-button>
+        <el-button link type="primary" size="small" @click="handleImagePreview(props)">Preview</el-button>
         <el-button link type="primary" size="small" @click="handleImageCropper(props)">Cropper</el-button>
         <el-button link type="primary" size="small" @click="handleDelete(props)">Delete</el-button>
       </template>
     </el-table-column>
   </el-table>
+
+  <!-- 添加裁剪对话框 -->
+  <el-dialog
+    v-model="cropperVisible"
+    title="Image Cropper"
+    width="800px"
+    destroy-on-close
+  >
+    <vue-cropper
+      ref="cropper"
+      :img="currentImage"
+      :info="true"
+      :autoCrop="true"
+      :fixedBox="true"
+      :centerBox="true"
+      outputType="jpeg"
+      @realTime="cropImage"
+    />
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="cropperVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="confirmCrop">
+          Confirm
+        </el-button>
+      </span>
+    </template>
+  </el-dialog>
+
+  <!-- 添加图片预览组件 -->
+  <el-image-viewer
+    v-if="previewVisible"
+    :url-list="[previewImage]"
+    :initial-index="0"
+    @close="previewVisible = false"
+  />
 </div>
 </template>
 
 <script lang="ts">
-import * as WidgetData from "./widgetData.js";
 import { projectStore } from './store/projectStore';
+import 'vue-cropper/dist/index.css'
+import { VueCropper } from 'vue-cropper'
 
-function compressImg(file) {
+async function compressImg(file) {
   let id = file.name;
   var size = file['size'];
+  let type = file.raw.type;
+  let base64 = await imgToBase64(file.raw);
+  
+  type = 'image/jpeg';
+  base64 = await convertImage(base64.toString(), type);
+
+  let imgInfo = await imgGetInfo(base64.toString());
+  
+  return { id: id, title: id, path: id, type, size, width: imgInfo.width, height: imgInfo.height, base64 };
+}
+
+async function imgToBase64(file) {
   var read = new FileReader()
-  read.readAsDataURL(file.raw)
+  read.readAsDataURL(file)
   return new Promise(function(resolve, reject) {
     read.onload = function(res) {
       let base64 = res.target.result;
-      var img = new Image()
-      img.src = base64.toString();
-      let type = file.raw.type;
-      img.onload = function() {
-        resolve({ id: id, title: id, path: id, type, size, width: img.width, height: img.height, base64 });
-      }
+      resolve(base64);
     }
-  })
+  });
+}
+
+async function imgGetInfo(url) {
+  var img = new Image()
+  return new Promise(function(resolve, reject) {
+    img.src = url;
+    img.onload = function() {
+      resolve({ width: img.width, height: img.height });
+    }
+  });
 }
 
 let convertImage = (function () {
@@ -107,9 +149,7 @@ let convertImage = (function () {
         context2D.clearRect(0, 0, canvas.width, canvas.height);
 
         canvas.width = image.naturalWidth;
-
         canvas.height = image.naturalHeight;
-
         image.crossOrigin = 'Anonymous';
 
         context2D.drawImage(image, 0, 0);
@@ -126,10 +166,19 @@ export default {
   name : 'creator-image',
   props: ['screenLayout', 'nodeKey'],
   emits: ['node-click', 'event'],
+  components: {
+    VueCropper
+  },
   data: function() {
-      return {
-        tableData: []
-      }
+    return {
+      tableData: [],
+      cropperVisible: false,
+      currentImage: '',
+      currentRow: null,
+      croppedData: null,
+      previewVisible: false,
+      previewImage: '',
+    }
   },
   watch: {
   },
@@ -162,17 +211,55 @@ export default {
         props.row.base64 = base64;
       }
     },
-    handleImageCropper() {
-
+    handleImageCropper(props) {
+      this.currentRow = props.row
+      this.currentImage = props.row.base64
+      this.cropperVisible = true
     },
-    handleClick() {
-      
-    }
+    cropImage(data) {
+      this.croppedData = data
+    },
+    async confirmCrop() {
+      if (!this.croppedData) return
+
+      const canvas = this.$refs.cropper.getCropData(async (data) => {
+        // 更新当前图片数据
+        this.currentRow.base64 = data
+        this.currentRow.width = this.croppedData.w
+        this.currentRow.height = this.croppedData.h
+        this.currentRow.size = Math.round(data.length * 0.75) // base64 to binary size approximation
+
+        // 保存到 store
+        projectStore.updateAsset('images', this.currentRow.id, this.currentRow)
+        
+        // 关闭对话框
+        this.cropperVisible = false
+        
+        // 刷新表格数据
+        this.tableData = projectStore.getAllAssets('images')
+      })
+    },
+    handleImagePreview(props) {
+      this.previewImage = props.row.base64
+      this.previewVisible = true
+    },
   },
 };
 </script>
 <style lang="less" scoped>
+.cropper-container {
+  height: 500px;
+}
 
+:deep(.vue-cropper) {
+  height: 400px;
+  width: 100%;
+}
+
+:deep(.el-image-viewer__wrapper) {
+  // 确保预览窗口在最顶层
+  z-index: 2100;
+}
 </style>
 <style lang="less">
 </style>

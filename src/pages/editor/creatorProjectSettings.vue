@@ -138,7 +138,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { Document, Monitor, DocumentAdd, FolderOpened } from '@element-plus/icons-vue'
 import { projectStore } from './store/projectStore'
 

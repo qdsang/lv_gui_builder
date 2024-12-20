@@ -28,7 +28,7 @@ export const template_py_setter_simple = (id, attr, param) => {
 }
 
 export const template_py_api_simple = (id, api, param) => {
-    if (id.startsWith('img') && (api === "set_src")) {
+    if (api === "set_src") {
         return template_py_img_api(id, api, param);
     }
     return `${id}.${api}(${param})`;

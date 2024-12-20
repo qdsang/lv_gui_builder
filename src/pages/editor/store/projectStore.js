@@ -114,7 +114,13 @@ class ProjectStore {
     if (fonts.find(font => font.path == 'lv.font_montserrat_16') == null) {
       this.addAsset('fonts', { name: 'Montserrat 16', path: 'lv.font_montserrat_16' });
     }
-    this.projectData.assets.fonts.sort((a, b) => a.name.localeCompare(b.name));
+
+    let assets = this.projectData.assets;
+    assets.images = assets.images || [];
+    assets.fonts = assets.fonts || [];
+    assets.themes = assets.themes || [];
+    
+    assets.fonts.sort((a, b) => a.name.localeCompare(b.name));
   }
 
   getComponents() {
