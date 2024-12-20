@@ -400,7 +400,7 @@
   "assets": {
     "images": [
       {
-        "imageid": "demo-arctic-code.jpg",
+        "id": "demo-arctic-code.jpg",
         "title": "arctic code",
         "path": "https://qdsang.github.io/lv_gui_builder/demo-arctic-code.jpg",
         "size": 1000,
@@ -410,7 +410,7 @@
         "value": ""
       },
       {
-        "imageid": "demo-pull-shark.jpg",
+        "id": "demo-pull-shark.jpg",
         "title": "pull shark",
         "path": "https://qdsang.github.io/lv_gui_builder/demo-pull-shark.jpg",
         "size": 1000,
@@ -420,7 +420,7 @@
         "value": ""
       },
       {
-        "imageid": "demo-starstruck.jpg",
+        "id": "demo-starstruck.jpg",
         "title": "starstruck",
         "path": "https://qdsang.github.io/lv_gui_builder/demo-starstruck.jpg",
         "size": 1000,

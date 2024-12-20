@@ -250,53 +250,6 @@ export let fonts = [
   { label: '48', value: 'lv.font_montserrat_48' },
 ]
 
-export let predefineColors = [
-  '#ff4500',
-  '#ff8c00',
-  '#ffd700',
-  '#90ee90',
-  '#00ced1',
-  '#1e90ff',
-  '#c71585',
-  'rgba(255, 69, 0, 0.68)',
-  'rgb(255, 120, 0)',
-  'hsv(51, 100, 98)',
-  'hsva(120, 40, 94, 0.5)',
-  'hsl(181, 100%, 37%)',
-  'hsla(209, 100%, 56%, 0.73)',
-  '#c7158577',
-];
-
-export let imageLibrary = [
-  { imageid: 'demo-arctic-code.jpg', title: 'arctic code', path: 'https://qdsang.github.io/lv_gui_builder/demo-arctic-code.jpg', size: 1000, width: 800, height: 800, data: '' },
-  { imageid: 'demo-pull-shark.jpg', title: 'pull shark', path: 'https://qdsang.github.io/lv_gui_builder/demo-pull-shark.jpg', size: 1000, width: 800, height: 800, data: '' },
-  { imageid: 'demo-starstruck.jpg', title: 'starstruck', path: 'https://qdsang.github.io/lv_gui_builder/demo-starstruck.jpg', size: 1000, width: 800, height: 800, data: '' },
-]
-
-let imageJson = localStorage.getItem("lvgl_image");
-if (imageJson) {
-  imageLibrary = JSON.parse(imageJson);
-}
-
-export function imageLibrarySave() {
-  localStorage.setItem("lvgl_image", JSON.stringify(imageLibrary));
-}
-
-export function imageLibraryOption() {
-  return imageLibrary;
-}
-
-export function imageLibraryGet(id) {
-  for (let i = 0; i < imageLibrary.length; i++) {
-    if (imageLibrary[i].imageid == id) {
-      return imageLibrary[i];
-    }
-  }
-  return null;
-}
-
-
-
 export let timeline_anim_def = { objs: [], start_time: 0, valueMin: 0, valueMax: 100, time: 1000, playback_delay: 100, playback_time: 300, repeat_delay: 500, repeat_count: -1, path_cb: '', custom_exec_cb: '' };
 export let timeline_obj_def = { id: 'arc_0', attr: 'value' };
 export let timeline_def = { id: 'timeline1', title: '', anims: [ timeline_anim_def ]};

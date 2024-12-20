@@ -36,9 +36,9 @@
         >
           <el-option
             v-for="item in defaultFonts"
-            :key="item.value"
-            :value="item.value"
-            :label="item.label"
+            :key="item.path"
+            :value="item.path"
+            :label="item.name"
           ></el-option>
         </el-select>
         <el-select
@@ -102,9 +102,9 @@ export default {
       isCheck: false,
       argSpan: 22,
       list: [],
-      defaultFonts: WidgetData.fonts,
+      defaultFonts: projectStore.getAllAssets('fonts'),
       imageLibrary: [],
-      predefineColors: WidgetData.predefineColors,
+      predefineColors: projectStore.getAllAssets('colors'),
     };
   },
   watch: {
@@ -164,7 +164,7 @@ export default {
         this.argSpan = 6;
       }
 
-      this.imageLibrary = WidgetData.imageLibraryOption();
+      this.imageLibrary = projectStore.getAllAssets('images');
     },
     getTitle: function () {
       let title = this.body.desc || this.body.api || this.name;

@@ -1,6 +1,7 @@
 /* template: generate the related code and return as string */
 import { color_convert } from './runtimeWrapper.js';
 import * as WidgetData from "./widgetData.js";
+import { projectStore } from './store/projectStore.js';
 
 export const template_py_create = (id, parent_id, type) => {
     return `${id} = lv.${type}(${parent_id})`;
@@ -70,7 +71,7 @@ img_data = None
 ${imgId} = None
 `];
 
-    let img = WidgetData.imageLibraryGet(url);
+    let img = projectStore.getAsset('images', url); //.getAsset('images', url);
     if (img) {
         let base64 = b64toBlob2(img.base64);
         let base64str = 'bytes([' + base64.join(', ') + '])'

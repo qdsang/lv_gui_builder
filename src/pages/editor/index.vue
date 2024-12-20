@@ -15,12 +15,8 @@
             <template #title>
               <span>Demo</span>
             </template>
-
-            <el-menu-item>
-              <el-link href="#/lv/editor/demo1">Demo1</el-link>
-            </el-menu-item>
-            <el-menu-item>
-              <el-link href="#/lv/editor/demo2">Demo2</el-link>
+            <el-menu-item v-for="item in demoList" :key="item">
+              <el-link :href="`#/lv/editor/${item}`">{{ item }}</el-link>
             </el-menu-item>
           </el-sub-menu>
           
@@ -191,7 +187,7 @@
   import { python_generator, c_generator } from './runtimeCompiler.js';
 
   import { projectStore } from './store/projectStore';
-  import { initDemo, initDemoProject } from './store/demo';
+  import { initDemo, initDemoProject, getDemoList } from './store/demo';
 
   import creatorWindow from './creatorWindow.vue';
   import creatorWidgets from './creatorWidgets.vue';
@@ -239,6 +235,8 @@
     },
     data() {
       return {
+        demoList: getDemoList(),
+
         //Simulator
         screenWidth: 480,
         screenHeight: 320,
@@ -392,7 +390,7 @@
         } catch (error) {
         }
         if (this.selectNodeId) {
-          this.activeNode('unknown');
+          // this.activeNode('unknown');
         }
       },
       getWidgetById(id) {
@@ -514,7 +512,7 @@
           let widget2 = this.copyWidget(info);
           console.log('copy', info, widget2);
         } else if (event == 'show') {
-          wrap_font_load();
+          // wrap_font_load();
           data.show = true;
           let list = projectStore.getWidgetChildrenList(id, true);
           for (const child of list) {

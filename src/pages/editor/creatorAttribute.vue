@@ -4,7 +4,7 @@
       <el-form-item label="ID">
         <el-row>
           <el-col :span="24">
-            <em> {{ id }} </em> &nbsp;
+            <em> {{ id }} </em> {{ currentType }}&nbsp;
             <el-button icon="el-icon-edit" circle @click="editID"></el-button>
           </el-col>
           <!-- <el-col :span="7">

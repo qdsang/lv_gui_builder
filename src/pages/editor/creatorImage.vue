@@ -14,10 +14,10 @@
     </div>
   </div>
   <el-table :data="tableData" style="width: 100%">
-    <el-table-column prop="imageid" label="ID Path" width="150">
+    <el-table-column prop="id" label="ID Path" width="150">
       <template #default="props">
-        <input type="text" v-show="props.row.iseditor" style="width: 100%;" v-model="props.row.imageid" />
-        <span v-show="!props.row.iseditor">{{props.row.imageid}}</span>
+        <input type="text" v-show="props.row.iseditor" style="width: 100%;" v-model="props.row.id" />
+        <span v-show="!props.row.iseditor">{{props.row.id}}</span>
       </template>
     </el-table-column>
     <el-table-column prop="title" label="title">
@@ -88,7 +88,7 @@ function compressImg(file) {
       img.src = base64.toString();
       let type = file.raw.type;
       img.onload = function() {
-        resolve({ imageid: id, title: id, path: id, type, size, width: img.width, height: img.height, base64 });
+        resolve({ id: id, title: id, path: id, type, size, width: img.width, height: img.height, base64 });
       }
     }
   })

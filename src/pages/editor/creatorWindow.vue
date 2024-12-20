@@ -44,7 +44,7 @@ export default {
   },
   data() {
     return {
-      leftWidth: 200,  // 左侧面板宽度
+      leftWidth: 220,  // 左侧面板宽度
       rightWidth: 220, // 右侧面板宽度
       leftCollapsed: false,  // 左侧面板折叠状态
       rightCollapsed: false, // 右侧面板折叠状态

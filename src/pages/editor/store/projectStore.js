@@ -1,6 +1,24 @@
 import { dispatch_data_changed_event } from '../utils.js';
 import { reactive } from 'vue'  // Vue 3
 
+let predefineColors = [
+  '#ff4500',
+  '#ff8c00',
+  '#ffd700',
+  '#90ee90',
+  '#00ced1',
+  '#1e90ff',
+  '#c71585',
+  'rgba(255, 69, 0, 0.68)',
+  'rgb(255, 120, 0)',
+  'hsv(51, 100, 98)',
+  'hsva(120, 40, 94, 0.5)',
+  'hsl(181, 100%, 37%)',
+  'hsla(209, 100%, 56%, 0.73)',
+  '#c7158577',
+];
+
+
 // 项目状态管理
 class ProjectStore {
   constructor() {
@@ -87,6 +105,16 @@ class ProjectStore {
     if (!pool['screen']) {
       this.createWidget({ id: 'screen', type: 'screen', data: { x: 0, y: 0, width: 480, height: 480 } });
     }
+
+    // 检查字体
+    let fonts = this.getAllAssets('fonts');
+    if (fonts.find(font => font.path == 'lv.font_montserrat_14') == null) {
+      this.addAsset('fonts', { name: 'Montserrat 14', path: 'lv.font_montserrat_14' });
+    }
+    if (fonts.find(font => font.path == 'lv.font_montserrat_16') == null) {
+      this.addAsset('fonts', { name: 'Montserrat 16', path: 'lv.font_montserrat_16' });
+    }
+    this.projectData.assets.fonts.sort((a, b) => a.name.localeCompare(b.name));
   }
 
   getComponents() {
@@ -298,6 +326,9 @@ class ProjectStore {
   }
 
   getAllAssets(type) {
+    if (type == 'colors') {
+      return predefineColors;
+    }
     let list = this.projectData.assets[type] || [];
     for (const asset of list) {
       asset.value = asset.value || '';
