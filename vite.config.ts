@@ -25,6 +25,8 @@ export default ({ command, mode }) => {
       // 这里的alias是路径别名，是运行阶段的替换路径，而tsconfig.json中的paths是编码阶段的提示，
       alias: {
         '@': pathResolve('src'), // path.resolve中，'./src' 等于 'src'
+        'opentype.js': 'node_modules/opentype.js/dist/opentype.module.js',
+        path: 'path-browserify',
       },
     },
     plugins: [

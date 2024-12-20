@@ -167,11 +167,6 @@
 </template>
 
 <script>
-  import 'element-plus/theme-chalk/dark/css-vars.css'
-  import {useDark, useToggle} from '@vueuse/core'
-
-  const isDark = useDark()
-  isDark.value = true;
 
   import * as WidgetData from './widgetData.js';
   import * as api from './widgetApis.js';

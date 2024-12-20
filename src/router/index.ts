@@ -17,6 +17,10 @@ const routes: Array<RouteRecordRaw> = [
     path: '/lv/editor/:id',
     component: () => import('@/pages/editor/index.vue'),
   },
+  {
+    path: '/lv/font',
+    component: () => import('@/pages/font/index.vue'),
+  },
 ];
 
 const router = createRouter({

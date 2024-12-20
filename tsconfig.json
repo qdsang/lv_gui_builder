@@ -15,7 +15,8 @@
       "DOM"
     ],
     "types": [
-      "element-plus/global"
+      "element-plus/global",
+      "node"
     ],
     "skipLibCheck": true,
     // 👆是初始化默认配置

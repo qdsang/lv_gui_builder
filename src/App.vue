@@ -4,6 +4,12 @@
 
 <script setup lang="ts">
 
+import 'element-plus/theme-chalk/dark/css-vars.css'
+import {useDark, useToggle} from '@vueuse/core'
+
+const isDark = useDark()
+isDark.value = true;
+
 </script>
 
 <style>
