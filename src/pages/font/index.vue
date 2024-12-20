@@ -67,6 +67,7 @@
         <el-form-item label="输出格式">
           <el-select v-model="fontSettings.format">
             <el-option label="LVGL C文件" value="lvgl"/>
+            <el-option label="LVGL Python文件" value="python"/>
             <el-option label="二进制文件" value="bin"/>
           </el-select>
         </el-form-item>
@@ -102,10 +103,12 @@ import { ElMessage } from 'element-plus'
 import FontCollectData from 'lv_font_conv/lib/collect_font_data'
 import FontWriterBin from 'lv_font_conv/lib/writers/bin'
 import FontWriterLvgl from 'lv_font_conv/lib/writers/lvgl'
+import FontWriterPython from './writers/python'
 
 let writers = {
   bin: FontWriterBin,
-  lvgl: FontWriterLvgl
+  lvgl: FontWriterLvgl,
+  python: FontWriterPython
 };
 
 async function FontConvert(args) {
@@ -235,7 +238,10 @@ export default {
           const url = URL.createObjectURL(blob)
           const link = document.createElement('a')
           link.href = url
-          link.download = `font_${font_name}_${fontSettings.size}px.${fontSettings.format === 'lvgl' ? 'c' : 'bin'}`
+          link.download = `font_${font_name}_${fontSettings.size}px.${
+            fontSettings.format === 'lvgl' ? 'c' : 
+            fontSettings.format === 'python' ? 'py' : 'bin'
+          }`
           link.click()
           URL.revokeObjectURL(url)
         }

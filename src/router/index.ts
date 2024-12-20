@@ -21,6 +21,10 @@ const routes: Array<RouteRecordRaw> = [
     path: '/lv/font',
     component: () => import('@/pages/font/index.vue'),
   },
+  {
+    path: '/lv/simulator',
+    component: () => import('@/pages/simulator/index.vue'),
+  },
 ];
 
 const router = createRouter({
