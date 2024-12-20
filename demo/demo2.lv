@@ -4,327 +4,326 @@
   "description": "LVGL GUI Builder Demo Project",
   "version": "1.0.0",
   "versionCode": 1,
+  "author": "Qdsang",
   "components": {
-    "pool": {
-      "screen": {
-        "parent": "",
-        "id": "screen",
-        "type": "screen",
-        "zindex": 0,
-        "cb": false,
-        "attributes": [
-          "x",
-          "y",
-          "width",
-          "height"
-        ],
-        "apis": [],
-        "styles": [
-          "MAIN.bg_color"
-        ],
-        "data": {
-          "width": 800,
-          "height": 480,
-          "x": "0",
-          "y": "0",
-          "MAIN.bg_img_src": "",
-          "MAIN.bg_color": "#000000"
-        }
-      },
-      "obj_3": {
-        "parent": "screen",
-        "id": "obj_3",
-        "type": "obj",
-        "zindex": 0,
-        "cb": false,
-        "attributes": [
-          "x",
-          "y",
-          "width",
-          "height"
-        ],
-        "apis": [],
-        "styles": [
-          "MAIN.radius",
-          "MAIN.bg_color",
-          "MAIN.border_width"
-        ],
-        "data": {
-          "y": 30,
-          "x": 190,
-          "height": 420,
-          "width": 420,
-          "MAIN.arc_rounded": "False",
-          "MAIN.radius": "333",
-          "MAIN.bg_color": "#605F5F",
-          "MAIN.border_width": "0"
-        }
-      },
-      "arc_0": {
-        "parent": "screen",
-        "id": "arc_0",
-        "type": "arc",
-        "zindex": 0,
-        "cb": false,
-        "attributes": [
-          "x",
-          "y",
-          "width",
-          "height"
-        ],
-        "apis": [
-          "set_start_angle",
-          "set_end_angle",
-          "set_bg_start_angle",
-          "set_bg_end_angle",
-          "set_value"
-        ],
-        "styles": [
-          "INDICATOR.arc_width",
-          "INDICATOR.text_font",
-          "KNOB.bg_opa",
-          "INDICATOR.arc_rounded",
-          "MAIN.arc_width",
-          "INDICATOR.arc_color",
-          "MAIN.arc_rounded",
-          "MAIN.arc_color"
-        ],
-        "data": {
-          "y": 40,
-          "x": 200,
-          "height": 400,
-          "width": 400,
-          "set_start_angle": "135",
-          "set_end_angle": "45",
-          "set_bg_start_angle": "135",
-          "set_bg_end_angle": "45",
-          "set_value": "60",
-          "INDICATOR.arc_img_src": "",
-          "INDICATOR.arc_width": "22",
-          "INDICATOR.text_font": "lv.font_montserrat_16",
-          "KNOB.bg_opa": "0",
-          "INDICATOR.arc_rounded": "False",
-          "MAIN.bg_opa": "",
-          "MAIN.arc_width": "22",
-          "INDICATOR.arc_color": "#589EF8",
-          "MAIN.arc_rounded": "False",
-          "MAIN.arc_color": "#E3E3E3"
-        }
-      },
-      "label_speed": {
-        "parent": "screen",
-        "id": "label_speed",
-        "type": "label",
-        "zindex": 0,
-        "cb": false,
-        "attributes": [
-          "x",
-          "y",
-          "width",
-          "height"
-        ],
-        "apis": [
-          "set_text"
-        ],
-        "styles": [
-          "MAIN.text_font",
-          "MAIN.text_color"
-        ],
-        "data": {
-          "y": 223,
-          "x": 345,
-          "height": 30,
-          "width": 100,
-          "set_text": "\"100KM/H\"",
-          "MAIN.text_font": "lv.font_montserrat_16",
-          "MAIN.text_color": "#FFFFFF"
-        }
-      },
-      "label_soc": {
-        "parent": "screen",
-        "id": "label_soc",
-        "type": "label",
-        "zindex": 0,
-        "cb": false,
-        "attributes": [
-          "x",
-          "y",
-          "width",
-          "height"
-        ],
-        "apis": [
-          "set_text"
-        ],
-        "styles": [
-          "MAIN.text_color",
-          "MAIN.text_font"
-        ],
-        "data": {
-          "y": 439,
-          "x": 287,
-          "height": 40,
-          "width": 100,
-          "MAIN.text_color": "#FFFFFF",
-          "MAIN.text_font": "lv.font_montserrat_16",
-          "set_text": "\"99%\""
-        }
-      },
-      "label_kw": {
-        "parent": "screen",
-        "id": "label_kw",
-        "type": "label",
-        "zindex": 0,
-        "cb": false,
-        "attributes": [
-          "x",
-          "y",
-          "width",
-          "height"
-        ],
-        "apis": [
-          "set_text"
-        ],
-        "styles": [
-          "MAIN.text_color",
-          "MAIN.text_font"
-        ],
-        "data": {
-          "y": 442,
-          "x": 465,
-          "height": 40,
-          "width": 100,
-          "MAIN.text_color": "#FFFFFF",
-          "MAIN.text_font": "lv.font_montserrat_16",
-          "set_text": "\"99.9KW\""
-        }
-      },
-      "label_c": {
-        "parent": "screen",
-        "id": "label_c",
-        "type": "label",
-        "zindex": 0,
-        "cb": false,
-        "attributes": [
-          "x",
-          "y",
-          "width",
-          "height"
-        ],
-        "apis": [
-          "set_text"
-        ],
-        "styles": [
-          "MAIN.text_color",
-          "MAIN.text_font"
-        ],
-        "data": {
-          "y": 56,
-          "x": 183,
-          "height": 26,
-          "width": 48,
-          "MAIN.text_color": "#FFFFFF",
-          "MAIN.text_font": "lv.font_montserrat_16",
-          "set_text": "\"36.6°\""
-        }
-      },
-      "arc_right": {
-        "parent": "screen",
-        "id": "arc_right",
-        "type": "arc",
-        "zindex": 0,
-        "cb": false,
-        "attributes": [
-          "x",
-          "y",
-          "width",
-          "height"
-        ],
-        "apis": [
-          "set_start_angle",
-          "set_end_angle",
-          "set_bg_start_angle",
-          "set_bg_end_angle",
-          "set_value",
-          "set_mode"
-        ],
-        "styles": [
-          "KNOB.bg_opa",
-          "MAIN.arc_rounded",
-          "MAIN.arc_width",
-          "MAIN.arc_color",
-          "INDICATOR.arc_rounded",
-          "INDICATOR.arc_width",
-          "INDICATOR.arc_color"
-        ],
-        "data": {
-          "y": 20,
-          "x": 190,
-          "height": 460,
-          "width": 460,
-          "set_start_angle": "30",
-          "set_end_angle": "60",
-          "KNOB.bg_opa": "0",
-          "set_bg_start_angle": "30",
-          "set_bg_end_angle": "60",
-          "set_value": "60",
-          "MAIN.arc_rounded": "False",
-          "MAIN.arc_width": "22",
-          "MAIN.arc_color": "#316131",
-          "INDICATOR.arc_rounded": "False",
-          "INDICATOR.arc_width": "22",
-          "INDICATOR.arc_color": "#65C266",
-          "set_range": ",",
-          "set_mode": "2"
-        }
-      },
-      "arc_left": {
-        "parent": "screen",
-        "id": "arc_left",
-        "type": "arc",
-        "zindex": 0,
-        "cb": false,
-        "attributes": [
-          "x",
-          "y",
-          "width",
-          "height"
-        ],
-        "apis": [
-          "set_start_angle",
-          "set_end_angle",
-          "set_bg_start_angle",
-          "set_bg_end_angle",
-          "set_value",
-          "set_mode"
-        ],
-        "styles": [
-          "KNOB.bg_opa",
-          "MAIN.arc_rounded",
-          "MAIN.arc_width",
-          "MAIN.arc_color",
-          "INDICATOR.arc_rounded",
-          "INDICATOR.arc_width",
-          "INDICATOR.arc_color"
-        ],
-        "data": {
-          "y": 20,
-          "x": 150,
-          "height": 460,
-          "width": 460,
-          "set_start_angle": "120",
-          "set_end_angle": "150",
-          "KNOB.bg_opa": "0",
-          "set_bg_start_angle": "120",
-          "set_bg_end_angle": "150",
-          "set_value": "80",
-          "MAIN.arc_rounded": "False",
-          "MAIN.arc_width": "22",
-          "MAIN.arc_color": "#316131",
-          "INDICATOR.arc_rounded": "False",
-          "INDICATOR.arc_width": "22",
-          "INDICATOR.arc_color": "#65C266",
-          "set_mode": "0"
-        }
+    "screen": {
+      "parent": "",
+      "id": "screen",
+      "type": "screen",
+      "zindex": 0,
+      "cb": false,
+      "attributes": [
+        "x",
+        "y",
+        "width",
+        "height"
+      ],
+      "apis": [],
+      "styles": [
+        "MAIN.bg_color"
+      ],
+      "data": {
+        "width": 800,
+        "height": 480,
+        "x": "0",
+        "y": "0",
+        "MAIN.bg_img_src": "",
+        "MAIN.bg_color": "#000000"
+      }
+    },
+    "obj_3": {
+      "parent": "screen",
+      "id": "obj_3",
+      "type": "obj",
+      "zindex": 3,
+      "cb": false,
+      "attributes": [
+        "x",
+        "y",
+        "width",
+        "height"
+      ],
+      "apis": [],
+      "styles": [
+        "MAIN.radius",
+        "MAIN.bg_color",
+        "MAIN.border_width"
+      ],
+      "data": {
+        "y": 30,
+        "x": 190,
+        "height": 420,
+        "width": 420,
+        "MAIN.arc_rounded": "False",
+        "MAIN.radius": "333",
+        "MAIN.bg_color": "#605F5F",
+        "MAIN.border_width": "0"
+      }
+    },
+    "arc_0": {
+      "parent": "screen",
+      "id": "arc_0",
+      "type": "arc",
+      "zindex": 4,
+      "cb": false,
+      "attributes": [
+        "x",
+        "y",
+        "width",
+        "height"
+      ],
+      "apis": [
+        "set_start_angle",
+        "set_end_angle",
+        "set_bg_start_angle",
+        "set_bg_end_angle",
+        "set_value"
+      ],
+      "styles": [
+        "INDICATOR.arc_width",
+        "INDICATOR.text_font",
+        "KNOB.bg_opa",
+        "INDICATOR.arc_rounded",
+        "MAIN.arc_width",
+        "INDICATOR.arc_color",
+        "MAIN.arc_rounded",
+        "MAIN.arc_color"
+      ],
+      "data": {
+        "y": 40,
+        "x": 200,
+        "height": 400,
+        "width": 400,
+        "set_start_angle": "135",
+        "set_end_angle": "45",
+        "set_bg_start_angle": "135",
+        "set_bg_end_angle": "45",
+        "set_value": "60",
+        "INDICATOR.arc_img_src": "",
+        "INDICATOR.arc_width": "22",
+        "INDICATOR.text_font": "lv.font_montserrat_16",
+        "KNOB.bg_opa": "0",
+        "INDICATOR.arc_rounded": "False",
+        "MAIN.bg_opa": "",
+        "MAIN.arc_width": "22",
+        "INDICATOR.arc_color": "#589EF8",
+        "MAIN.arc_rounded": "False",
+        "MAIN.arc_color": "#E3E3E3"
+      }
+    },
+    "label_speed": {
+      "parent": "screen",
+      "id": "label_speed",
+      "type": "label",
+      "zindex": 5,
+      "cb": false,
+      "attributes": [
+        "x",
+        "y",
+        "width",
+        "height"
+      ],
+      "apis": [
+        "set_text"
+      ],
+      "styles": [
+        "MAIN.text_font",
+        "MAIN.text_color"
+      ],
+      "data": {
+        "y": 223,
+        "x": 345,
+        "height": 30,
+        "width": 100,
+        "set_text": "\"100KM/H\"",
+        "MAIN.text_font": "lv.font_montserrat_16",
+        "MAIN.text_color": "#FFFFFF"
+      }
+    },
+    "label_soc": {
+      "parent": "screen",
+      "id": "label_soc",
+      "type": "label",
+      "zindex": 6,
+      "cb": false,
+      "attributes": [
+        "x",
+        "y",
+        "width",
+        "height"
+      ],
+      "apis": [
+        "set_text"
+      ],
+      "styles": [
+        "MAIN.text_color",
+        "MAIN.text_font"
+      ],
+      "data": {
+        "y": 439,
+        "x": 287,
+        "height": 40,
+        "width": 100,
+        "MAIN.text_color": "#FFFFFF",
+        "MAIN.text_font": "lv.font_montserrat_16",
+        "set_text": "\"99%\""
+      }
+    },
+    "label_kw": {
+      "parent": "screen",
+      "id": "label_kw",
+      "type": "label",
+      "zindex": 7,
+      "cb": false,
+      "attributes": [
+        "x",
+        "y",
+        "width",
+        "height"
+      ],
+      "apis": [
+        "set_text"
+      ],
+      "styles": [
+        "MAIN.text_color",
+        "MAIN.text_font"
+      ],
+      "data": {
+        "y": 442,
+        "x": 465,
+        "height": 40,
+        "width": 100,
+        "MAIN.text_color": "#FFFFFF",
+        "MAIN.text_font": "lv.font_montserrat_16",
+        "set_text": "\"99.9KW\""
+      }
+    },
+    "label_c": {
+      "parent": "screen",
+      "id": "label_c",
+      "type": "label",
+      "zindex": 8,
+      "cb": false,
+      "attributes": [
+        "x",
+        "y",
+        "width",
+        "height"
+      ],
+      "apis": [
+        "set_text"
+      ],
+      "styles": [
+        "MAIN.text_color",
+        "MAIN.text_font"
+      ],
+      "data": {
+        "y": 56,
+        "x": 183,
+        "height": 26,
+        "width": 48,
+        "MAIN.text_color": "#FFFFFF",
+        "MAIN.text_font": "lv.font_montserrat_16",
+        "set_text": "\"36.6°\""
+      }
+    },
+    "arc_right": {
+      "parent": "screen",
+      "id": "arc_right",
+      "type": "arc",
+      "zindex": 2,
+      "cb": false,
+      "attributes": [
+        "x",
+        "y",
+        "width",
+        "height"
+      ],
+      "apis": [
+        "set_start_angle",
+        "set_end_angle",
+        "set_bg_start_angle",
+        "set_bg_end_angle",
+        "set_value",
+        "set_mode"
+      ],
+      "styles": [
+        "KNOB.bg_opa",
+        "MAIN.arc_rounded",
+        "MAIN.arc_width",
+        "MAIN.arc_color",
+        "INDICATOR.arc_rounded",
+        "INDICATOR.arc_width",
+        "INDICATOR.arc_color"
+      ],
+      "data": {
+        "y": 20,
+        "x": 190,
+        "height": 460,
+        "width": 460,
+        "set_start_angle": "30",
+        "set_end_angle": "60",
+        "KNOB.bg_opa": "0",
+        "set_bg_start_angle": "30",
+        "set_bg_end_angle": "60",
+        "set_value": "60",
+        "MAIN.arc_rounded": "False",
+        "MAIN.arc_width": "22",
+        "MAIN.arc_color": "#316131",
+        "INDICATOR.arc_rounded": "False",
+        "INDICATOR.arc_width": "22",
+        "INDICATOR.arc_color": "#65C266",
+        "set_range": ",",
+        "set_mode": "2"
+      }
+    },
+    "arc_left": {
+      "parent": "screen",
+      "id": "arc_left",
+      "type": "arc",
+      "zindex": 1,
+      "cb": false,
+      "attributes": [
+        "x",
+        "y",
+        "width",
+        "height"
+      ],
+      "apis": [
+        "set_start_angle",
+        "set_end_angle",
+        "set_bg_start_angle",
+        "set_bg_end_angle",
+        "set_value",
+        "set_mode"
+      ],
+      "styles": [
+        "KNOB.bg_opa",
+        "MAIN.arc_rounded",
+        "MAIN.arc_width",
+        "MAIN.arc_color",
+        "INDICATOR.arc_rounded",
+        "INDICATOR.arc_width",
+        "INDICATOR.arc_color"
+      ],
+      "data": {
+        "y": 20,
+        "x": 150,
+        "height": 460,
+        "width": 460,
+        "set_start_angle": "120",
+        "set_end_angle": "150",
+        "KNOB.bg_opa": "0",
+        "set_bg_start_angle": "120",
+        "set_bg_end_angle": "150",
+        "set_value": "80",
+        "MAIN.arc_rounded": "False",
+        "MAIN.arc_width": "22",
+        "MAIN.arc_color": "#316131",
+        "INDICATOR.arc_rounded": "False",
+        "INDICATOR.arc_width": "22",
+        "INDICATOR.arc_color": "#65C266",
+        "set_mode": "0"
       }
     }
   },
@@ -486,6 +485,5 @@
       "colorDepth": 16,
       "defaultFont": "montserrat_16"
     }
-  },
-  "author": "Qdsang"
+  }
 }

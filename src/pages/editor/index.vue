@@ -96,20 +96,19 @@
           </el-tab-pane>
         </el-tabs>
 
-        <div style="margin: 18px">
+        <div style="margin: 10px">
           <i class="el-icon-monitor">REPL Terminal</i>
           <el-switch v-model="term_visible"></el-switch>
           <el-button icon="el-icon-refresh" circle @click="refreshTerm"></el-button>
-          <i style="float: right"
-            >X: {{ cursorX }}, Y: {{ cursorY }}
+          <i style="float: right">X: {{ cursorX }}, Y: {{ cursorY }} &nbsp;
             <el-tooltip :value="editScreenSize" manual effect="light" placement="top">
-              <template #content><div slot="content" style="color: red">* 更改分辨率会重新加载页面</div></template>
+              <template #content><div slot="content" style="color: red">* Changing the resolution will reload the page</div></template>
               <div style="display: inline-block">
                 Size:
                 <el-input
                   :disabled="!editScreenSize"
                   v-model.number="screenWidth"
-                  style="width: 85px !important"
+                  style="width: 50px"
                   size="small"
                   type="text"
                 ></el-input>
@@ -117,13 +116,14 @@
                 <el-input
                   :disabled="!editScreenSize"
                   v-model.number="screenHeight"
-                  style="width: 85px !important"
+                  style="width: 55px"
                   size="small"
                   type="text"
                 ></el-input>
               </div>
             </el-tooltip>
             <el-button
+              style="margin-left: 10px"
               v-show="editScreenSize"
               icon="el-icon-close"
               circle
@@ -140,10 +140,10 @@
           </i>
         </div>
 
-        <creator-term ref="term" :style="{ visibility: term_visible ? 'visible' : 'hidden' }"></creator-term>
+        <creator-term ref="term" :style="{ visibility: term_visible ? 'visible' : 'hidden' }" style="padding: 0 16px;"></creator-term>
       </template>
       <template #right>
-        <el-tabs type="border-card" model-value="args" class="tab-full" style="height: 100%;">
+        <el-tabs type="border-card" model-value="args" class="tab-full">
           <el-tab-pane label="Attr" name="args">
             <creator-attribute :id="selectNodeId" @change-id="handleChangeID"
             @change="handleSetterChange"></creator-attribute>
@@ -188,9 +188,10 @@
     wrap_show, wrap_hide, wrap_set_index,
     wrap_style_setter_v2,
     wrap_attr_setter_v2,
-    wrap_simple_setter,
     wrap_timeline_load,
     wrap_timeline_stop_all,
+
+    wrap_font_load,
   } from './runtimeWrapper.js';
   import { python_generator, c_generator } from './runtimeCompiler.js';
 
@@ -267,15 +268,31 @@
         projectConfig: null,
           
         shortcuts: {
-          // ... existing shortcuts ...
-          'arrowleft': this.handleMove('left', -1),
-          'arrowright': this.handleMove('right', 1),
-          'arrowup': this.handleMove('up', -1),
-          'arrowdown': this.handleMove('down', 1),
-          'shift+arrowleft': this.handleMove('left', -4),
-          'shift+arrowright': this.handleMove('right', 4),
-          'shift+arrowup': this.handleMove('up', -4),
-          'shift+arrowdown': this.handleMove('down', 4),
+          
+          'arrowleft': () => this.handleMove('left', -1),
+          'arrowright': () => this.handleMove('right', 1),
+          'arrowup': () => this.handleMove('up', -1),
+          'arrowdown': () => this.handleMove('down', 1),
+          'shift+arrowleft': () => this.handleMove('left', -4),
+          'shift+arrowright': () => this.handleMove('right', 4),
+          'shift+arrowup': () => this.handleMove('up', -4),
+          'shift+arrowdown': () => this.handleMove('down', 4),
+
+          'ctrl+g': this.handleGenerateCode,
+          'meta+g': this.handleGenerateCode,
+          'ctrl+s': this.savePage,
+          'meta+s': this.savePage,
+          'ctrl+z': this.handleUndo,
+          'ctrl+y': this.handleRedo,
+          'ctrl+c': () => this.handleEvent('copy'),
+          'ctrl+v': () => this.handleEvent('paste'),
+          'ctrl+x': () => this.handleEvent('cut'),
+          'meta+c': () => this.handleEvent('copy'),
+          'meta+v': () => this.handleEvent('paste'),
+          'meta+x': () => this.handleEvent('cut'),
+          'delete': () => this.handleEvent('delete'),
+          'backspace': () => this.handleEvent('delete'),
+          
         },
       };
     },
@@ -330,17 +347,17 @@
 
         this.clearSimulatorWidgets();
         projectStore.initProject(id);
-      },
-      async mpylvInit() {
-        await this.$refs.simulator.initialComplete();
 
         let screen = this.getWidgetById('screen');
         const width = screen.data?.width;
         const height = screen.data?.height;
         this.screenWidth = width;
         this.screenHeight = height;
+      },
+      async mpylvInit() {
+        await this.$refs.simulator.initialComplete();
 
-        this.$refs.simulator.initScreen({width: width, height: height});
+        this.$refs.simulator.initScreen({width: this.screenWidth, height: this.screenHeight});
         this.initWidgets();
       },
       initWidgets() {
@@ -378,6 +395,9 @@
           }
           wrap_timeline_stop_all();
         } catch (error) {
+        }
+        if (this.selectNodeId) {
+          this.activeNode('unknown');
         }
       },
       getWidgetById(id) {
@@ -423,6 +443,10 @@
       refreshTerm: function () {
         this.$refs.term.clear();
       },
+      handleTreeEvent(event, node, data) {
+        console.log('handleTreeEvent', event, node, data);
+        this.handleEvent(event, data, data);
+      },
 
       handleCreator: function (type) {
         let parent_id = this.selectNodeId;
@@ -458,8 +482,8 @@
       },
 
       // Delete node and its childs(reverse)
-      deleteNode: function (node, data) {
-        const id = data.id;
+      deleteNode: function (node) {
+        const id = node.id;
 
         if (id == 'screen' || id == '') {
           this.message({
@@ -485,16 +509,17 @@
         });
       },
 
-      handleTreeEvent(event, node, data) {
-        let id = data ? data.id : '';
-        // console.log('handleTreeEvent', event, id, data);
+      handleEvent(event, widget, data) {
+        let id = widget ? widget.id : this.selectNodeId;
+        widget = this.getWidgetById(id);
         if (event == 'delete') {
-          this.deleteNode(node, data);
-        } else if (event == 'copy') {
+          this.deleteNode(widget);
+        } else if (event == 'copy' || event == 'paste') {
           let info = this.getWidgetById(id);
           let widget2 = this.copyWidget(info);
-          console.log('copy', node, data, info, widget2);
+          console.log('copy', info, widget2);
         } else if (event == 'show') {
+          wrap_font_load();
           data.show = true;
           let list = projectStore.getWidgetChildrenList(id, true);
           for (const child of list) {
@@ -514,6 +539,22 @@
             wrap_set_index(item.id, item.zindex);
           }
         }
+      },
+      handleMove(direction, speed = 1) {
+        let widget = this.getWidgetById(this.selectNodeId);
+        if (widget.type == 'screen') {
+          return;
+        }
+        let id = widget.id;
+        if (direction == 'left' || direction == 'right') {
+          widget.data.x += speed;
+        } else if (direction == 'up' || direction == 'down') {
+          widget.data.y += speed;
+        }
+
+        wrap_attr_setter_v2(widget);
+        this.activeNode(id);
+        // console.log('move', widget, direction, speed);
       },
       activeNode: function (id = 'screen') {
         let info = this.getWidgetById(id);
@@ -564,6 +605,7 @@
 
       // Generate the code and print them to the editor.
       generateCode: async function () {
+        this.activeTab = 'code';
         let preview_code = '';
         let screen = {
           info: projectStore.getComponents(),
@@ -578,7 +620,6 @@
         }
         
         await this.$refs.editor.setValue(preview_code);
-        this.activeTab = 'code';
         this.message({
           message: 'Generate code successfully',
           type: 'success'
@@ -689,28 +730,6 @@
           ...msg
         });
       },
-      handleMove(direction, speed = 1) {
-        let that = this;
-        function move() {
-          let widget = that.getWidgetById(that.selectNodeId);
-          if (widget.type == 'screen') {
-            return;
-          }
-          let id = widget.id;
-          if (direction == 'left' || direction == 'right') {
-            widget.data.x += speed;
-            // wrap_simple_setter(id, 'x', widget.data.x);
-          } else if (direction == 'up' || direction == 'down') {
-            widget.data.y += speed;
-            // wrap_simple_setter(id, 'y', widget.data.y);
-          }
-
-          wrap_attr_setter_v2(widget);
-          that.activeNode(id);
-          console.log('move', widget, direction, speed);
-        }
-        return move;
-      },
       // 修改原有的 handleKeyDown 方法，增加对输入框的判断
       handleKeyDown(event) {
         // 如果焦点在输入框、文本框等元素上，不处理快捷键
@@ -726,6 +745,8 @@
         if (handler) {
           event.preventDefault(); // 阻止默认行为
           handler();
+        } else {
+          console.log('no handler', key);
         }
       },
 
@@ -748,6 +769,7 @@
         if (event.ctrlKey) keys.push('ctrl');
         if (event.shiftKey) keys.push('shift');
         if (event.altKey) keys.push('alt');
+        if (event.metaKey) keys.push('meta');
         
         // 处理特殊键
         const keyMap = {
@@ -888,10 +910,14 @@
   display: flex;
   flex-flow: column;
   height: 100%;
+  border: none;
 
   .el-tabs__content {
     flex: 1;
     overflow: scroll;
+  }
+  .el-tabs__content {
+    padding: 8px;
   }
 }
 </style>

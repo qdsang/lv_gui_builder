@@ -31,7 +31,7 @@
           <el-col :span="2"><strong>X:</strong></el-col>
           <el-col :span="10">
             <el-input
-              placeholder="X"
+              placeholder="px"
               v-model="currentWidget.x"
               v-on:input="bindWidgetNumerical('x')"
             ></el-input>
@@ -39,7 +39,7 @@
           <el-col :span="2"><strong>Y:</strong></el-col>
           <el-col :span="10">
             <el-input
-              placeholder="Y"
+              placeholder="px"
               v-model="currentWidget.y"
               v-on:input="bindWidgetNumerical('y')"
             ></el-input>
@@ -52,7 +52,7 @@
           <el-col :span="2"><strong>W:</strong></el-col>
           <el-col :span="10">
             <el-input
-              placeholder="Width"
+              placeholder="px"
               v-model="currentWidget.width"
               v-on:input="bindWidgetNumerical('width')"
             ></el-input>
@@ -60,7 +60,7 @@
           <el-col :span="2"><strong>H:</strong></el-col>
           <el-col :span="10">
             <el-input
-              placeholder="Height"
+              placeholder="px"
               v-model="currentWidget.height"
               v-on:input="bindWidgetNumerical('height')"
             ></el-input>
@@ -86,31 +86,31 @@
           </el-col>												
         </el-row>
       </el-form-item> -->
+    </el-form>
 
-      <el-divider></el-divider>
+    <el-divider style="margin: 10px 0"></el-divider>
 
-      <!-- method area -->
-      <div style="">
-        <div v-for="(body, name) in setter[currentType]" :key="name">
-          <lvgl-attr-setter2
-            :id="id"
-            :mode="'apis'"
-            :name="name"
-            :body="body"
-            @change="handleSetterChange"
-          >
-          </lvgl-attr-setter2>
-        </div>
-      </div>
-
-      <div style="padding-left: 10px">
-        <lvgl-style-setter2
+    <!-- method area -->
+    <div style="padding: 0 0 10px;">
+      <div v-for="(body, name) in setter[currentType]" :key="name">
+        <lvgl-attr-setter2
           :id="id"
+          :mode="'apis'"
+          :name="name"
+          :body="body"
           @change="handleSetterChange"
         >
-        </lvgl-style-setter2>
+        </lvgl-attr-setter2>
       </div>
-    </el-form>
+    </div>
+
+    <div>
+      <lvgl-style-setter2
+        :id="id"
+        @change="handleSetterChange"
+      >
+      </lvgl-style-setter2>
+    </div>
   </div>
 </template>
 
@@ -118,16 +118,7 @@
 import { reverse_del_node, pool_delete, setArgvs, dispatch_data_changed_event, debounceFun } from './utils.js';
 
 import {
-  wrap_create,
-  wrap_query_attr,
-  wrap_equal,
   wrap_simple_setter,
-  wrap_delete,
-  wrap_setter_str,
-  wrap_attributes_setter_str,
-  wrap_style_setter_str,
-  wrap_style_setter_v2,
-  wrap_apis_setter_str,
 } from './runtimeWrapper.js';
 
 import * as api from './widgetApis.js';

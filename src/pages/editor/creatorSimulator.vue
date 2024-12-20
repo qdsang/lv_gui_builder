@@ -22,7 +22,7 @@
       <div draggable="false" class="lv-widget-transform-resize lv-widget-transform-cursor-s" data-position="bottom"></div>
       <div draggable="false" class="lv-widget-transform-resize lv-widget-transform-cursor-sw" data-position="bottom-left"></div>
       <div draggable="false" class="lv-widget-transform-resize lv-widget-transform-cursor-w" data-position="left"></div>
-      <div draggable="false" class="lv-widget-transform-rotate"></div>
+      <div draggable="false" class="lv-widget-transform-rotate" data-position="move"></div>
     </div>
   </div>
 </template>
@@ -152,6 +152,9 @@ export default {
       } else if (position == 'left') {
         info.x += deltaX;
         info.width -= deltaX;
+      } else if (position == 'move') {
+        info.x += deltaX;
+        info.y += deltaY;
       }
 
       let eventData = {action: 'frame', id: this.activeInfo.id, data: info };
@@ -423,7 +426,7 @@ export default {
 
 <style lang="less">
 #canvas {
-  border: 2px grey solid;
+  border: 1px grey solid;
   border-radius: 2px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);
 }

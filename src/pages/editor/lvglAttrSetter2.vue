@@ -1,6 +1,6 @@
 <template>
   <div style="padding: 0 0 2px;">
-    {{ body.desc || body.api || name }} 
+    {{ getTitle() }} 
     <el-row>
       <el-col :span="2">
         <input
@@ -165,6 +165,11 @@ export default {
       }
 
       this.imageLibrary = WidgetData.imageLibraryOption();
+    },
+    getTitle: function () {
+      let title = this.body.desc || this.body.api || this.name;
+      title = title.replace('set_', '').replace(/_/g, ' ');
+      return title;
     },
     handleCheck: function () {
       let attrKey = this.body.api;

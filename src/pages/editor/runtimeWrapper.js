@@ -238,3 +238,25 @@ export const wrap_timeline_progress = (id, v) => {
     code.push(`lv.anim_timeline_set_progress(${timelineid}, ${v})`);
     mp_js_do_str(code.join('\n'));
 }
+
+export const wrap_font_load = (font) => {
+    mp_js_do_str(`
+print('load font')
+# 创建字体信息结构体
+dd = dir(lv)
+for i in dd:
+    if "font" in i:
+        print(i)
+ft_info = lv.ft_info_t()
+
+# 设置字体信息
+ft_info.name = "my_font"                    # 字体名称
+ft_info.weight = 400                        # 字重 (normal = 400)
+ft_info.style = lv.FT_FONT_STYLE.NORMAL    # 字体样式
+ft_info.mem_size = 4096                     # 缓存大小（字节）
+ft_info.path = "/path/to/your/font.ttf"    # 字体文件路径
+
+# 创建字体对象
+font = lv.ft_create_font(ft_info, 24)      # 24是字体大小（px）
+`);
+}

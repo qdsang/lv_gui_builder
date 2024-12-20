@@ -158,7 +158,7 @@
         </el-table-column>
 
         <!-- 操作列优化 -->
-        <el-table-column fixed="right" label="Operations" width="200">
+        <el-table-column fixed="right" label="Operations" width="260">
           <template #default="props">
             <div class="operation-buttons">
               <el-button 
@@ -362,6 +362,10 @@ export default {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
+    .el-button {
+      margin: 0;
+      padding: 4px 8px;
+    }
   }
 }
 </style>

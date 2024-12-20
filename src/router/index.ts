@@ -3,6 +3,10 @@ import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
+    redirect: '/lv/editor/demo1',
+  },
+  {
+    path: '/home',
     component: () => import('@/pages/home.vue'),
   },
   {

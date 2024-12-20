@@ -14,7 +14,6 @@ class ProjectStore {
       "versionCode": 1,
       "author": "",
       components: {
-        pool: {},
       },
       animations: {
         timelines: [],
@@ -84,23 +83,23 @@ class ProjectStore {
   }
 
   componentCheck() {
-    let pool = this.projectData.components.pool;
+    let pool = this.projectData.components;
     if (!pool['screen']) {
       this.createWidget({ id: 'screen', type: 'screen', data: { x: 0, y: 0, width: 480, height: 480 } });
     }
   }
 
   getComponents() {
-    return this.projectData.components.pool;
+    return this.projectData.components;
   }
 
   getWidgetById(id) {
-    return this.projectData.components.pool[id];
+    return this.projectData.components[id];
   }
 
   makeWidgetId(widget) {
-    let widgetNum = parseInt((widget.id || '_0').split('_')[1], 10);
-    while (this.projectData.components.pool[widget.type + '_' + widgetNum.toString(10)]) {
+    let widgetNum = parseInt((widget.id || '_1').split('_')[1], 10) || 1;
+    while (this.projectData.components[widget.type + '_' + widgetNum.toString(10)]) {
       widgetNum++;
     }
     return widget.type + '_' + widgetNum.toString(10);
@@ -121,7 +120,7 @@ class ProjectStore {
       data: {},
       ...widget
     };
-    this.projectData.components.pool[widgetInfo.id] = widgetInfo;
+    this.projectData.components[widgetInfo.id] = widgetInfo;
 
     this.updateTree();
     return widgetInfo;
@@ -129,8 +128,9 @@ class ProjectStore {
 
   copyWidget(widget) {
     let id = this.makeWidgetId(widget);
-    let widgetWithId = { ...widget, id };
-    this.projectData.components.pool[id] = widgetWithId;
+    let widget2 = JSON.parse(JSON.stringify(widget));
+    let widgetWithId = { ...widget2, id };
+    this.projectData.components[id] = widgetWithId;
     
     this.updateTree();
     return widgetWithId;
@@ -138,13 +138,13 @@ class ProjectStore {
 
   changeWidgetId(widget, id) {
     let widgetWithId = { ...widget, id };
-    delete this.projectData.components.pool[widget.id];
-    this.projectData.components.pool[id] = widgetWithId;
+    delete this.projectData.components[widget.id];
+    this.projectData.components[id] = widgetWithId;
     this.updateTree();
   }
 
   getWidgetChildrenList(id, self = true) {
-    let pool = this.projectData.components.pool;
+    let pool = this.projectData.components;
     let dlist = [];
     if (self) {
       dlist.push(pool[id]);
@@ -161,7 +161,7 @@ class ProjectStore {
   deleteWidget(widget) {
     let dlist = this.getWidgetChildrenList(widget.id, true);
     for (const child of dlist) {
-      delete this.projectData.components.pool[child.id];
+      delete this.projectData.components[child.id];
     }
     this.updateTree();
     return dlist;
@@ -173,7 +173,7 @@ class ProjectStore {
     const trees = [];
     
     // 第一步：创建所有节点
-    for (const widget of Object.values(this.projectData.components.pool)) {
+    for (const widget of Object.values(this.projectData.components)) {
       const node = {
         id: widget.id,
         label: widget.id,
@@ -187,7 +187,7 @@ class ProjectStore {
     }
     
     // 第二步：构建树形结构
-    for (const widget of Object.values(this.projectData.components.pool)) {
+    for (const widget of Object.values(this.projectData.components)) {
       const node = nodeMap.get(widget.id);
       
       if (widget.parent && nodeMap.has(widget.parent)) {
@@ -201,10 +201,13 @@ class ProjectStore {
     }
 
     // 排序
-    for (const node of Object.entries(nodeMap)) {
-      node.children.sort((a, b) => a.zindex - b.zindex);
+    function sortChildren(nodes) {
+      nodes.sort((a, b) => a.zindex - b.zindex);
+      for (const node of nodes) {
+        sortChildren(node.children);
+      }
     }
-    trees.sort((a, b) => a.zindex - b.zindex);
+    sortChildren(trees);
 
     this.componentTree.splice(0, this.componentTree.length);
     this.componentTree.push(...trees);
@@ -214,23 +217,25 @@ class ProjectStore {
   updateWidgetTreeIndex() {
     let change = [];
     let tree = this.componentTree;
-    let pool = this.projectData.components.pool;
+    let pool = this.projectData.components;
     let index = 0;
-    function updateIndex(node, zindex) {
+    function updateIndex(node, parent, zindex) {
       if (node.zindex != zindex) {
         change.push({id: node.id, zindex: zindex });
       }
       node.zindex = zindex;
       pool[node.id].zindex = zindex;
+      pool[node.id].parent = parent;
 
       for (const child of node.children) {
-        updateIndex(child, index++);
+        updateIndex(child, node.id, index++);
       }
     }
     for (const node of tree) {
-      updateIndex(node, index++);
+      updateIndex(node, '', index++);
     }
-    console.log('updateWidgetTreeIndex', change, tree);
+    console.log('updateWidgetTreeIndex', change, tree, pool);
+    // this.updateTree();
     return change;
   }
 

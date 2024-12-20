@@ -1,7 +1,7 @@
 <template>
   <el-container class="main-container">
     <div class="aside-wrapper left" :class="{ 'is-collapsed': leftCollapsed }">
-      <el-aside :width="leftWidth + 'px'" class="resizable-aside">
+      <el-aside :width="leftWidth + 'px'" class="resizable-aside resizable-aside-left">
         <slot name="left"></slot>
       </el-aside>
       <div class="resize-handle left" 
@@ -27,7 +27,7 @@
       <div class="resize-handle right" 
         @mousedown="startResize($event, 'right')"
       ></div>
-      <el-aside :width="rightWidth + 'px'" class="resizable-aside">
+      <el-aside :width="rightWidth + 'px'" class="resizable-aside resizable-aside-right">
         <slot name="right"></slot>
       </el-aside>
     </div>
@@ -62,9 +62,11 @@ export default {
       const handleMouseMove = (e) => {
         const delta = e.clientX - startX;
         if (side === 'left') {
+          this.leftCollapsed = false;
           const newWidth = startWidth + delta;
           this.leftWidth = Math.max(100, Math.min(newWidth, 600)); // 限制最小/最大宽度
         } else {
+          this.rightCollapsed = false;
           const newWidth = startWidth - delta;
           this.rightWidth = Math.max(100, Math.min(newWidth, 600));
         }
@@ -112,13 +114,14 @@ export default {
 
 .main-container {
   position: relative;
-  height: 100%;
+  height: calc(100% - 60px);
 }
 
 .aside-wrapper {
   position: relative;
   height: 100%;
   transition: transform 0.1s;
+  z-index: 1;
 
   &.left {
     &.is-collapsed {
@@ -126,6 +129,7 @@ export default {
       
       .collapse-handle {
         transform: translateX(100%);
+        right: 0;
       }
     }
   }
@@ -136,6 +140,7 @@ export default {
       
       .collapse-handle {
         transform: translateX(-100%);
+        left: 0;
       }
     }
   }
@@ -165,10 +170,13 @@ export default {
 
 .resizable-aside {
   height: 100%;
-  overflow: hidden;
+  overflow: scroll;
   background: var(--el-bg-color-overlay);
   border-right: 1px solid var(--el-border-color-lighter);
   transition: width 0.1s;
+}
+.resizable-aside-right {
+  border-left: 1px solid var(--el-border-color);
 }
 
 .collapse-handle {
