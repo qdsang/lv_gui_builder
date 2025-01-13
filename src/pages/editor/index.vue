@@ -401,6 +401,9 @@
         if (json.action == 'click') {
           this.activeNode();
           return;
+        } else if (json.action == 'create') {
+          this.handleCreator(json.type, json.position);
+          return;
         }
 
         dispatch_data_changed_event();
@@ -441,26 +444,22 @@
         this.handleEvent(event, data, data);
       },
 
-      handleCreator: function (type) {
+      handleCreator: function (type, options) {
         let parent_id = this.selectNodeId;
-        if (parent_id === null) {
-          this.message({
-            message: 'You must choose a widget!',
-            type: 'error',
-          });
-          return;
+        if (parent_id === null || parent_id == '') {
+          this.activeNode('screen');
         }
-        if (parent_id == '') {
-          this.message({
-            message: 'You created a widget invisible',
-            type: 'warning',
-          });
-          return;
+        let data = {};
+        if (options) {
+          data.x = options.x || 0;
+          data.y = options.y || 0;
         }
-        
-        let widget = projectStore.createWidget({ type, parent: parent_id });
+        console.log('handleCreator', type, parent_id, data);
+        let widget = projectStore.createWidget({ type, parent: parent_id, data: data });
 
         wrap_create_v2(widget, false);
+        wrap_attr_setter_v2(widget);
+        wrap_style_setter_v2(widget);
       },
 
       //Parametres are the String type

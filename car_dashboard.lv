@@ -1,0 +1,347 @@
+{
+  "id": "car_dashboard",
+  "name": "Car Dashboard Demo",
+  "description": "LVGL GUI Car Dashboard Demo with Gauges",
+  "version": "1.0.0",
+  "versionCode": 1,
+  "author": "LVGL GUI Builder",
+  "components": {
+    "screen": {
+      "parent": "",
+      "id": "screen",
+      "type": "screen",
+      "zindex": 0,
+      "cb": false,
+      "attributes": ["x", "y", "width", "height"],
+      "apis": [],
+      "styles": [
+        "MAIN.bg_color",
+        "MAIN.bg_opa",
+        "MAIN.bg_img_src"
+      ],
+      "data": {
+        "width": 320,
+        "height": 170,
+        "x": "0",
+        "y": "0",
+        "MAIN.bg_color": "#202020",
+        "MAIN.bg_opa": "255",
+        "MAIN.bg_img_src": "images_bg.png"
+      }
+    },
+    "img_guage_bg": {
+      "parent": "screen",
+      "id": "img_guage_bg", 
+      "type": "img",
+      "zindex": 1,
+      "cb": false,
+      "attributes": ["x", "y", "width", "height"],
+      "apis": ["set_src"],
+      "styles": [],
+      "data": {
+        "x": 11,
+        "y": 54,
+        "width": "LV_SIZE_CONTENT",
+        "height": "LV_SIZE_CONTENT",
+        "set_src": "images_guage_bg.png"
+      }
+    },
+    "slider_speed": {
+      "parent": "screen",
+      "id": "slider_speed",
+      "type": "slider",
+      "zindex": 2,
+      "cb": true,
+      "attributes": ["x", "y", "width", "height"],
+      "apis": ["set_range"],
+      "styles": [
+        "MAIN.radius",
+        "MAIN.bg_color",
+        "MAIN.bg_opa",
+        "INDICATOR.radius",
+        "INDICATOR.bg_color", 
+        "INDICATOR.bg_opa",
+        "INDICATOR.bg_img_src",
+        "KNOB.radius",
+        "KNOB.bg_color",
+        "KNOB.bg_opa"
+      ],
+      "data": {
+        "x": 12,
+        "y": 55,
+        "width": 298,
+        "height": 84,
+        "set_range": "0,200",
+        "MAIN.radius": "0",
+        "MAIN.bg_color": "#FFFFFF",
+        "MAIN.bg_opa": "0",
+        "INDICATOR.radius": "0", 
+        "INDICATOR.bg_color": "#FFFFFF",
+        "INDICATOR.bg_opa": "0",
+        "INDICATOR.bg_img_src": "images_guage_indicator.png",
+        "KNOB.radius": "0",
+        "KNOB.bg_color": "#FFFFFF",
+        "KNOB.bg_opa": "0"
+      }
+    },
+    "roller_mode": {
+      "parent": "screen",
+      "id": "roller_mode",
+      "type": "roller",
+      "zindex": 3,
+      "cb": false,
+      "attributes": ["x", "y", "width", "height"],
+      "apis": ["set_options"],
+      "styles": [
+        "MAIN.text_color",
+        "MAIN.text_opa",
+        "MAIN.text_font",
+        "MAIN.radius",
+        "MAIN.bg_color",
+        "MAIN.bg_opa",
+        "MAIN.border_color",
+        "MAIN.border_opa",
+        "SELECTED.text_color",
+        "SELECTED.text_opa",
+        "SELECTED.text_align",
+        "SELECTED.bg_color",
+        "SELECTED.bg_opa"
+      ],
+      "data": {
+        "x": 122,
+        "y": 67,
+        "width": 59,
+        "height": 23,
+        "set_options": "Eco\nNormal\nSport\nHyper",
+        "MAIN.text_color": "#C4C4C4",
+        "MAIN.text_opa": "255",
+        "MAIN.text_font": "Hollow22",
+        "MAIN.radius": "3",
+        "MAIN.bg_color": "#4A4A4A",
+        "MAIN.bg_opa": "255",
+        "MAIN.border_color": "#000000",
+        "MAIN.border_opa": "0",
+        "SELECTED.text_color": "#CACACA",
+        "SELECTED.text_opa": "255",
+        "SELECTED.text_align": "center",
+        "SELECTED.bg_color": "#FFFFFF",
+        "SELECTED.bg_opa": "0"
+      }
+    },
+    "speed_num10": {
+      "parent": "screen",
+      "id": "speed_num10",
+      "type": "label",
+      "zindex": 4,
+      "cb": false,
+      "attributes": ["x", "y", "width", "height"],
+      "apis": ["set_text"],
+      "styles": [
+        "MAIN.text_color",
+        "MAIN.text_font",
+        "MAIN.text_align",
+        "MAIN.text_opa",
+        "MAIN.bg_opa"
+      ],
+      "data": {
+        "x": 140,
+        "y": 95,
+        "width": 85,
+        "height": 85,
+        "set_text": "0",
+        "MAIN.text_color": "#FFFFFF",
+        "MAIN.text_font": "Hollow85",
+        "MAIN.text_align": "right",
+        "MAIN.text_opa": "255",
+        "MAIN.bg_opa": "0"
+      }
+    },
+    "speed_num1": {
+      "parent": "screen", 
+      "id": "speed_num1",
+      "type": "label",
+      "zindex": 5,
+      "cb": false,
+      "attributes": ["x", "y", "width", "height"],
+      "apis": ["set_text"],
+      "styles": [
+        "MAIN.text_color",
+        "MAIN.text_font",
+        "MAIN.text_align",
+        "MAIN.text_opa",
+        "MAIN.bg_opa"
+      ],
+      "data": {
+        "x": 225,
+        "y": 95,
+        "width": 85,
+        "height": 85,
+        "set_text": "0",
+        "MAIN.text_color": "#FFFFFF",
+        "MAIN.text_font": "Hollow85",
+        "MAIN.text_align": "left",
+        "MAIN.text_opa": "255",
+        "MAIN.bg_opa": "0"
+      }
+    },
+    "speed_unit": {
+      "parent": "screen",
+      "id": "speed_unit",
+      "type": "label",
+      "zindex": 6,
+      "cb": false,
+      "attributes": ["x", "y", "width", "height"],
+      "apis": ["set_text"],
+      "styles": [
+        "MAIN.text_color",
+        "MAIN.text_font",
+        "MAIN.text_align",
+        "MAIN.text_opa",
+        "MAIN.bg_opa"
+      ],
+      "data": {
+        "x": 225,
+        "y": 125,
+        "width": 40,
+        "height": 22,
+        "set_text": "km/h",
+        "MAIN.text_color": "#C4C4C4",
+        "MAIN.text_font": "Hollow22",
+        "MAIN.text_align": "left",
+        "MAIN.text_opa": "255",
+        "MAIN.bg_opa": "0"
+      }
+    },
+    "img_battery": {
+      "parent": "screen",
+      "id": "img_battery",
+      "type": "img",
+      "zindex": 7,
+      "cb": false,
+      "attributes": ["x", "y", "width", "height"],
+      "apis": ["set_src"],
+      "styles": [],
+      "data": {
+        "x": 12,
+        "y": 12,
+        "width": 24,
+        "height": 24,
+        "set_src": "images_battery.png"
+      }
+    },
+    "battery_percent": {
+      "parent": "screen",
+      "id": "battery_percent",
+      "type": "label",
+      "zindex": 8,
+      "cb": false,
+      "attributes": ["x", "y", "width", "height"],
+      "apis": ["set_text"],
+      "styles": [
+        "MAIN.text_color",
+        "MAIN.text_font",
+        "MAIN.text_align",
+        "MAIN.text_opa",
+        "MAIN.bg_opa"
+      ],
+      "data": {
+        "x": 40,
+        "y": 12,
+        "width": 40,
+        "height": 22,
+        "set_text": "100%",
+        "MAIN.text_color": "#C4C4C4",
+        "MAIN.text_font": "Hollow22",
+        "MAIN.text_align": "left",
+        "MAIN.text_opa": "255",
+        "MAIN.bg_opa": "0"
+      }
+    },
+    "img_signal": {
+      "parent": "screen",
+      "id": "img_signal",
+      "type": "img", 
+      "zindex": 9,
+      "cb": false,
+      "attributes": ["x", "y", "width", "height"],
+      "apis": ["set_src"],
+      "styles": [],
+      "data": {
+        "x": 284,
+        "y": 12,
+        "width": 24,
+        "height": 24,
+        "set_src": "images_signal.png"
+      }
+    },
+    "time": {
+      "parent": "screen",
+      "id": "time",
+      "type": "label",
+      "zindex": 10,
+      "cb": false, 
+      "attributes": ["x", "y", "width", "height"],
+      "apis": ["set_text"],
+      "styles": [
+        "MAIN.text_color",
+        "MAIN.text_font",
+        "MAIN.text_align",
+        "MAIN.text_opa",
+        "MAIN.bg_opa"
+      ],
+      "data": {
+        "x": 230,
+        "y": 12,
+        "width": 50,
+        "height": 22,
+        "set_text": "12:00",
+        "MAIN.text_color": "#C4C4C4",
+        "MAIN.text_font": "Hollow22",
+        "MAIN.text_align": "right",
+        "MAIN.text_opa": "255",
+        "MAIN.bg_opa": "0"
+      }
+    }
+  },
+  "assets": {
+    "fonts": [
+      {
+        "id": "hollow22",
+        "name": "Hollow 22",
+        "path": "fonts/Hollow22.ttf"
+      },
+      {
+        "id": "hollow85",
+        "name": "Hollow 85", 
+        "path": "fonts/Hollow85.ttf"
+      }
+    ],
+    "images": [
+      {
+        "id": "bg",
+        "title": "Background",
+        "path": "images/bg.png"
+      },
+      {
+        "id": "guage_bg",
+        "title": "Gauge Background",
+        "path": "images/guage_bg.png"
+      },
+      {
+        "id": "guage_indicator",
+        "title": "Gauge Indicator",
+        "path": "images/guage_indicator.png"
+      },
+      {
+        "id": "battery",
+        "title": "Battery Icon",
+        "path": "images/battery.png"
+      },
+      {
+        "id": "signal",
+        "title": "Signal Icon",
+        "path": "images/signal.png"
+      }
+    ]
+  }
+} 

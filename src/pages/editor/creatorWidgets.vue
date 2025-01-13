@@ -1,35 +1,28 @@
 <template>
 <div style="padding: 0 6px;">
   <el-collapse v-model="collapseModel" style="border: none;">
-    <el-collapse-item  v-for="(item, index) in creator_options" :key="item.value" :title="item.label" :name="item.value">
+    <el-collapse-item v-for="(item, index) in creator_options" :key="item.value" :title="item.label" :name="item.value">
       <el-row v-if="item.children">
-        <el-col v-for="(item2, index2) in item.children" :key="item2.label" :sm="8" :lg="8" style="text-align: center; cursor: pointer;" @click="handleClick(item2)">
+        <el-col v-for="(item2, index2) in item.children" 
+          :key="item2.label" 
+          :sm="8" 
+          :lg="8" 
+          style="text-align: center;" 
+          class="widget-item"
+          draggable="true"
+          @dragstart="handleDragStart($event, item2)"
+          @dragend="handleDragEnd">
           <div>
             <img
               :src="imageMap[item2.img]"
               style="width: 60%"
             />
           </div>
-          <!-- <img :src="require(`@/pages/editor2/objects/screen.png`)" /> -->
           <span> {{ item2.label }} </span>
         </el-col>
       </el-row>
     </el-collapse-item>
   </el-collapse>
-<!-- 
-  <el-cascader
-    :options="creator_options"
-    :show-all-levels="false"
-    :props="{ emitPath: false, expandTrigger: 'hover' }"
-    v-model="selectedType"
-  ></el-cascader>
-  
-  <div style="margin: 15px">
-    <el-row>
-      <el-button type="primary" icon="el-icon-plus" @click="Creator" circle></el-button>
-    </el-row>
-    <el-row style="margin-top: 15px"> </el-row>
-  </div> -->
 </div>
 </template>
 
@@ -77,11 +70,30 @@ export default {
     handleClick(item) {
       this.$emit('create', item.label);
     },
+    handleDragStart(event, item) {
+      event.dataTransfer.setData('widgetInfo', JSON.stringify(item));
+      // 设置拖拽时的视觉效果
+      event.dataTransfer.effectAllowed = 'copy';
+    },
+    handleDragEnd(event) {
+      // 清理拖拽状态
+    },
   },
 };
 </script>
 <style lang="less" scoped>
+.widget-item {
+  cursor: grab;
+  transition: all 0.3s;
 
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
+}
 </style>
 <style lang="less">
 </style>

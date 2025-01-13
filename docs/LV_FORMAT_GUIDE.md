@@ -60,13 +60,35 @@ LV文件是一个标准的JSON文件,包含以下顶层字段:
 - screen: 屏幕容器组件
 - obj: 基础对象组件
 - arc: 圆弧组件
-- label: 文本标签组件
+- bar: 进度条组件
 - btn: 按钮组件
-- img: 图片组件
+- btnmatrix: 按钮矩阵组件
+- calendar: 日历组件
+- canvas: 画布组件
+- chart: 图表组件
 - checkbox: 复选框组件
+- colorwheel: 颜色选择器组件
+- dropdown: 下拉菜单组件
+- img: 图片组件
+- imgbtn: 图片按钮组件
+- keyboard: 键盘组件
+- label: 文本标签组件
+- led: LED指示器组件
+- line: 线条组件
+- list: 列表组件
+- menu: 菜单组件
+- meter: 仪表组件
+- msgbox: 消息框组件
+- roller: 滚轮选择器组件
 - slider: 滑块组件
+- spinbox: 数字输入框组件
+- spinner: 加载动画组件
 - switch: 开关组件
+- table: 表格组件
+- tabview: 标签页组件
 - textarea: 文本区域组件
+- tileview: 平铺视图组件
+- win: 窗口组件
 
 ### 3.3 组件示例
 
@@ -191,7 +213,7 @@ LV文件是一个标准的JSON文件,包含以下顶层字段:
       "size": number,       // 文件大小
       "width": number,      // 图片宽度
       "height": number,     // 图片高度
-      "data": string       // 图片数据(可选)
+      "base64": string       // 图片数据
     }
   ]
 }
@@ -235,20 +257,80 @@ LV文件是一个标准的JSON文件,包含以下顶层字段:
 ### 7.1 样式属性前缀
 
 - MAIN: 主要样式
+- SCROLLBAR: 滚动条样式
 - INDICATOR: 指示器样式
 - KNOB: 旋钮样式
+- PRESSED: 按下状态样式
+- CHECKED: 选中状态样式
+- FOCUSED: 焦点状态样式
+- EDITED: 编辑状态样式
+- HOVERED: 悬停状态样式
+- DISABLED: 禁用状态样式
+等等
 
 ### 7.2 常用样式属性
 
+#### 背景相关
 - bg_color: 背景颜色
-- text_color: 文本颜色
-- text_font: 文本字体
-- radius: 圆角半径
-- border_width: 边框宽度
-- arc_width: 圆弧宽度
-- arc_rounded: 圆弧圆角
-- arc_color: 圆弧颜色
 - bg_opa: 背景透明度
+- bg_grad_color: 背景渐变颜色
+- bg_grad_dir: 背景渐变方向
+- bg_main_stop: 背景渐变起始位置
+- bg_grad_stop: 背景渐变结束位置
+- bg_img_src: 背景图片源
+- bg_img_opa: 背景图片透明度
+- bg_img_recolor: 背景图片重新着色
+- bg_img_recolor_opa: 背景图片重新着色透明度
+
+#### 边框相关
+- border_color: 边框颜色
+- border_opa: 边框透明度
+- border_width: 边框宽度
+- border_side: 边框显示的边
+- border_post: 边框位置
+
+#### 文本相关
+- text_color: 文本颜色
+- text_opa: 文本透明度
+- text_font: 文本字体
+- text_letter_space: 字母间距
+- text_line_space: 行间距
+- text_decor: 文本装饰
+- text_align: 文本对齐方式
+
+#### 轮廓相关
+- outline_width: 轮廓宽度
+- outline_color: 轮廓颜色
+- outline_opa: 轮廓透明度
+- outline_pad: 轮廓内边距
+
+#### 阴影相关
+- shadow_width: 阴影宽度
+- shadow_color: 阴影颜色
+- shadow_opa: 阴影透明度
+- shadow_spread: 阴影扩散
+- shadow_ofs_x: 阴影X偏移
+- shadow_ofs_y: 阴影Y偏移
+
+#### 填充相关
+- pad_top: 顶部内边距
+- pad_bottom: 底部内边距
+- pad_left: 左侧内边距
+- pad_right: 右侧内边距
+- pad_row: 行间内边距
+- pad_column: 列间内边距
+
+#### 其他
+- radius: 圆角半径
+- clip_corner: 裁剪圆角
+- opa: 整体透明度
+- color_filter_dsc: 颜色过滤器描述
+- color_filter_opa: 颜色过滤器透明度
+- anim_time: 动画时间
+- anim_speed: 动画速度
+- blend_mode: 混合模式
+- layout: 布局方式
+- base_dir: 基准方向
 
 ## 8. 注意事项
 

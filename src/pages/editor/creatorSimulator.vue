@@ -1,5 +1,5 @@
 <template>
-  <div id="mp_js_stdout" style="text-align: center" @click="handleClick">
+  <div id="mp_js_stdout" style="text-align: center" @click="handleClick" @dragover="handleDragOver" @drop="handleDrop">
     <canvas
       id="canvas"
       ref="canvas"
@@ -186,7 +186,7 @@ export default {
 
 
       /*Initialize MicroPython itself*/
-      mp_js_init(8 * 1024 * 1024);
+      mp_js_init(20 * 1024 * 1024);
 
       /* Add function querry_attr() & walv_callback() */
       mp_js_do_str(WidgetData.QueryCode.join('\n'));
@@ -214,7 +214,8 @@ export default {
     initScreen({ width, height}) {
       this.screen.width = width;
       this.screen.height = height;
-
+      console.log('initScreen', width, height);
+      
       /* Run init script */
       mp_js_do_str(WidgetData.EnvInitCode(width, height).join('\n'));
 
@@ -290,6 +291,41 @@ export default {
         this.$emit('console', text);
       }
       return text;
+    },
+    handleDragOver(event) {
+      event.preventDefault();
+      event.dataTransfer.dropEffect = 'copy';
+    },
+    handleDrop(event) {
+      event.preventDefault();
+      
+      // 获取画布相对于视口的位置
+      const canvas = this.$refs.canvas;
+      const rect = canvas.getBoundingClientRect();
+      
+      // 计算相对于画布的坐标
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      
+      // 转换为画布内的实际坐标
+      const canvasX = Math.round(x * (this.screen.width / canvas.offsetWidth));
+      const canvasY = Math.round(y * (this.screen.height / canvas.offsetHeight));
+      
+      try {
+        const widgetInfo = JSON.parse(event.dataTransfer.getData('widgetInfo'));
+        console.log('handleDrop', widgetInfo);
+        // 发送创建事件，包含位置信息
+        this.$emit('event', {
+          action: 'create',
+          type: widgetInfo.label,
+          position: {
+            x: canvasX,
+            y: canvasY
+          }
+        });
+      } catch (error) {
+        console.error('Failed to parse widget info:', error);
+      }
     },
   },
 };
