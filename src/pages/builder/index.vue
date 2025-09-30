@@ -6,7 +6,7 @@
           <h1 class="logo-text">
             <span class="logo-brand">LV</span>
             <el-divider direction="vertical" />
-            <span class="logo-product">GUI Builder</span>
+            <span class="logo-product">Builder</span>
           </h1>
         </div>
 
@@ -15,18 +15,31 @@
             <template #title>
               <span>Demo</span>
             </template>
-            <el-menu-item v-for="item in demoList" :key="item">
+            <el-menu-item v-for="item in demoList" :key="item" :index="'k'+item">
               <el-link :href="`#/lv/editor/${item}`">{{ item }}</el-link>
             </el-menu-item>
           </el-sub-menu>
           
-          <el-menu-item>
+          <el-menu-item index="font">
+            <el-link href="#/lv/font" target="_blank">
+              <el-icon><Link /></el-icon>
+              Font
+            </el-link>
+          </el-menu-item>
+          <el-menu-item index="image">
+            <el-link href="#/lv/image" target="_blank">
+              <el-icon><Link /></el-icon>
+              image
+            </el-link>
+          </el-menu-item>
+
+          <el-menu-item index="docs">
             <el-link href="https://docs.lvgl.io/master/index.html" target="_blank">
               <el-icon><Link /></el-icon>
               Documentation
             </el-link>
           </el-menu-item>
-          <el-menu-item>
+          <el-menu-item index="examples">
             <el-link href="https://sim.lvgl.io/v8.3/micropython/ports/javascript/index.html" target="_blank">
               <el-icon><Monitor /></el-icon>
               Simulator
@@ -61,13 +74,18 @@
 
     <creator-window>
       <template #left>
-        <creator-widgets @create="handleCreator"></creator-widgets>
-        <el-divider></el-divider>
-        <el-tag class="widget-name">{{ selectNodeId }}</el-tag>
-        <creator-tree :node-key="selectNodeId" @event="handleTreeEvent"></creator-tree>
+        <el-tabs type="card" v-model="activeTabLeft">
+          <el-tab-pane label="Screen" name="screen">
+            <el-tag class="widget-name">{{ selectNodeId }}</el-tag>
+            <creator-tree :node-key="selectNodeId" @event="handleTreeEvent"></creator-tree>
+          </el-tab-pane>
+          <el-tab-pane label="Widget" name="widget">
+            <creator-widgets @create="handleCreator"></creator-widgets>
+          </el-tab-pane>
+        </el-tabs>
       </template>
       <template #center>
-        <el-tabs type="border-card" v-model="activeTab" @tab-change="handleTabChange" style="border: none;">
+        <el-tabs type="card" v-model="activeTab" @tab-change="handleTabChange" style="border: none;">
           <el-tab-pane label="Simulator" name="simulator">
             <creator-simulator ref="simulator" @cursor="cursorXY" @event="handleSimulatorEvent" @console="handleSimulatorConsole"></creator-simulator>
             <creator-anim-console></creator-anim-console>
@@ -139,7 +157,7 @@
         <creator-term ref="term" :style="{ visibility: term_visible ? 'visible' : 'hidden' }" style="padding: 0 16px;"></creator-term>
       </template>
       <template #right>
-        <el-tabs type="border-card" model-value="args" class="tab-full">
+        <el-tabs type="card" model-value="args" class="tab-full">
           <el-tab-pane label="Attr" name="args">
             <creator-attribute :id="selectNodeId" @change-id="handleChangeID"
             @change="handleSetterChange"></creator-attribute>
@@ -149,11 +167,11 @@
           </el-tab-pane>
           <!-- <el-tab-pane label="样式" name="style" style="height: 800px;overflow: scroll">
             <div style="padding-left: 10px">
-              <lvgl-style-setter2
+              <style-setter2
                 :id="selectNodeId"
                 @change="handleSetterChange"
               >
-              </lvgl-style-setter2>
+              </style-setter2>
             </div>
           </el-tab-pane> -->
         </el-tabs>
@@ -162,14 +180,13 @@
   </el-container>
 </template>
 
-<script>
+<script lang="ts">
+  import * as api from '@lvgl/v8.3.0/widgetApis.js';
+  import { python_generator, c_generator } from '@lvgl/v8.3.0/runtimeCompiler.js';
 
-  import * as WidgetData from './widgetData.js';
-  import * as api from './widgetApis.js';
   
   import { setArgvs, dispatch_data_changed_event, debounceFun, saveAs } from './utils.js';
-  import { Categorize, Data_Changed_Event, MSG_AUTO_SAVE_PAGE_SUCC, MSG_SAVE_PAGE_SUCC } from  './constant.js';
-  import { CMD } from  './cmd.js';
+  import { Categorize, Data_Changed_Event, MSG_AUTO_SAVE_PAGE_SUCC, MSG_SAVE_PAGE_SUCC } from  './common/constant.js';
   import {
     wrap_delete,
     wrap_setter_str,
@@ -184,7 +201,6 @@
 
     wrap_font_load,
   } from './runtimeWrapper.js';
-  import { python_generator, c_generator } from './runtimeCompiler.js';
 
   import { projectStore } from './store/projectStore';
   import { initDemo, initDemoProject, getDemoList } from './store/demo';
@@ -195,7 +211,7 @@
   import creatorSimulator from './creatorSimulator.vue';
   import creatorTerm from './creatorTerm.vue';
   import creatorEditor from './creatorEditor.vue';
-  import creatorAttribute from './creatorAttribute.vue';
+  import creatorAttribute from './attribute/creatorAttribute.vue';
   import creatorAnim from './creatorAnim.vue';
   import creatorAnimConsole from './creatorAnimConsole.vue';
   import creatorFont from './creatorFont.vue';
@@ -206,7 +222,7 @@
 
   
   export default {
-    name: 'lvgl-editor',
+    name: 'lv-editor',
     provide() {
       return {};
     },
@@ -255,6 +271,7 @@
         editScreenSize: false,
 
         // tabs
+        activeTabLeft: 'screen',
         activeTab: 'simulator',
 
         // 添加项目配置
@@ -271,8 +288,8 @@
           'shift+arrowup': () => this.handleMove('up', -4),
           'shift+arrowdown': () => this.handleMove('down', 4),
 
-          'ctrl+g': this.handleGenerateCode,
-          'meta+g': this.handleGenerateCode,
+          'ctrl+g': this.generateCode,
+          'meta+g': this.generateCode,
           'ctrl+s': this.savePage,
           'meta+s': this.savePage,
           'ctrl+z': this.handleUndo,
@@ -350,7 +367,7 @@
       async mpylvInit() {
         await this.$refs.simulator.initialComplete();
 
-        this.$refs.simulator.initScreen({width: this.screenWidth, height: this.screenHeight});
+        await this.$refs.simulator.initScreen({width: this.screenWidth, height: this.screenHeight});
         this.initWidgets();
       },
       initWidgets() {
@@ -617,27 +634,30 @@
           type: 'success'
         });
       },
+      // Save code to lvgl file.
+      savePage: async function (event, msg = MSG_SAVE_PAGE_SUCC) {
+        // 保存项目数据
+        projectStore.saveProject();
+        return projectStore.projectData;
+      },
       async exportCodeAsLV() {
         let json = await this.savePage();
-        let code = JSON.stringify(json, null, 2);
+        
+        let code = projectStore.saveLv();//JSON.stringify(json, null, 2);
         let blob = new Blob([code], {type: "text/plain;charset=utf-8"});
         let fileName = +new Date();
         saveAs(blob, `lv_gui_${fileName}.lv`);
       },
-
-      //Highlight object
-      drawRect: (x, y, w, h) => {
-        let ctx = document.getElementById('canvas').getContext('2d');
-        ctx.strokeStyle = 'blue';
-        ctx.lineWidth = 2;
-        ctx.setLineDash([5, 5]);
-        ctx.strokeRect(x, y, w, h);
-      },
-
       changeScreenSize() {
         let screen = this.getWidgetById('screen');
         screen.data.width = this.screenWidth;
         screen.data.height = this.screenHeight;
+
+        // 更新 projectStore 数据
+        projectStore.projectData.settings.screen = {
+          width: this.screenWidth,
+          height: this.screenHeight
+        };
 
         if (this.savePage({}, MSG_SAVE_PAGE_SUCC)) {
           window.location.reload();
@@ -649,17 +669,13 @@
         }
       },
 
-      // Save code to lvgl file.
-      savePage: async function (event, msg = MSG_SAVE_PAGE_SUCC) {
-        // 更新 projectStore 数据
-        projectStore.projectData.settings.screen = {
-          width: this.screenWidth,
-          height: this.screenHeight
-        };
-        
-        // 保存项目数据
-        projectStore.saveProject();
-        return projectStore.projectData;
+      //Highlight object
+      drawRect: (x, y, w, h) => {
+        let ctx = document.getElementById('canvas').getContext('2d');
+        ctx.strokeStyle = 'blue';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 5]);
+        ctx.strokeRect(x, y, w, h);
       },
 
       handleTabChange(name) {
@@ -890,6 +906,11 @@
 </style>
 
 <style lang="less">
+  @import "./common/common.less";
+  :root {
+    --el-menu-base-level-padding: 10px;
+  }
+  
   [v-cloak] {
     display: none;
   }

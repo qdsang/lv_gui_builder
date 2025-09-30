@@ -12,10 +12,7 @@ import { Terminal } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
 import '@xterm/xterm/css/xterm.css';
 
-
-import {
-    mp_js_process_char,
-  } from './micropython.js';
+import * as engine from '@lvgl/v8.3.0/index.js';
 
 export default {
   name : 'creator-simulator',
@@ -47,13 +44,13 @@ export default {
 
       term.open(document.getElementById('mpy_repl'));
       fitAddon.fit();
-      // term.write('Welcome To \x1B[1;3;31mLVGL LVGL-Extension\x1B[0m');
+      // term.write('Welcome To \x1B[1;3;31mLV LV-Extension\x1B[0m');
 
       /*Setup key input handler */
       term.onData(key => {
       // term.on('data', function(key, e) {
         for (var i = 0; i < key.length; i++) {
-          mp_js_process_char(key.charCodeAt(i));
+          engine.simulatorStdioInput(key.charCodeAt(i));
         }
       });
 

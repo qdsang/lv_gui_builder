@@ -8,9 +8,9 @@
   import { useRouter } from 'vue-router';
   const router = useRouter()
   const editorRouter =()=>{
-      router.push('/lv/editor')
+      router.push('/lv/builder')
   }
-  router.push('/lv/editor')
+  router.push('/lv/builder')
 </script>
 
 <style lang="less">

@@ -6,7 +6,7 @@
     <el-collapse v-model="collStyles" style="padding: 0 0 0 16px;">
       <el-collapse-item v-for="styles in styleGroups" :title="styles.title" :name="part + '_' + styles.title" :key="styles.title">
         <div v-for="api in styles.list" :key="api.api">
-          <lvgl-attr-setter2
+          <attr-setter2
               :id="id"
               :part="part"
               :mode="'styles'"
@@ -14,7 +14,7 @@
               :body="api"
               @change="handleSetterChange"
             >
-            </lvgl-attr-setter2>
+            </attr-setter2>
         </div>
       </el-collapse-item>
     </el-collapse>
@@ -23,17 +23,18 @@
 </template>
 
 <script lang="ts">
-import * as widgetData from './widgetData.js';
-import lvglAttrSetter2 from './lvglAttrSetter2.vue';
+import * as engine from '@lvgl/v8.3.0/index.js';
 
-import { projectStore } from './store/projectStore.js';
+import AttrSetter2 from './AttrSetter2.vue';
+
+import { projectStore } from '../store/projectStore.js';
 
 export default {
   name: 'lvgl-style-setter-v2',
   props: ['id'],
   emits: ['change'],
   components: {
-    lvglAttrSetter2,
+    AttrSetter2,
   },
   data: function () {
     return {
@@ -61,7 +62,7 @@ export default {
         return;
       }
       let widgetType = node.type;
-      let widget = widgetData.getWidget(widgetType);
+      let widget = engine.Widget.getWidget(widgetType);
       if (!widget) {
         console.error('Style Setter not found', this.id, widgetType);
         return ;

@@ -1,5 +1,5 @@
 
-import { Data_Changed_Event } from  './constant.js';
+import { Data_Changed_Event } from  './common/constant.js';
 import { wrap_delete } from './runtimeWrapper.js';
 
 export const reverse_del_node = (node, record) => {

@@ -14,12 +14,8 @@
     :indent="12"
   >
     <template #default="{ node, data }">
-      <el-tooltip
-        effect="dark"
-        :content="'Type：' + data.widgetType"
-        placement="right-start">
       <div class="custom-tree-node">
-        <!-- <el-icon><Clock color="#ff0000"/></el-icon> -->
+        <el-icon style="padding: 0 6px 0 0;"><img width="12" :src="getWidgetIcon(data.widgetType)" /></el-icon>
         <span>{{ node.label }}</span>
         <div class="node-right">
           <el-button class="btn" v-show="!(data.show == false)" icon="el-icon-view" circle @click.stop @click="hide(node, data)"></el-button>
@@ -28,12 +24,13 @@
           <el-button class="btn" icon="el-icon-delete" circle @click.stop @click="remove(node, data)"></el-button>
         </div>
       </div>
-    </el-tooltip>
     </template>
   </el-tree>
 </template>
 
 <script lang="ts">
+
+import * as engine from '@lvgl/v8.3.0/index.js';
 import { projectStore } from './store/projectStore';
 
 export default {
@@ -57,6 +54,10 @@ export default {
     }
   },
   methods: {
+    getWidgetIcon(type) {
+      let widget = engine.Widget.getWidget(type);
+      return widget.iconUrl;
+    },
     clickNode: function (data, obj, tree_obj) {
       // console.log('click', data, obj, tree_obj);
       this.$emit('event', 'click', obj, data, tree_obj);

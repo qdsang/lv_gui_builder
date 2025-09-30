@@ -13,7 +13,7 @@
           </el-menu-item>
           <el-menu-item index="lvgl">
             <el-icon><Monitor /></el-icon>
-            <span>LVGL Settings</span>
+            <span>LV Settings</span>
           </el-menu-item>
           <el-menu-item index="code">
             <el-icon><DocumentAdd /></el-icon>

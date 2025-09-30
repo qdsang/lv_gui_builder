@@ -1,5 +1,6 @@
 import { dispatch_data_changed_event } from '../utils.js';
 import { reactive } from 'vue'  // Vue 3
+import * as lvFile from './lvFile.js';
 
 let predefineColors = [
   '#ff4500',
@@ -49,11 +50,13 @@ class ProjectStore {
         },
         lvgl: {
           version: '8.3.0',
+          defaultFont: '',
           colorDepth: 16
         },
         output: {
           format: 'python',
-          path: ''
+          path: '',
+          prefix: ''
         }
       }
     });
@@ -104,6 +107,17 @@ class ProjectStore {
     let pool = this.projectData.components;
     if (!pool['screen']) {
       this.createWidget({ id: 'screen', type: 'screen', data: { x: 0, y: 0, width: 480, height: 480 } });
+    }
+    for (const id in pool) {
+      let widget = pool[id];
+      if (widget.id != id) {
+        pool[widget.id] = widget;
+        delete pool[id];
+      }
+      widget.attributes = widget.attributes || [];
+      widget.apis = widget.apis || [];
+      widget.styles = widget.styles || [];
+      widget.data = widget.data || {};
     }
 
     // 检查字体
@@ -424,6 +438,12 @@ class ProjectStore {
         }
       }
     };
+  }
+
+  saveLv() {
+    let xml = lvFile.jsonToLv(this.projectData);
+    console.log(this.projectData, xml);
+    return xml;
   }
 }
 

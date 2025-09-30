@@ -7,6 +7,7 @@ import AutoImport from 'unplugin-auto-import/vite';
 import { babel } from '@rollup/plugin-babel';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
+import { viteStaticCopy } from 'vite-plugin-static-copy'
 
 const pathResolve = (dir: string) => resolve(__dirname, dir);
 
@@ -25,15 +26,48 @@ export default ({ command, mode }) => {
       // 这里的alias是路径别名，是运行阶段的替换路径，而tsconfig.json中的paths是编码阶段的提示，
       alias: {
         '@': pathResolve('src'), // path.resolve中，'./src' 等于 'src'
+        '@lvgl': pathResolve('lvgl'),
         'opentype.js': 'node_modules/opentype.js/dist/opentype.module.js',
         path: 'path-browserify',
       },
     },
     plugins: [
+      viteStaticCopy({
+        targets: [
+          {
+            src: 'lvgl',
+            dest: '.'
+          }
+        ]
+      }),
       vue(),
       // 默认会向 index.html 注入 .env 文件的内容，类似 vite 的 loadEnv函数
       // 还可配置entry入口文件， inject自定义注入数据等
-      createHtmlPlugin(),
+      createHtmlPlugin({
+        minify: true,
+        pages: [
+          {
+            filename: 'index.html',
+            template: 'index.html',
+            entry: 'src/main.ts',
+            injectOptions: {
+              data: {
+                title: '主页'
+              }
+            }
+          },
+          {
+            filename: 'lvgl/v8.3.0/embed.html',
+            template: 'lvgl/v8.3.0/embed.html',
+            entry: 'lvgl/v8.3.0/main.ts',  // 如果需要单独的入口文件
+            injectOptions: {
+              data: {
+                title: 'LVGL Simulator'
+              }
+            }
+          }
+        ]
+      }),
       // 自动导入src/compoents下的组件和配置的ui库组件
       // 只能在template中使用，js中需要手动导入
       // importStyle: false，关闭自动导入样式

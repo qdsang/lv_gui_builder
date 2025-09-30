@@ -27,18 +27,19 @@
 </template>
 
 <script lang="ts">
-import * as WidgetData from './widgetData.js';
 
-let imageList = import.meta.glob('./objects/*.png',{eager:true})
+import * as engine from '@lvgl/v8.3.0/index.js';
+
+// let imageList = import.meta.glob('../../../lvgl/v8.3.0/objects/*.png',{eager:true, as: 'url' })
+let imageList = import.meta.glob('./objects/*.png', { eager:true })
 let imageMap = {};
 for (let p in imageList) {
   let k = p.replace('./objects/', '').replace('.png', '');
   // @ts-ignore
   imageMap[k] = imageList[p].default;
 }
+engine.Widget.updateIcon(imageMap);
 
-// import accIcon from "@/pages/editor2/objects/screen.png"
-// console.log(accIcon);
 
 export default {
   name : 'creator-widgets',
@@ -47,7 +48,7 @@ export default {
   data: function() {
       return {
         //Creator
-        creator_options: WidgetData.WidgetsOption,
+        creator_options: engine.Widget.WidgetsOption,
         selectedType: '',
         imageMap: imageMap,
         collapseModel: 'basics',

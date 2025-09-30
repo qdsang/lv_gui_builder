@@ -96,7 +96,7 @@
 </div>
 </template>
 
-<script lang="ts">
+<script>
 import { projectStore } from './store/projectStore';
 import 'vue-cropper/dist/index.css'
 import { VueCropper } from 'vue-cropper'

@@ -3,19 +3,19 @@ import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    redirect: '/lv/editor/demo1',
+    redirect: '/lv/builder/demo1',
   },
   {
     path: '/home',
     component: () => import('@/pages/home.vue'),
   },
   {
-    path: '/lv/editor',
-    component: () => import('@/pages/editor/index.vue'),
+    path: '/lv/builder',
+    component: () => import('@/pages/builder/index.vue'),
   },
   {
-    path: '/lv/editor/:id',
-    component: () => import('@/pages/editor/index.vue'),
+    path: '/lv/builder/:id',
+    component: () => import('@/pages/builder/index.vue'),
   },
   {
     path: '/lv/simulator',
@@ -32,6 +32,10 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       title: 'Image Converter'
     }
+  },
+  {
+    path: '/test',
+    component: () => import('@/pages/test/index.vue'),
   }
 ];
 

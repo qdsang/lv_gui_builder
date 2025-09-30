@@ -1,7 +1,8 @@
 /* template: generate the related code and return as string */
 import { color_convert } from './runtimeWrapper.js';
-import * as WidgetData from "./widgetData.js";
-import { projectStore } from './store/projectStore.js';
+// import * as WidgetData from "./widgetData.js";
+
+import { projectStore } from '../../src/pages/builder/store/projectStore.js';
 
 export const template_py_create = (id, parent_id, type) => {
     return `${id} = lv.${type}(${parent_id})`;

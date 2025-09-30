@@ -89,8 +89,7 @@
 </template>
 
 <script lang="ts">
-import * as WidgetData from "./widgetData.js";
-import { projectStore } from './store/projectStore.js';
+import { projectStore } from '../store/projectStore.js';
 
 export default {
   name: 'lvgl-attr-setter',
@@ -122,6 +121,9 @@ export default {
     init() {
       let id = this.id;
       let node = projectStore.getWidgetById(this.id);
+      if (!node) {
+        return;
+      }
       let attrKey = this.body.api;
       if (this.part) {
         attrKey = this.part + '.' + this.body.api;

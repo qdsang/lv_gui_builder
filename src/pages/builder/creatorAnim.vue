@@ -204,7 +204,7 @@
 </template>
 
 <script lang="ts">
-import * as WidgetData from "./widgetData.js";
+import * as engine from '@lvgl/v8.3.0/index.js';
 import { projectStore } from './store/projectStore.js';
 
 export default {
@@ -225,7 +225,7 @@ export default {
   },
   methods: {
     animAdd(timeline) {
-      let anim = JSON.parse(JSON.stringify(WidgetData.timeline_anim_def));
+      let anim = JSON.parse(JSON.stringify(engine.Widget.timeline_anim_def));
       timeline.anims.push(anim);
     },
     animCopy(props, timeline) {
@@ -237,7 +237,7 @@ export default {
     },
 
     objAdd(anim) {
-      let obj = JSON.parse(JSON.stringify(WidgetData.timeline_obj_def));
+      let obj = JSON.parse(JSON.stringify(engine.Widget.timeline_obj_def));
       anim.objs.push(obj);
     },
     objRemove(row, anim) {
@@ -250,7 +250,7 @@ export default {
       props.row.iseditor = false;
     },
     timelineAdd() {
-      let timeline = JSON.parse(JSON.stringify(WidgetData.timeline_def));
+      let timeline = JSON.parse(JSON.stringify(engine.Widget.timeline_def));
       timeline.id = 'timeline_' + (this.timelines.length + 1);
       this.timelines.push(timeline);
       console.log(this.timelines)

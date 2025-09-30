@@ -1,5 +1,6 @@
 <template>
-  <div id="mp_js_stdout" style="text-align: center" @click="handleClick" @dragover="handleDragOver" @drop="handleDrop">
+  <div id="mp_js_stdout" style="text-align: center; position: relative;" @click="handleClick" @dragover="handleDragOver" @drop="handleDrop">
+    <iframe id="embed" style="width: 480px; height: 480px; display: none;" src="/lvgl/v8.3.0/embed.html"></iframe>
     <canvas
       id="canvas"
       ref="canvas"
@@ -10,6 +11,14 @@
       @mousemove="cursorXY"
       @click.stop
       tabindex="-1"
+    >
+    </canvas>
+    
+    <!-- 添加用于交互和辅助元素显示的fabric.js canvas -->
+    <canvas
+      id="fabric-canvas"
+      ref="fabricCanvas"
+      style="width: 480px; height: 480px; position: absolute; top: 0; left: 0; pointer-events: auto; display: none;"
     >
     </canvas>
 
@@ -30,29 +39,15 @@
 <script lang="ts">
 import * as WidgetData from './widgetData.js';
 import {
-  wrap_create,
-  wrap_query_attr,
   wrap_equal,
   wrap_simple_setter,
-  wrap_delete,
-  wrap_setter_str,
-  wrap_attributes_setter_str,
-  wrap_style_setter_str,
-  wrap_style_setter_v2,
-  wrap_apis_setter_str,
 } from './runtimeWrapper.js';
+import * as engine from '@lvgl/v8.3.0/index.js';
 
 
-import {
-    MicroPython,
-    mp_js_init,
-    mp_js_do_str,
-    mp_js_init_repl,
-    mp_js_process_char,
-  } from './micropython.js';
+// 引入fabric.js
+import * as fabric from 'fabric';
 
-import * as wasm_file_api from './wasm_file_api.js';
-wasm_file_api;
 
 export default {
   name : 'creator-simulator',
@@ -72,6 +67,9 @@ export default {
       activeInfo: null,
       transformFrameInfo: null,
       transformInfo: {startX: 0, startY: 0, },
+
+      // 添加fabric相关属性
+      fabricCanvas: null,
     }
   },
   created() {
@@ -80,15 +78,19 @@ export default {
   destroyed() {
     window.removeEventListener("resize", this.resizeEventHandler);
     window.removeEventListener("mousemove", this.dragging);
+    window.removeEventListener("resize", this.handleFabricResize);
+    
+    // 清理fabric canvas
+    if (this.fabricCanvas) {
+      this.fabricCanvas.dispose();
+      this.fabricCanvas = null;
+    }
   },
   mounted() {
-    this.runTime = +new Date();
-    MicroPython.run();
+    engine.init();
 
     let vm = this;
-    window.addEventListener(
-        'python:stdout_print',
-      (e) => {
+    engine.on('stdout', (e) => {
         // setTimeout(() => {
           // @ts-ignore
           let data = e.data;
@@ -96,11 +98,141 @@ export default {
             vm.handleOutput(data[i]);
           }
         // }, 50);
-      },
-      false
-    );
+    })
+    
+    // 初始化fabric canvas
+    // this.$nextTick(() => {
+    //   this.initFabricCanvas();
+    // });
   },
   methods: {
+    // 初始化fabric canvas
+    initFabricCanvas() {
+      const canvasElement = this.$refs.fabricCanvas;
+      this.fabricCanvas = new fabric.Canvas(canvasElement, {
+        containerClass: 'fabric-container',
+        selection: false, // 禁用默认选择
+        hoverCursor: 'default',
+        backgroundColor: 'transparent',
+        preserveObjectStacking: true
+      });
+      
+      // 设置canvas尺寸与主canvas一致
+      const boundingRect = this.$refs.canvas.getBoundingClientRect();
+      this.fabricCanvas.setDimensions({
+        width: boundingRect.width,
+        height: boundingRect.height
+      });
+      
+      // 添加窗口大小变化监听
+      window.addEventListener('resize', this.handleFabricResize);
+      
+      // 添加fabric事件监听
+      this.setupFabricEvents();
+      
+      console.log('Fabric canvas initialized');
+    },
+    
+    // 设置fabric事件监听
+    setupFabricEvents() {
+      // 可以在这里添加各种交互事件监听
+      this.fabricCanvas.on('mouse:down', (options) => {
+        // 处理鼠标按下事件
+        console.log('Fabric mouse down', options);
+      });
+      
+      this.fabricCanvas.on('mouse:move', (options) => {
+        // 处理鼠标移动事件
+        console.log('Fabric mouse move', options);
+      });
+      
+      this.fabricCanvas.on('mouse:up', (options) => {
+        // 处理鼠标释放事件
+        console.log('Fabric mouse up', options);
+      });
+    },
+    
+    // 处理fabric canvas大小调整
+    handleFabricResize() {
+      if (this.fabricCanvas && this.$refs.canvas) {
+        const boundingRect = this.$refs.canvas.getBoundingClientRect();
+        this.fabricCanvas.setDimensions({
+          width: boundingRect.width,
+          height: boundingRect.height
+        });
+        this.fabricCanvas.calcOffset();
+      }
+    },
+    
+    // 添加辅助线方法
+    addGuideline(type, position) {
+      if (!this.fabricCanvas) return;
+      
+      let line;
+      if (type === 'vertical') {
+        line = new fabric.Line([position, 0, position, this.fabricCanvas.height], {
+          stroke: '#ff0000',
+          strokeWidth: 1,
+          selectable: false,
+          evented: false,
+          strokeDashArray: [5, 5]
+        });
+      } else if (type === 'horizontal') {
+        line = new fabric.Line([0, position, this.fabricCanvas.width, position], {
+          stroke: '#ff0000',
+          strokeWidth: 1,
+          selectable: false,
+          evented: false,
+          strokeDashArray: [5, 5]
+        });
+      }
+      
+      if (line) {
+        this.fabricCanvas.add(line);
+        this.fabricCanvas.renderAll();
+      }
+    },
+    
+    // 清除所有辅助线
+    clearGuidelines() {
+      if (!this.fabricCanvas) return;
+      
+      const objects = this.fabricCanvas.getObjects();
+      objects.forEach(obj => {
+        if (obj.type === 'line') {
+          this.fabricCanvas.remove(obj);
+        }
+      });
+      this.fabricCanvas.renderAll();
+    },
+    
+    // 添加辅助矩形（用于高亮显示选中组件区域等）
+    addOverlayRect(left, top, width, height, options = {}) {
+      if (!this.fabricCanvas) return;
+      
+      const defaultOptions = {
+        fill: 'rgba(0, 0, 255, 0.1)',
+        stroke: 'blue',
+        strokeWidth: 1,
+        selectable: false,
+        evented: false,
+        opacity: 0.5,
+        ...options
+      };
+      
+      const rect = new fabric.Rect({
+        left: left,
+        top: top,
+        width: width,
+        height: height,
+        ...defaultOptions
+      });
+      
+      this.fabricCanvas.add(rect);
+      this.fabricCanvas.renderAll();
+      return rect;
+    },
+    
     dragStart(event) {
       // 获取元素初始位置和鼠标按下时的坐标
       this.transformInfo.startX = event.clientX;
@@ -170,57 +302,15 @@ export default {
     dragEnd() {
       document.removeEventListener('mousemove', this.dragging);
     },
-
-    initVM() {
-      if (this.isInit) {
-        return;
-      }
-      this.isInit = true;
-      console.log('VM init:', (+new Date() - this.runTime)+'ms');
-
-      MicroPython.canvas = document.getElementById('canvas');
-
-      /* Bind mp_js_stdout */
-      // let mp_js_stdout = document.getElementById('mp_js_stdout');
-      // mp_js_stdout.value = '';
-
-
-      /*Initialize MicroPython itself*/
-      mp_js_init(20 * 1024 * 1024);
-
-      /* Add function querry_attr() & walv_callback() */
-      mp_js_do_str(WidgetData.QueryCode.join('\n'));
-      wrap_equal('ATTR', JSON.stringify(WidgetData.Getter)); //Add ATTR to mpy, ATTR is common getter
-
-      /*Setup lv_task_handler loop*/
-      var the_mp_handle_pending = MicroPython.cwrap('mp_handle_pending', null, [], { async: true });
-      function handle_pending() {
-        the_mp_handle_pending();
-        setTimeout(handle_pending, 10); // should call lv_task_handler()
-      }
-
-      /*Initialize the REPL.*/
-      mp_js_init_repl();
-
-      /*Start the main loop, asynchronously.*/
-      handle_pending();
-    },
     async initialComplete() {
-      while (!mp_js_do_str) {
-        await new Promise(resolve => setTimeout(resolve, 100));
-      }
-      this.initVM();
+       await engine.simulatorInit(this.$refs.canvas);
     },
     initScreen({ width, height}) {
       this.screen.width = width;
       this.screen.height = height;
       console.log('initScreen', width, height);
       
-      /* Run init script */
-      mp_js_do_str(WidgetData.EnvInitCode(width, height).join('\n'));
-
-      MicroPython.canvas.style.width = width+'px';
-      MicroPython.canvas.style.height = height+'px';
+      engine.ScreenSize(width, height);
     },
     activeFrame(info) {
       if (info.type == 'screen') {
@@ -288,7 +378,12 @@ export default {
         this.buffer.splice(0, this.buffer.length);
       }
       if (['\x06', '\x15', ''].indexOf(text) == -1) {
-        this.$emit('console', text);
+        if (this.consoleTmp == '\r' && text == '\n') {
+
+        } else {
+          this.$emit('console', text);
+        }
+        this.consoleTmp = text;
       }
       return text;
     },
@@ -340,6 +435,7 @@ export default {
   border-radius: 5px;
   user-select: none;
   pointer-events: none;
+  z-index: 10; /* 确保变换控件在fabric canvas之上 */
 }
 .lv-widget-transform > div {
   position: absolute;
@@ -465,5 +561,20 @@ export default {
   border: 1px grey solid;
   border-radius: 2px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);
+}
+
+/* fabric canvas容器样式 */
+.fabric-container {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  pointer-events: auto !important;
+  z-index: 5; /* 确保在主canvas之上但在变换控件之下 */
+}
+
+.fabric-container canvas {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
 }
 </style>

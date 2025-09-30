@@ -22,7 +22,7 @@
       <!-- <el-form-item label="align">
         <el-row>
           <el-col :span="12">
-          <lvgl-align></lvgl-align>
+          <align></align>
           </el-col>
         </el-row>
       </el-form-item> -->
@@ -93,50 +93,51 @@
     <!-- method area -->
     <div style="padding: 0 0 10px;">
       <div v-for="(body, name) in setter[currentType]" :key="name">
-        <lvgl-attr-setter2
+        <attr-setter2
           :id="id"
           :mode="'apis'"
           :name="name"
           :body="body"
           @change="handleSetterChange"
         >
-        </lvgl-attr-setter2>
+        </attr-setter2>
       </div>
     </div>
 
     <div>
-      <lvgl-style-setter2
+      <style-setter2
         :id="id"
         @change="handleSetterChange"
       >
-      </lvgl-style-setter2>
+      </style-setter2>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { reverse_del_node, pool_delete, setArgvs, dispatch_data_changed_event, debounceFun } from './utils.js';
+import { reverse_del_node, pool_delete, setArgvs, dispatch_data_changed_event, debounceFun } from '../utils.js';
 
 import {
   wrap_simple_setter,
-} from './runtimeWrapper.js';
+} from '../runtimeWrapper.js';
 
-import * as api from './widgetApis.js';
+import * as api from '@lvgl/v8.3.0/widgetApis.js';
 
-import lvglAttrAlign from './lvglAttrAlign.vue';
-import lvglAttrSetter2 from './lvglAttrSetter2.vue';
-import lvglStyleSetter2 from './lvglStyleSetter2.vue';
 
-import { projectStore } from './store/projectStore.js';
+import AttrAlign from './AttrAlign.vue';
+import AttrSetter2 from './AttrSetter2.vue';
+import StyleSetter2 from './StyleSetter2.vue';
+
+import { projectStore } from '../store/projectStore.js';
 
 export default {
   name : 'creator-attribute',
   props: ['id'],
   emits: ['change', 'change-id'],
   components: {
-    lvglAttrAlign,
-    lvglAttrSetter2,
-    lvglStyleSetter2,
+    AttrAlign,
+    AttrSetter2,
+    StyleSetter2,
   },
   data: function() {
     return {

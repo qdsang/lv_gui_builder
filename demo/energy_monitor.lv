@@ -1,0 +1,396 @@
+{
+  "id": "energy_monitor",
+  "name": "Energy Monitor Dashboard",
+  "description": "LVGL GUI Energy Monitor Dashboard Demo",
+  "version": "1.0.0",
+  "versionCode": 1,
+  "author": "LVGL GUI Builder",
+  "components": {
+    "screen": {
+      "parent": "",
+      "id": "screen",
+      "type": "screen",
+      "zindex": 0,
+      "cb": false,
+      "attributes": ["x", "y", "width", "height"],
+      "apis": [],
+      "styles": ["MAIN.bg_color", "MAIN.bg_opa"],
+      "data": {
+        "width": 320,
+        "height": 240,
+        "x": "0",
+        "y": "0",
+        "MAIN.bg_color": "#000000",
+        "MAIN.bg_opa": "255"
+      }
+    },
+    "cont_gauge_home": {
+      "parent": "screen", 
+      "id": "cont_gauge_home",
+      "type": "obj",
+      "zindex": 1,
+      "cb": false,
+      "attributes": ["x", "y", "width", "height"],
+      "apis": [],
+      "styles": [],
+      "data": {
+        "width": 108,
+        "height": 108,
+        "x": -14,
+        "y": 11,
+        "align": "top_right"
+      }
+    },
+    "img_gauge_home": {
+      "parent": "cont_gauge_home",
+      "id": "img_gauge_home",
+      "type": "img",
+      "zindex": 2,
+      "cb": false,
+      "attributes": ["x", "y", "width", "height"],
+      "apis": ["set_src"],
+      "styles": [],
+      "data": {
+        "width": 108,
+        "height": 108,
+        "set_src": "images/home_gauge.png",
+        "align": "center"
+      }
+    },
+    "img_needle_home": {
+      "parent": "cont_gauge_home",
+      "id": "img_needle_home", 
+      "type": "img",
+      "zindex": 3,
+      "cb": false,
+      "attributes": ["x", "y", "width", "height"],
+      "apis": ["set_src"],
+      "styles": [],
+      "data": {
+        "width": 108,
+        "height": 108,
+        "set_src": "images/home_needle.png",
+        "align": "center"
+      }
+    },
+    "label_home_kv": {
+      "parent": "cont_gauge_home",
+      "id": "label_home_kv",
+      "type": "label",
+      "zindex": 4,
+      "cb": false,
+      "attributes": ["x", "y", "width", "height"],
+      "apis": ["set_text"],
+      "styles": [
+        "MAIN.text_color",
+        "MAIN.text_opa",
+        "MAIN.text_align",
+        "MAIN.text_font"
+      ],
+      "data": {
+        "width": 60,
+        "height": 31,
+        "align": "center",
+        "set_text": "0",
+        "MAIN.text_color": "#1EAEFF",
+        "MAIN.text_opa": "255",
+        "MAIN.text_align": "center",
+        "MAIN.text_font": "Be30"
+      }
+    },
+    "cont_battery": {
+      "parent": "screen",
+      "id": "cont_battery",
+      "type": "obj", 
+      "zindex": 5,
+      "cb": false,
+      "attributes": ["x", "y", "width", "height"],
+      "apis": [],
+      "styles": [],
+      "data": {
+        "width": 63,
+        "height": 91,
+        "x": 3,
+        "y": 0
+      }
+    },
+    "img_battery_fill": {
+      "parent": "cont_battery",
+      "id": "img_battery_fill",
+      "type": "img",
+      "zindex": 6,
+      "cb": false,
+      "attributes": ["x", "y", "width", "height"],
+      "apis": ["set_src"],
+      "styles": ["MAIN.img_recolor", "MAIN.img_recolor_opa"],
+      "data": {
+        "width": 36,
+        "height": 71,
+        "x": 0,
+        "y": 1,
+        "align": "center",
+        "set_src": "images/battery.png",
+        "MAIN.img_recolor": "#FF0000",
+        "MAIN.img_recolor_opa": "255"
+      }
+    },
+    "label_home_unit": {
+      "parent": "cont_gauge_home",
+      "id": "label_home_unit",
+      "type": "label",
+      "zindex": 7,
+      "cb": false,
+      "attributes": ["x", "y", "width", "height"],
+      "apis": ["set_text"],
+      "styles": [
+        "MAIN.text_color",
+        "MAIN.text_font",
+        "MAIN.text_align"
+      ],
+      "data": {
+        "width": 40,
+        "height": 15,
+        "x": 0,
+        "y": 25,
+        "set_text": "\"kW\"",
+        "MAIN.text_color": "#FFFFFF",
+        "MAIN.text_font": "Be15",
+        "MAIN.text_align": "center"
+      }
+    },
+    "cont_power": {
+      "parent": "screen",
+      "id": "cont_power",
+      "type": "obj",
+      "zindex": 8,
+      "cb": false,
+      "attributes": ["x", "y", "width", "height"],
+      "apis": [],
+      "styles": [],
+      "data": {
+        "width": 160,
+        "height": 91,
+        "x": 160,
+        "y": 0
+      }
+    },
+    "label_power": {
+      "parent": "cont_power",
+      "id": "label_power",
+      "type": "label", 
+      "zindex": 9,
+      "cb": false,
+      "attributes": ["x", "y", "width", "height"],
+      "apis": ["set_text"],
+      "styles": [
+        "MAIN.text_color",
+        "MAIN.text_font",
+        "MAIN.text_align"
+      ],
+      "data": {
+        "width": 100,
+        "height": 30,
+        "x": 30,
+        "y": 10,
+        "set_text": "\"0.0\"",
+        "MAIN.text_color": "#1EAEFF",
+        "MAIN.text_font": "Be30",
+        "MAIN.text_align": "right"
+      }
+    },
+    "label_power_unit": {
+      "parent": "cont_power",
+      "id": "label_power_unit",
+      "type": "label",
+      "zindex": 10,
+      "cb": false,
+      "attributes": ["x", "y", "width", "height"],
+      "apis": ["set_text"],
+      "styles": [
+        "MAIN.text_color",
+        "MAIN.text_font"
+      ],
+      "data": {
+        "width": 30,
+        "height": 15,
+        "x": 130,
+        "y": 20,
+        "set_text": "\"kW\"",
+        "MAIN.text_color": "#FFFFFF",
+        "MAIN.text_font": "Be13"
+      }
+    },
+    "chart_power": {
+      "parent": "screen",
+      "id": "chart_power",
+      "type": "chart",
+      "zindex": 11,
+      "cb": false,
+      "attributes": ["x", "y", "width", "height"],
+      "apis": [
+        "set_type",
+        "set_point_count",
+        "set_range",
+        "set_div_line_count"
+      ],
+      "styles": [
+        "MAIN.bg_color",
+        "MAIN.border_width",
+        "MAIN.pad_left",
+        "MAIN.pad_bottom",
+        "MAIN.pad_right"
+      ],
+      "data": {
+        "width": 320,
+        "height": 120,
+        "x": 0,
+        "y": 120,
+        "set_type": "LV_CHART_TYPE_LINE",
+        "set_point_count": 48,
+        "set_range": "0,5000",
+        "set_div_line_count": "5,8",
+        "MAIN.bg_color": "#000000",
+        "MAIN.border_width": 0,
+        "MAIN.pad_left": 35,
+        "MAIN.pad_bottom": 25,
+        "MAIN.pad_right": 10
+      }
+    },
+    "chart_series_power": {
+      "parent": "chart_power",
+      "id": "chart_series_power",
+      "type": "chart_series",
+      "zindex": 12,
+      "cb": false,
+      "attributes": [],
+      "apis": [],
+      "styles": [
+        "MAIN.line_width",
+        "MAIN.line_color"
+      ],
+      "data": {
+        "MAIN.line_width": 2,
+        "MAIN.line_color": "#1EAEFF"
+      }
+    }
+  },
+  "animations": {
+    "timelines": [
+      {
+        "id": "timeline_1",
+        "title": "Gauge Animation",
+        "anims": [
+          {
+            "objs": [
+              {
+                "id": "img_needle_home",
+                "attr": "angle",
+                "iseditor": false
+              }
+            ],
+            "start_time": "0",
+            "valueMin": 0,
+            "valueMax": 100,
+            "time": 1000,
+            "playback_delay": 100,
+            "playback_time": 300,
+            "repeat_delay": 500,
+            "repeat_count": "-1"
+          }
+        ]
+      },
+      {
+        "id": "timeline_2",
+        "title": "Chart Animation",
+        "anims": [
+          {
+            "objs": [
+              {
+                "id": "chart_power",
+                "attr": "value",
+                "iseditor": false
+              }
+            ],
+            "start_time": "0",
+            "valueMin": 0,
+            "valueMax": 5000,
+            "time": 500,
+            "repeat_count": "-1"
+          }
+        ]
+      }
+    ],
+    "sequences": []
+  },
+  "assets": {
+    "images": [
+      {
+        "id": "home_gauge.png",
+        "title": "Home Gauge Background",
+        "path": "images/home_gauge.png",
+        "size": 1024,
+        "width": 108,
+        "height": 108
+      },
+      {
+        "id": "home_needle.png",
+        "title": "Home Gauge Needle",
+        "path": "images/home_needle.png", 
+        "size": 512,
+        "width": 108,
+        "height": 108
+      },
+      {
+        "id": "battery.png",
+        "title": "Battery Icon",
+        "path": "images/battery.png",
+        "size": 256,
+        "width": 36,
+        "height": 71
+      }
+    ],
+    "fonts": [
+      {
+        "id": "Be30",
+        "name": "Be Sans 30px",
+        "path": "fonts/be_sans_30"
+      },
+      {
+        "id": "Be15",
+        "name": "Be Sans 15px", 
+        "path": "fonts/be_sans_15"
+      },
+      {
+        "id": "Be13",
+        "name": "Be Sans 13px",
+        "path": "fonts/be_sans_13"
+      }
+    ]
+  },
+  "settings": {
+    "screen": {
+      "width": 320,
+      "height": 240
+    },
+    "output": {
+      "format": "c",
+      "path": ""
+    },
+    "lvgl": {
+      "version": "8.3.0",
+      "colorDepth": 16
+    }
+  },
+  "styles": {
+    "chart": {
+      "MAIN.bg_color": "#000000",
+      "MAIN.line_color": "#1EAEFF",
+      "MAIN.border_width": 0,
+      "MAIN.pad_all": 5
+    },
+    "label": {
+      "MAIN.text_color": "#FFFFFF",
+      "MAIN.text_align": "center"
+    }
+  }
+} 

@@ -8,7 +8,7 @@
 </template>
 
 <script lang="ts">
-import { wrap_align } from './runtimeWrapper.js';
+import { wrap_align } from '../runtimeWrapper.js';
 
 export default {
   name : 'lvgl-attr-align',

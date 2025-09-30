@@ -237,6 +237,19 @@ for (let objKey in style_setter) {
   ];
 }
 
+export function updateIcon(iconMap) {
+  for (let key in widgetMap) {
+    let icon = iconMap[key];
+    if (icon) {
+      widgetMap[key].iconUrl = icon;
+    } else {
+      widgetMap[key].iconUrl = '/icon_404.png';
+      // console.log('updateIcon widgetMap[key]', key)
+    }
+  }
+  // console.log('updateIcon', iconMap, widgetMap);
+}
+
 export function getWidget(type) {
   return widgetMap[type];
 }
@@ -254,14 +267,6 @@ export let timeline_anim_def = { objs: [], start_time: 0, valueMin: 0, valueMax:
 export let timeline_obj_def = { id: 'arc_0', attr: 'value' };
 export let timeline_def = { id: 'timeline1', title: '', anims: [ timeline_anim_def ]};
 
-
-
-
-
-
-
-
-
 //The Python code to Initialize the environment
 export const EnvInitCode = (width, height) => [
   `
@@ -269,7 +274,6 @@ import ujson
 import lvgl as lv
 lv.init()
 import SDL
-
 
 print('boot init')
 WIDTH = ${width}

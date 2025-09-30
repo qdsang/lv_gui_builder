@@ -33,6 +33,7 @@
     "element-plus": "^2.4.4",
     "esbuild-plugin-external-global": "^1.0.1",
     "events": "^3.3.0",
+    "fabric": "^6.7.1",
     "highlight.js": "^11.9.0",
     "lodash-es": "^4.17.21",
     "lv_font_conv": "^1.5.3",
@@ -48,7 +49,8 @@
     "vue": "^3.3.13",
     "vue-cropper": "^1.1.4",
     "vue-router": "^4.1.3",
-    "vue3-ace-editor": "^2.2.4"
+    "vue3-ace-editor": "^2.2.4",
+    "xmlbuilder2": "^3.1.1"
   },
   "devDependencies": {
     "@babel/plugin-proposal-optional-chaining": "^7.18.9",
@@ -74,6 +76,7 @@
     "unplugin-vue-components": "^0.22.12",
     "vite": "^3.0.0",
     "vite-plugin-html": "^3.2.0",
+    "vite-plugin-static-copy": "^2.2.0",
     "vite-plugin-vconsole": "^1.2.2",
     "vue-tsc": "^0.38.4"
   }
