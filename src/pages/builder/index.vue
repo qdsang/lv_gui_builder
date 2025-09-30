@@ -204,7 +204,7 @@
     },
     data() {
       return {
-        demoList: getDemoList(),
+        demoList: [],
 
         //Simulator
         cursorX: 0,
@@ -289,17 +289,21 @@
       );
       // 添加键盘事件监听
       window.addEventListener('keydown', this.handleKeyDown);
-
-      initDemo();
-
-      this.initProject();
-      this.simulatorInit();
+      this.init();
     },
     beforeDestroy() {
       // 移除键盘事件监听
       window.removeEventListener('keydown', this.handleKeyDown);
     },
     methods: {
+      async init() {
+        this.demoList = await getDemoList();
+        // console.log('demoList', this.demoList);
+        initDemo();
+
+        this.initProject();
+        this.simulatorInit();
+      },
       initProject() {
         const id = this.$route.params.id || 'demo1';
         console.log('initProject', id);
@@ -384,21 +388,24 @@
           let files = Array.from(droppedFiles);
           console.log(files);
           files.forEach(async file => {
-            if (file.type && file.type.includes('image/')) {
-              file.base64 = await this.readFileContent(file);
-              projectStore.importImage(file);
+            // 为file添加类型断言
+            const typedFile = file as File & { base64?: string };
+            const fileType = typedFile.type || '';
+            if (fileType && fileType.includes('image/')) {
+              typedFile.base64 = await this.readFileContent(typedFile);
+              projectStore.importImage(typedFile);
 
               this.message({
-                message: "" + file.name + " imported successfully",
+                message: "" + typedFile.name + " imported successfully",
                 type: 'success',
               });
-            } else if (file.type && file.type.includes('font/')) {
+            } else if (fileType && fileType.includes('font/')) {
               this.message({
-                message: "NO " + file.name + " imported successfully",
+                message: "NO " + typedFile.name + " imported successfully",
                 type: 'success',
               });
             } else {
-              this.loadProjectFile(file);
+              this.loadProjectFile(typedFile);
             }
           });
         } catch (error) {
@@ -656,7 +663,8 @@
 
       // Take a screenshot for the Simulator
       screenshot: function () {
-        document.getElementById('canvas').toBlob((blob) => {
+        const canvasElement = document.getElementById('canvas') as HTMLCanvasElement;
+        canvasElement.toBlob((blob) => {
           saveAs(blob, 'screenshot.png');
         });
       },
@@ -696,7 +704,8 @@
 
       //Highlight object
       drawRect: (x, y, w, h) => {
-        let ctx = document.getElementById('canvas').getContext('2d');
+        const canvasElement = document.getElementById('canvas') as HTMLCanvasElement;
+        let ctx = canvasElement.getContext('2d');
         ctx.strokeStyle = 'blue';
         ctx.lineWidth = 2;
         ctx.setLineDash([5, 5]);
@@ -710,6 +719,7 @@
       },
 
       handleChangeID(id) {
+        // @ts-ignore
         ElMessageBox.prompt('ID（' + id + '）  new ID：', 'Edit ID', {
           confirmButtonText: 'OK',
           cancelButtonText: 'Cancel',
@@ -718,6 +728,7 @@
         .then(({ value }) => {
           let newid = value;
           if (projectStore.getWidgetById(newid)) {
+            // @ts-ignore
             ElMessage({
               type: 'info',
               message: `Already exists:${value}`,

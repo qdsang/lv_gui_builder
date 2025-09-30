@@ -49,20 +49,10 @@ export default ({ command, mode }) => {
           {
             filename: 'public/index.html',
             template: 'public/index.html',
-            entry: 'src/main.ts',
+            entry: '/src/main.ts',
             injectOptions: {
               data: {
                 title: '主页'
-              }
-            }
-          },
-          {
-            filename: 'lvgl/v8.3.0/embed.html',
-            template: 'lvgl/v8.3.0/embed.html',
-            entry: 'lvgl/v8.3.0/main.ts',  // 如果需要单独的入口文件
-            injectOptions: {
-              data: {
-                title: 'LVGL Simulator'
               }
             }
           }
