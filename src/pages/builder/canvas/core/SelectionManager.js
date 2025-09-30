@@ -138,8 +138,15 @@ export class SelectionManager {
       if (this.canvas.selectedElements.size === 1) {
         this.canvas.transformer.nodes([node]);
       } else {
-        // 多选时不附加变换器
-        this.canvas.transformer.nodes([]);
+        // 多选时将所有选中的元素附加到变换器
+        const selectedNodes = [];
+        for (const selectedId of this.canvas.selectedElements) {
+          const selectedElement = this.canvas.elements.get(selectedId);
+          if (selectedElement && selectedElement.object && selectedElement.type !== 'screen') {
+            selectedNodes.push(selectedElement.object);
+          }
+        }
+        this.canvas.transformer.nodes(selectedNodes);
       }
     }
     
@@ -198,6 +205,16 @@ export class SelectionManager {
           this.canvas.transformer.nodes([node]);
         }
       }
+    } else {
+      // 如果还有多个元素被选中，更新变换器
+      const selectedNodes = [];
+      for (const selectedId of this.canvas.selectedElements) {
+        const selectedElement = this.canvas.elements.get(selectedId);
+        if (selectedElement && selectedElement.object) {
+          selectedNodes.push(selectedElement.object);
+        }
+      }
+      this.canvas.transformer.nodes(selectedNodes);
     }
     
     // 触发取消选中事件

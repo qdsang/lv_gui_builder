@@ -308,8 +308,11 @@ export class ElementManager {
 
     group.on('transformstart dragstart', (e) => {
       e.cancelBubble = true; // 阻止事件冒泡
-      this.canvas.deselectAllElements();
-      this.canvas.selectElement(id);
+      // 如果当前元素未被选中，则选中它
+      if (!this.canvas.selectedElements.has(id)) {
+        this.canvas.deselectAllElements();
+        this.canvas.selectElement(id);
+      }
     });
 
     // 在拖动和变换过程中都触发修改事件

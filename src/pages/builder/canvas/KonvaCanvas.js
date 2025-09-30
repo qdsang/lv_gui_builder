@@ -174,11 +174,12 @@ export class KonvaCanvas {
       // 获取当前变换的节点
       const nodes = this.transformer.nodes();
       if (nodes.length > 0) {
-        const node = nodes[0];
-        // 从节点ID找到对应的元素ID并触发修改事件
-        const elementId = node.id();
-        if (elementId) {
-          this.onElementModified(elementId, e);
+        // 遍历所有节点并触发修改事件
+        for (const node of nodes) {
+          const elementId = node.id();
+          if (elementId) {
+            this.onElementModified(elementId, e);
+          }
         }
       }
     });
@@ -188,11 +189,12 @@ export class KonvaCanvas {
       // 获取当前变换的节点
       const nodes = this.transformer.nodes();
       if (nodes.length > 0) {
-        const node = nodes[0];
-        // 从节点ID找到对应的元素ID并触发修改事件
-        const elementId = node.id();
-        if (elementId) {
-          this.onElementModified(elementId, e);
+        // 遍历所有节点并触发修改事件
+        for (const node of nodes) {
+          const elementId = node.id();
+          if (elementId) {
+            this.onElementModified(elementId, e);
+          }
         }
       }
     });
