@@ -33,7 +33,7 @@ export default {
       // wrap_align(this.id, 'None', type, 0, 0);
       // wrap_align(this.id, type, 0, 0);
       let node = null;
-      engine.simulatorUpdateAttr(node);
+      engine.simulatorWidget.updateAttr(node);
     }
   },
 };

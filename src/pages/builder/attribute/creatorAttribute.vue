@@ -4,7 +4,7 @@
       <el-form-item label="ID">
         <el-row>
           <el-col :span="24">
-            <em> {{ id }} </em> {{ currentType }}&nbsp;
+            <em> {{ id }} </em> ({{ currentType }})&nbsp;
             <el-button icon="el-icon-edit" circle @click="editID"></el-button>
           </el-col>
         </el-row>
@@ -49,8 +49,8 @@
     <!-- <el-divider style="margin: 10px 0"></el-divider> -->
 
     <!-- method area -->
-    <div style="padding: 0 0 10px;">
-      <div v-for="(body, name) in setter[currentType]" :key="name">
+    <div style="padding: 10px 0 10px;">
+      <div v-for="(body, name) in getWidgetSetter(currentType)" :key="name">
         <attr-setter2
           :id="id"
           :mode="'apis'"
@@ -73,7 +73,7 @@
 </template>
 
 <script lang="ts">
-import * as api from '@lvgl/v8.3.0/widgetApis.js';
+import engine from '../engine.js';
 
 import AttrAlign from './AttrAlign.vue';
 import AttrSetter2 from './AttrSetter2.vue';
@@ -92,7 +92,6 @@ export default {
   },
   data: function() {
     return {
-      setter: api.setter,
       currentType: '',
       currentWidget: {},
       changeIDFormVisible: false,
@@ -134,6 +133,9 @@ export default {
     editID() {
       this.$emit('change-id', this.id);
     },
+    getWidgetSetter(type) {
+      return engine.Widget.getWidgetSetter(type);
+    }
   },
 };
 </script>

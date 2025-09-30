@@ -1,6 +1,7 @@
 // ============================== FILE I/O (sync => bad) =================================
 
 import { FS } from './micropython.js';
+import assets from './assets.js';
 
 
 window.urls = {"name":"webcache","id":-1, "index": "/index.html"}
@@ -16,7 +17,7 @@ if(searchParams.get("script") != null) {
     scriptLocationPrefix = scriptPath.origin + scriptPath.pathname.substring(0, scriptPath.pathname.lastIndexOf("/")+1);
     console.warn("Attempts to open() files using relative paths will also try:", scriptLocationPrefix);
 } else {
-    console.error("Attempts to open() files using relative paths will fail! No script parameter in URL.");
+    // console.error("Attempts to open() files using relative paths will fail! No script parameter in URL.");
 }
 
 function is_relative(url) {
@@ -92,7 +93,17 @@ function awfull_get(url) {
     }
 }
 
-
+let cache = {};
+function awfull_get_cache(url) {
+    let v = assets.get(url);
+    if (v) {
+        return v;
+    }
+    
+    if (cache[url])
+        return cache[url];
+    return cache[url] = awfull_get(url);
+}
 
 
 window.wasm_file_open = function(url, cachefile) {
@@ -141,7 +152,7 @@ window.wasm_file_open = function(url, cachefile) {
                 url = window.urls.cors(url)
         }
 
-        var ab = awfull_get(url)
+        var ab = awfull_get_cache(url)
 
         // is file found and complete ?
         if (window.currentTransferSize<0)

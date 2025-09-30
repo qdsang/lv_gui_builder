@@ -47,41 +47,37 @@
           v-model="arg.value"
           @change="checkArgs()"
           clearable
+          :placeholder="`Select image`"
         >
           <el-option
             v-for="item in imageLibrary"
-            :key="item.path"
-            :value="item.path"
+            :key="item.id"
+            :value="item.id"
           >
-
-            <span style="float: left">{{ item.title }}</span>
-            <span
-              style="
-                float: right;
-                color: var(--el-text-color-secondary);
-                font-size: 13px;
-              "
-            >
-              {{ item.path }}
-            </span>
+            <img
+              style="height: 20px; margin-right: 5px"
+              :src="item.content"
+            />
+            <span>{{ item.name }}</span>
           </el-option>
         </el-select>
 
-        <el-tooltip
-            v-else
+        <input
+          v-else
+          type="text"
+          style="width: 100%"
+          v-model="arg.value"
+          :placeholder="arg.name + ' (' + arg.type + ')'"
+          @input="checkArgs()"
+        />
+        
+        <!-- <el-tooltip
           class="box-item"
           effect="dark"
-          :content="arg.name + '(' + arg.type + ')'"
+          :content="arg.name + ' (' + arg.type + ')'"
           placement="bottom-start"
         >
-          <input
-            type="text"
-            style="width: 100%"
-            v-model="arg.value"
-            :placeholder="arg.name + ' ' + arg.type"
-            @input="checkArgs()"
-          />
-        </el-tooltip>
+        </el-tooltip> -->
       </el-col>
       </template>
     </el-row>

@@ -1,7 +1,8 @@
 <template>
   <div
     id="mpy_repl"
-    style="height: 200px"
+    ref="terminalContainer"
+    style="height: 200px; padding: 0 0 0 10px"
     :style="{ visibility: term_visible ? 'visible' : 'hidden' }"
   >
   </div>
@@ -21,6 +22,8 @@ export default {
   data: function() {
     return {
       term: null,
+      fitAddon: null,
+      resizeObserver: null,
 
       //Terminal
       term_visible: false,
@@ -28,6 +31,13 @@ export default {
   },
   mounted() {
     this.initVM();
+    this.initResizeObserver();
+  },
+  beforeUnmount() {
+    // 清理 ResizeObserver
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+    }
   },
   methods: {
     initVM() {
@@ -42,7 +52,7 @@ export default {
       const fitAddon = new FitAddon();
       term.loadAddon(fitAddon);
 
-      term.open(document.getElementById('mpy_repl'));
+      term.open(this.$refs.terminalContainer);
       fitAddon.fit();
       // term.write('Welcome To \x1B[1;3;31mLV LV-Extension\x1B[0m');
 
@@ -55,6 +65,21 @@ export default {
       });
 
       vm.term = term;
+      vm.fitAddon = fitAddon;
+    },
+    initResizeObserver() {
+      // 创建 ResizeObserver 实例来监听容器尺寸变化
+      this.resizeObserver = new ResizeObserver(entries => {
+        // 当容器尺寸变化时，调整终端大小
+        if (this.fitAddon) {
+          this.fitAddon.fit();
+        }
+      });
+
+      // 开始观察容器元素
+      if (this.$refs.terminalContainer) {
+        this.resizeObserver.observe(this.$refs.terminalContainer);
+      }
     },
     write(text) {
       this.term.write(text);

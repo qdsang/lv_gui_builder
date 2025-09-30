@@ -1,7 +1,7 @@
 <template>
-<div>
-  <div style="display: flex; justify-content: space-between;">
-    <div style="display: flex; flex-grow: 1; justify-content: flex-end; align-items: center;">
+<div class="image-gallery-container">
+  <div class="upload-section">
+    <div class="upload-wrapper">
       <el-upload
         class="upload-demo"
         multiple
@@ -9,55 +9,155 @@
         :auto-upload="false"
         :on-change="handFileChange"
       >
-        <el-button type="primary">Click to upload</el-button>
+        <el-button type="primary" class="upload-button">
+          <el-icon><Upload /></el-icon>
+          Upload Images
+        </el-button>
       </el-upload>
     </div>
   </div>
-  <el-table :data="tableData" style="width: 100%">
-    <el-table-column prop="id" label="ID Path" width="150">
-      <template #default="props">
-        <input type="text" v-show="props.row.iseditor" style="width: 100%;" v-model="props.row.id" />
-        <span v-show="!props.row.iseditor">{{props.row.id}}</span>
-      </template>
-    </el-table-column>
-    <el-table-column prop="title" label="title">
-      <template #default="props">
-        <input type="text" v-show="props.row.iseditor" style="width: 100%;" v-model="props.row.title" />
-        <span v-show="!props.row.iseditor">{{props.row.title}}</span>
-      </template>
-    </el-table-column>
-    <el-table-column prop="type" label="Type" width="140">
-      <template #default="props">
-        <el-select
-          v-show="props.row.iseditor"
-          size="small"
-          style="width: 100%;"
-          v-model="props.row.type"
-          @change="handleImgTypeChange(props)"
-        >
-          <el-option value="image/png" label="png"></el-option>
-          <el-option value="image/jpeg" label="jpg"></el-option>
-        </el-select>
-        <span v-show="!props.row.iseditor">{{props.row.type}}</span>
-      </template>
-    </el-table-column>
+  
+  <div class="gallery-grid">
+    <div 
+      v-for="(item, index) in tableData" 
+      :key="item.id" 
+      class="gallery-item"
+      @dblclick="openEditDialog(item)"
+    >
+      <div class="image-card">
+        <div class="image-preview" @click="handleImagePreview(item)">
+          <img :src="item.content" :alt="item.name" />
+        </div>
+        
+        <!-- Hover时显示的图片信息 -->
+        <div class="image-hover-info" v-if="false">
+          <div class="info-content">
+            <div class="info-row">
+              <span class="info-label">Title:</span>
+              <span class="info-value">{{ item.name }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">ID:</span>
+              <span class="info-value">{{ item.id }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Size:</span>
+              <span class="info-value">{{ item.width }}×{{ item.height }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">File:</span>
+              <span class="info-value">{{ formatFileSize(item.size) }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="image-title">
+          {{ item.name }}
+        </div>
+        
+        <div class="image-actions">
+          <div class="action-buttons">
+            <el-button 
+              type="primary" 
+              size="small" 
+              @click.stop="openEditDialog(item)"
+              circle
+            >
+              <el-icon><Edit /></el-icon>
+            </el-button>
+            
+            <el-button 
+              type="primary" 
+              size="small" 
+              @click.stop="handleImageCropper({ row: item })"
+              circle
+            >
+              <el-icon><Crop /></el-icon>
+            </el-button>
+            
+            <el-button 
+              type="danger" 
+              size="small" 
+              @click.stop="handleDelete({ row: item, $index: index })"
+              circle
+            >
+              <el-icon><Delete /></el-icon>
+            </el-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <el-table-column label="Info">
-      <template #default="props">
-        <span>{{ props.row.size/1000 }}kb</span><br />
-        <span>{{ props.row.width + 'x' + props.row.height }}</span>
-      </template>
-    </el-table-column>
-    <el-table-column fixed="right" label="Operations" width="250">
-      <template #default="props">
-        <el-button link type="primary" size="small" v-if="props.row.iseditor" @click="save(props)">Save</el-button>
-        <el-button link type="primary" size="small" v-if="!props.row.iseditor" @click="edit(props)">Edit</el-button>
-        <el-button link type="primary" size="small" @click="handleImagePreview(props)">Preview</el-button>
-        <el-button link type="primary" size="small" @click="handleImageCropper(props)">Cropper</el-button>
-        <el-button link type="primary" size="small" @click="handleDelete(props)">Delete</el-button>
-      </template>
-    </el-table-column>
-  </el-table>
+  <!-- 编辑图片信息弹框 -->
+  <el-dialog
+    v-model="editDialogVisible"
+    title="Edit Image"
+    width="500px"
+    destroy-on-close
+  >
+    <div class="edit-dialog-content" v-if="editingItem">
+      <div class="form-item">
+        <label class="form-label">Title</label>
+        <el-input 
+          v-model="editingItem.name" 
+          placeholder="Image title"
+        />
+      </div>
+      
+      <div class="form-item">
+        <label class="form-label">ID</label>
+        <el-input 
+          v-model="editingItem.id" 
+          placeholder="Image ID"
+        />
+      </div>
+      
+      <div class="form-item">
+        <label class="form-label">Type</label>
+        <el-select
+          v-model="editingItem.type"
+          @change="handleImgTypeChange({ row: editingItem })"
+          style="width: 100%"
+        >
+          <el-option value="image/png" label="PNG"></el-option>
+          <el-option value="image/jpeg" label="JPG"></el-option>
+        </el-select>
+      </div>
+      
+      <div class="form-item">
+        <label class="form-label">Preview</label>
+        <div class="preview-container">
+          <img :src="editingItem.content" :alt="editingItem.title" />
+        </div>
+      </div>
+      
+      <div class="form-item">
+        <label class="form-label">Details</label>
+        <div class="details-grid">
+          <div class="detail-item">
+            <span class="detail-label">Dimensions:</span>
+            <span>{{ editingItem.width }} × {{ editingItem.height }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">File size:</span>
+            <span>{{ formatFileSize(editingItem.size) }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Type:</span>
+            <span>{{ editingItem.type }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="editDialogVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="saveEditedItem">Confirm</el-button>
+      </span>
+    </template>
+  </el-dialog>
 
   <!-- 添加裁剪对话框 -->
   <el-dialog
@@ -65,6 +165,7 @@
     title="Image Cropper"
     width="800px"
     destroy-on-close
+    class="cropper-dialog"
   >
     <vue-cropper
       ref="cropper"
@@ -91,6 +192,7 @@
     v-if="previewVisible"
     :url-list="[previewImage]"
     :initial-index="0"
+    :hide-on-click-modal="true"
     @close="previewVisible = false"
   />
 </div>
@@ -100,41 +202,7 @@
 import { projectStore } from './store/projectStore';
 import 'vue-cropper/dist/index.css'
 import { VueCropper } from 'vue-cropper'
-
-async function compressImg(file) {
-  let id = file.name;
-  var size = file['size'];
-  let type = file.raw.type;
-  let base64 = await imgToBase64(file.raw);
-  
-  type = 'image/jpeg';
-  base64 = await convertImage(base64.toString(), type);
-
-  let imgInfo = await imgGetInfo(base64.toString());
-  
-  return { id: id, title: id, path: id, type, size, width: imgInfo.width, height: imgInfo.height, base64 };
-}
-
-async function imgToBase64(file) {
-  var read = new FileReader()
-  read.readAsDataURL(file)
-  return new Promise(function(resolve, reject) {
-    read.onload = function(res) {
-      let base64 = res.target.result;
-      resolve(base64);
-    }
-  });
-}
-
-async function imgGetInfo(url) {
-  var img = new Image()
-  return new Promise(function(resolve, reject) {
-    img.src = url;
-    img.onload = function() {
-      resolve({ width: img.width, height: img.height });
-    }
-  });
-}
+import { Upload, Picture, Document, Files, Edit, Delete, Check, Crop } from '@element-plus/icons-vue'
 
 let convertImage = (function () {
   var canvas = document.createElement('canvas');
@@ -167,7 +235,15 @@ export default {
   props: ['screenLayout', 'nodeKey'],
   emits: ['node-click', 'event'],
   components: {
-    VueCropper
+    VueCropper,
+    Upload,
+    Picture,
+    Document,
+    Files,
+    Edit,
+    Delete,
+    Check,
+    Crop
   },
   data: function() {
     return {
@@ -178,6 +254,10 @@ export default {
       croppedData: null,
       previewVisible: false,
       previewImage: '',
+      editDialogVisible: false,
+      editingItem: null,
+      editingItemOriginal: null,
+      hoveredItem: null
     }
   },
   watch: {
@@ -187,17 +267,28 @@ export default {
     this.tableData = projectStore.getAllAssets('images');
   },
   methods: {
-    edit(props) {
-      props.row.iseditor = true;
+    openEditDialog(item) {
+      // 保存原始数据用于取消操作
+      this.editingItemOriginal = JSON.parse(JSON.stringify(item));
+      this.editingItem = JSON.parse(JSON.stringify(item));
+      this.editDialogVisible = true;
     },
-    save(props) {
-      props.row.iseditor = false;
-      projectStore.updateAsset('images', props.row.id, props.row);
+    saveEditedItem() {
+      if (this.editingItem) {
+        // 更新数据
+        projectStore.updateAsset('images', this.editingItem.id, this.editingItem);
+        // 更新表格数据
+        const index = this.tableData.findIndex(item => item.id === this.editingItem.id);
+        if (index !== -1) {
+          this.tableData[index] = JSON.parse(JSON.stringify(this.editingItem));
+        }
+      }
+      this.editDialogVisible = false;
+      this.editingItem = null;
+      this.editingItemOriginal = null;
     },
     async handFileChange(file) {
-      let imageData = await compressImg(file);
-      // 使用 projectStore 添加图片
-      const id = projectStore.addAsset('images', imageData);
+      const id = await projectStore.importImage(file);
       this.tableData = projectStore.getAllAssets('images');
     },
     handleDelete(props) {
@@ -205,15 +296,15 @@ export default {
       this.tableData = projectStore.getAllAssets('images');
     },
     async handleImgTypeChange(props) {
-      let base64 = await convertImage(props.row.base64, props.row.type);
-      if (base64) {
-        console.log('handleImgTypeChange', props.row.type, base64, props.row.base64);
-        props.row.base64 = base64;
+      let content = await convertImage(props.row.content, props.row.type);
+      if (content) {
+        // console.log('handleImgTypeChange', props.row.type, content, props.row.content);
+        props.row.content = content;
       }
     },
     handleImageCropper(props) {
       this.currentRow = props.row
-      this.currentImage = props.row.base64
+      this.currentImage = props.row.content
       this.cropperVisible = true
     },
     cropImage(data) {
@@ -224,7 +315,7 @@ export default {
 
       const canvas = this.$refs.cropper.getCropData(async (data) => {
         // 更新当前图片数据
-        this.currentRow.base64 = data
+        this.currentRow.content = data
         this.currentRow.width = this.croppedData.w
         this.currentRow.height = this.croppedData.h
         this.currentRow.size = Math.round(data.length * 0.75) // base64 to binary size approximation
@@ -240,15 +331,214 @@ export default {
       })
     },
     handleImagePreview(props) {
-      this.previewImage = props.row.base64
+      this.previewImage = props.row ? props.row.content : props.content
       this.previewVisible = true
     },
+    formatFileSize(size) {
+      if (size < 1024) {
+        return size + ' B';
+      } else if (size < 1024 * 1024) {
+        return (size / 1024).toFixed(1) + ' KB';
+      } else {
+        return (size / (1024 * 1024)).toFixed(1) + ' MB';
+      }
+    }
   },
 };
 </script>
 <style lang="less" scoped>
-.cropper-container {
-  height: 500px;
+.image-gallery-container {
+  padding: 20px;
+  background-color: var(--el-bg-color-page);
+  min-height: 100%;
+  
+  .upload-section {
+    margin-bottom: 30px;
+    
+    .upload-wrapper {
+      display: flex;
+      justify-content: center;
+      
+      .upload-button {
+        padding: 12px 24px;
+        font-size: 16px;
+        
+        .el-icon {
+          margin-right: 8px;
+        }
+      }
+    }
+  }
+  
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 16px;
+    
+    .gallery-item {
+      transition: all 0.3s ease;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      
+      .image-card {
+        background: var(--el-bg-color-overlay);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        position: relative;
+        
+        &:hover {
+          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+          transform: translateY(-4px);
+        }
+        
+        .image-preview {
+          height: 140px;
+          overflow: hidden;
+          position: relative;
+          
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+          }
+          
+          &:hover img {
+            transform: scale(1.05);
+          }
+        }
+        
+        .image-title {
+          padding: 4px 6px 4px;
+          font-size: 14px;
+          font-weight: 500;
+          color: var(--el-text-color-primary);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        
+        .image-hover-info {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          background: rgba(0, 0, 0, 0.85);
+          color: white;
+          padding: 10px;
+          font-size: 12px;
+          transform: translateY(100%);
+          transition: transform 0.3s ease;
+          z-index: 10;
+          
+          .info-content {
+            .info-row {
+              display: flex;
+              justify-content: space-between;
+              margin-bottom: 4px;
+              
+              &:last-child {
+                margin-bottom: 0;
+              }
+              
+              .info-label {
+                font-weight: 500;
+              }
+              
+              .info-value {
+                text-align: right;
+                max-width: 65%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              }
+            }
+          }
+        }
+        
+        &:hover .image-hover-info {
+          transform: translateY(0);
+        }
+        
+        .image-actions {
+          padding: 4px 8px 8px;
+          
+          .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            
+            .el-button {
+              flex: 1;
+              margin: 0 3px;
+              padding: 8px;
+              
+              &:first-child {
+                margin-left: 0;
+              }
+              
+              &:last-child {
+                margin-right: 0;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.edit-dialog-content {
+  .form-item {
+    margin-bottom: 20px;
+    
+    .form-label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: var(--el-text-color-primary);
+    }
+    
+    .preview-container {
+      width: 100%;
+      height: 150px;
+      border: 1px solid var(--el-border-color);
+      border-radius: 4px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+      }
+    }
+    
+    .details-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      
+      .detail-item {
+        display: flex;
+        flex-direction: column;
+        
+        .detail-label {
+          font-size: 12px;
+          color: var(--el-text-color-secondary);
+        }
+      }
+    }
+  }
+}
+
+.cropper-dialog {
+  .el-dialog__body {
+    padding: 20px;
+  }
 }
 
 :deep(.vue-cropper) {
@@ -259,6 +549,19 @@ export default {
 :deep(.el-image-viewer__wrapper) {
   // 确保预览窗口在最顶层
   z-index: 2100;
+}
+
+// 深色模式适配
+html.dark {
+  .image-gallery-container {
+    .gallery-grid {
+      .gallery-item {
+        .image-card {
+          background: var(--el-bg-color-overlay);
+        }
+      }
+    }
+  }
 }
 </style>
 <style lang="less">

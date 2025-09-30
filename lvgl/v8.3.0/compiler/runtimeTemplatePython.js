@@ -1,8 +1,7 @@
 /* template: generate the related code and return as string */
 import { color_convert } from './runtimeWrapper.js';
 // import * as WidgetData from "./widgetData.js";
-
-import { projectStore } from '../../src/pages/builder/store/projectStore.js';
+import assets from '../assets.js';
 
 export const template_py_create = (id, parent_id, type) => {
     return `${id} = lv.${type}(${parent_id})`;
@@ -31,6 +30,9 @@ export const template_py_setter_simple = (id, attr, param) => {
 export const template_py_api_simple = (id, api, param) => {
     if (api === "set_src") {
         return template_py_img_api(id, api, param);
+    } else if (api.includes('_color')) {
+        let hexColor = color_convert(param);
+        param = `lv.color_hex(${hexColor})`;
     }
     return `${id}.${api}(${param})`;
 }
@@ -52,33 +54,34 @@ function GenNonDuplicateID(){
     return idStr
 }
 
-function b64toBlob2(dataURI) {
-    var byteString = atob(dataURI.split(',')[1]);
-    var ab = new ArrayBuffer(byteString.length);
-    var ia = [];//new Uint8Array(ab);
-    
-    for (var i = 0; i < byteString.length; i++) {
-        ia[i] = byteString.charCodeAt(i);
+function removeBase64Prefix(base64Str) {
+    if (base64Str.startsWith('data:')) {
+        const base64Index = base64Str.indexOf('base64,');
+        if (base64Index !== -1) {
+            return base64Str.substring(base64Index + 7);
+        }
     }
-    return ia;
-    return new Blob([ab], { type: 'image/jpeg' });
+    return base64Str;
 }
-
 function GenImageCode(url){
     let imgId = 'i' + GenNonDuplicateID().substring(0, 10);
     let code = [
 `
+#print("img start")
 img_data = None
 ${imgId} = None
 `];
 
-    let img = projectStore.getAsset('images', url); //.getAsset('images', url);
+    let img = assets.get(url);
     if (img) {
-        let base64 = b64toBlob2(img.base64);
-        let base64str = 'bytes([' + base64.join(', ') + '])'
+        let base64 = removeBase64Prefix(img.content)
+        // let base64str = 'bytes([' + base64.join(', ') + '])'
 code.push(`
+import ubinascii
+
 try:
-    img_data = ${base64str}
+    img_str = "${base64}"
+    img_data = ubinascii.a2b_base64(img_str)
 except:
     print("Could not img base64 ${url}")
 `);
@@ -87,7 +90,7 @@ code.push(`
 try:
     with open('${url}','rb') as f:
         img_data = f.read()
-        print(type(img_data))
+        #print(type(img_data))
 except:
     print("Could not find ${url}")
     # sys.exit()
@@ -95,7 +98,7 @@ except:
     }
 
 code.push(`
-print("img_data: " + str(len(img_data)))
+#print("img ${url} size: " + str(len(img_data)))
 
 if img_data:
     ${imgId} = lv.img_dsc_t({
@@ -103,8 +106,9 @@ if img_data:
         'data': img_data
     })
 
-print("img ok")
+#print("img ok")
 `);
+// console.log(code.join('\n'));
     return {imgId, code: code.join('\n')};
 }
 
@@ -252,7 +256,8 @@ try:
     lv.anim_timeline_pause(${v})
     lv.anim_timeline_delete(${v})
 except Exception as err:
-    print(f"Unexpected {err=}, {type(err)=}")
+    pass
+    #print(f"Unexpected {err=}, {type(err)=}")
 `);
 }
 timelines = [];

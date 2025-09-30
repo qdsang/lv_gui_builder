@@ -26,10 +26,7 @@ export class AlignmentManager {
     let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
 
     selectedElements.forEach(element => {
-      let node = element.object;
-      if (element.type === 'screen') {
-        node = element.group;
-      }
+      let node = element.group;
 
       if (node) {
         const x = typeof node.x === 'function' ? node.x() : (node.attrs?.x || 0);
@@ -49,10 +46,7 @@ export class AlignmentManager {
 
     // 对齐元素
     selectedElements.forEach(element => {
-      let node = element.object;
-      if (element.type === 'screen') {
-        node = element.group;
-      }
+      let node = element.group;
 
       if (node) {
         const width = typeof node.width === 'function' ? node.width() : (node.attrs?.width || 0);
@@ -107,10 +101,7 @@ export class AlignmentManager {
       const element = this.canvas.elements.get(id);
       if (!element) return null;
 
-      let node = element.object;
-      if (element.type === 'screen') {
-        node = element.group;
-      }
+      let node = element.group;
 
       if (!node) return null;
 

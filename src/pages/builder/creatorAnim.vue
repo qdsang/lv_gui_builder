@@ -39,7 +39,6 @@
             >
               <div class="row-content">
                 <el-button 
-                  type="text" 
                   icon="el-icon-arrow-right" 
                   :class="{ 'expanded': expandedTimelines.has(timeline.id) }"
                   @click.stop="toggleTimeline(timeline)"
@@ -70,6 +69,7 @@
                 class="anim-row"
                 :class="{ 'selected': selectedAnim === anim }"
                 @click="selectAnim(anim, timeline)"
+                @dblclick="openAnimEditDialog(anim, timeline)"
               >
                 <div class="anim-info">
                   <span class="anim-name">{{ anim.name || anim.path_cb || 'Animation' }}</span>
@@ -96,189 +96,164 @@
         </div>
       </div>
 
-      <!-- 右侧属性面板 -->
-      <div class="properties-panel">
-        <div v-if="selectedAnim" class="property-section">
-          <h3>Animation Properties</h3>
-          <div class="property-group">
-            <div class="property-item">
-              <label>Name</label>
-              <el-input 
-                v-model="selectedAnim.name" 
-                size="small" 
-                placeholder="Animation name"
-              />
-            </div>
-            
-            <div class="property-item">
-              <label>Path</label>
-              <el-input 
-                v-model="selectedAnim.path_cb" 
-                size="small" 
-                placeholder="Path callback"
-              />
-            </div>
-            
-            <div class="property-item">
-              <label>Start Time</label>
-              <el-input-number 
-                v-model="selectedAnim.start_time" 
-                size="small" 
-                :min="0"
-                controls-position="right"
-              />
-            </div>
-            
-            <div class="property-item">
-              <label>Duration</label>
-              <el-input-number 
-                v-model="selectedAnim.time" 
-                size="small" 
-                :min="0"
-                controls-position="right"
-              />
-            </div>
-            
-            <div class="property-item">
-              <label>Value Min</label>
-              <el-input-number 
-                v-model="selectedAnim.valueMin" 
-                size="small" 
-                controls-position="right"
-              />
-            </div>
-            
-            <div class="property-item">
-              <label>Value Max</label>
-              <el-input-number 
-                v-model="selectedAnim.valueMax" 
-                size="small" 
-                controls-position="right"
-              />
-            </div>
-            
-            <div class="property-item">
-              <label>Playback Delay</label>
-              <el-input-number 
-                v-model="selectedAnim.playback_delay" 
-                size="small" 
-                :min="0"
-                controls-position="right"
-              />
-            </div>
-            
-            <div class="property-item">
-              <label>Playback Time</label>
-              <el-input-number 
-                v-model="selectedAnim.playback_time" 
-                size="small" 
-                :min="0"
-                controls-position="right"
-              />
-            </div>
-            
-            <div class="property-item">
-              <label>Repeat Delay</label>
-              <el-input-number 
-                v-model="selectedAnim.repeat_delay" 
-                size="small" 
-                :min="0"
-                controls-position="right"
-              />
-            </div>
-            
-            <div class="property-item">
-              <label>Repeat Count</label>
-              <el-input-number 
-                v-model="selectedAnim.repeat_count" 
-                size="small" 
-                :min="0"
-                controls-position="right"
-              />
-            </div>
-            
-            <!-- Objects Section -->
-            <div class="property-item">
-              <label>Objects</label>
-              <div class="objs-container">
-                <div 
-                  v-for="(obj, objIndex) in selectedAnim.objs" 
-                  :key="objIndex"
-                  class="obj-item"
-                >
-                  <div class="obj-row">
-                    <el-input 
-                      v-model="obj.id"
-                      size="small" 
-                      placeholder="Object ID"
-                      class="obj-id-input"
-                    />
-                    <el-input 
-                      v-model="obj.attr"
-                      size="small" 
-                      placeholder="Attribute"
-                      class="obj-attr-input"
-                    />
-                    <el-button 
-                      type="danger" 
-                      size="small" 
-                      icon="el-icon-delete" 
-                      circle 
-                      @click="removeObj(objIndex, selectedAnim)"
-                    ></el-button>
-                  </div>
-                </div>
-                <el-button 
-                  type="primary" 
-                  size="small" 
-                  icon="el-icon-plus" 
-                  @click="addObj(selectedAnim)"
-                >
-                  Add Object
-                </el-button>
-              </div>
-            </div>
+    </div>
+
+    <!-- 动画编辑弹窗 -->
+    <el-dialog
+      v-model="animEditDialogVisible"
+      title="Edit Animation"
+      width="500px"
+      :before-close="handleAnimEditDialogClose"
+    >
+      <div v-if="editingAnim" class="anim-edit-dialog">
+        <div class="property-group">
+          <div class="property-item">
+            <label>Name</label>
+            <el-input 
+              v-model="editingAnim.name" 
+              size="small" 
+              placeholder="Animation name"
+            />
           </div>
           
-          <div class="section-actions">
-            <el-button 
-              type="info"
-              size="small"
-              @click="animCopyFromPanel"
-            >
-              Duplicate
-            </el-button>
-            <el-button 
-              type="danger"
-              size="small"
-              @click="animRemoveFromPanel"
-            >
-              Delete
-            </el-button>
+          <div class="property-item">
+            <label>Path</label>
+            <el-input 
+              v-model="editingAnim.path_cb" 
+              size="small" 
+              placeholder="Path callback"
+            />
           </div>
-        </div>
-        
-        <div v-else-if="selectedTimeline" class="property-section">
-          <h3>Timeline Properties</h3>
-          <div class="property-group">
-            <div class="property-item">
-              <label>Timeline ID</label>
-              <el-input 
-                v-model="selectedTimeline.id" 
+          
+          <div class="property-item">
+            <label>Start Time</label>
+            <el-input-number 
+              v-model="editingAnim.start_time" 
+              size="small" 
+              :min="0"
+              controls-position="right"
+            />
+          </div>
+          
+          <div class="property-item">
+            <label>Duration</label>
+            <el-input-number 
+              v-model="editingAnim.time" 
+              size="small" 
+              :min="0"
+              controls-position="right"
+            />
+          </div>
+          
+          <div class="property-item">
+            <label>Value Min</label>
+            <el-input-number 
+              v-model="editingAnim.valueMin" 
+              size="small" 
+              controls-position="right"
+            />
+          </div>
+          
+          <div class="property-item">
+            <label>Value Max</label>
+            <el-input-number 
+              v-model="editingAnim.valueMax" 
+              size="small" 
+              controls-position="right"
+            />
+          </div>
+          
+          <div class="property-item">
+            <label>Playback Delay</label>
+            <el-input-number 
+              v-model="editingAnim.playback_delay" 
+              size="small" 
+              :min="0"
+              controls-position="right"
+            />
+          </div>
+          
+          <div class="property-item">
+            <label>Playback Time</label>
+            <el-input-number 
+              v-model="editingAnim.playback_time" 
+              size="small" 
+              :min="0"
+              controls-position="right"
+            />
+          </div>
+          
+          <div class="property-item">
+            <label>Repeat Delay</label>
+            <el-input-number 
+              v-model="editingAnim.repeat_delay" 
+              size="small" 
+              :min="0"
+              controls-position="right"
+            />
+          </div>
+          
+          <div class="property-item">
+            <label>Repeat Count</label>
+            <el-input-number 
+              v-model="editingAnim.repeat_count" 
+              size="small" 
+              :min="0"
+              controls-position="right"
+            />
+          </div>
+          
+          <!-- Objects Section -->
+          <div class="property-item">
+            <label>Objects</label>
+            <div class="objs-container">
+              <div 
+                v-for="(obj, objIndex) in editingAnim.objs" 
+                :key="objIndex"
+                class="obj-item"
+              >
+                <div class="obj-row">
+                  <el-input 
+                    v-model="obj.id"
+                    size="small" 
+                    placeholder="Object ID"
+                    class="obj-id-input"
+                  />
+                  <el-input 
+                    v-model="obj.attr"
+                    size="small" 
+                    placeholder="Attribute"
+                    class="obj-attr-input"
+                  />
+                  <el-button 
+                    type="danger" 
+                    size="small" 
+                    icon="el-icon-delete" 
+                    circle 
+                    @click="removeObjFromDialog(objIndex)"
+                  ></el-button>
+                </div>
+              </div>
+              <el-button 
+                type="primary" 
                 size="small" 
-                placeholder="Timeline ID"
-              />
+                icon="el-icon-plus" 
+                @click="addObjToDialog"
+              >
+                Add Object
+              </el-button>
             </div>
-          </div>
-        </div>
-        
-        <div v-else class="no-selection">
-          <div class="placeholder-content">
-            <p>Select a timeline or animation</p>
           </div>
         </div>
       </div>
-    </div>
+      
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="closeAnimEditDialog">Cancel</el-button>
+          <el-button type="primary" @click="saveAnimEditDialog">Confirm</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -300,7 +275,12 @@ export default {
         dragAnim: null,
         startX: 0,
         startStartTime: 0,
-        startDuration: 0
+        startDuration: 0,
+        // 动画编辑弹窗相关数据
+        animEditDialogVisible: false,
+        editingAnim: null,
+        editingAnimOriginal: null,
+        editingTimeline: null
       }
   },
   setup() {
@@ -346,10 +326,40 @@ export default {
     selectAnim(anim, timeline) {
       this.selectedAnim = anim;
       this.selectedTimeline = timeline;
+    },    
+
+    openAnimEditDialog(anim, timeline) {
+      // 保存原始数据用于取消操作
+      this.editingAnimOriginal = JSON.parse(JSON.stringify(anim));
+      this.editingAnim = JSON.parse(JSON.stringify(anim));
+      this.editingTimeline = timeline;
+      this.animEditDialogVisible = true;
+    },
+    
+    closeAnimEditDialog() {
+      this.animEditDialogVisible = false;
+      this.editingAnim = null;
+      this.editingTimeline = null;
+    },
+    
+    saveAnimEditDialog() {
+      if (this.editingAnim && this.editingTimeline) {
+        // 找到对应的动画并更新
+        const animIndex = this.editingTimeline.anims.findIndex(a => a.id === this.editingAnim.id);
+        if (animIndex !== -1) {
+          // 更新动画数据
+          this.editingTimeline.anims[animIndex] = JSON.parse(JSON.stringify(this.editingAnim));
+        }
+      }
+      this.closeAnimEditDialog();
+    },
+    
+    handleAnimEditDialogClose() {
+      this.closeAnimEditDialog();
     },
     
     animAdd(timeline) {
-      let anim = JSON.parse(JSON.stringify(engine.Widget.timeline_anim_def));
+      let anim = engine.Widget.createTimelineAnim();
       // 为动画添加一个唯一ID
       anim.id = 'anim_' + Date.now();
       // 初始化name字段
@@ -386,12 +396,11 @@ export default {
       const index = this.selectedTimeline.anims.indexOf(this.selectedAnim);
       if (index !== -1) {
         this.selectedTimeline.anims.splice(index, 1);
-        this.selectedAnim = null;
       }
     },
 
     objAdd(anim) {
-      let obj = JSON.parse(JSON.stringify(engine.Widget.timeline_obj_def));
+      let obj = engine.Widget.createTimelineObj();
       anim.objs.push(obj);
     },
     
@@ -407,6 +416,21 @@ export default {
       this.objRemove(index, anim);
     },
     
+    // 弹窗中添加对象的方法
+    addObjToDialog() {
+      if (this.editingAnim) {
+        let obj = engine.Widget.createTimelineObj();
+        this.editingAnim.objs.push(obj);
+      }
+    },
+    
+    // 弹窗中移除对象的方法
+    removeObjFromDialog(index) {
+      if (this.editingAnim) {
+        this.editingAnim.objs.splice(index, 1);
+      }
+    },
+    
     edit(props) {
       props.row.iseditor = true;
     },
@@ -416,7 +440,7 @@ export default {
     },
     
     timelineAdd() {
-      let timeline = JSON.parse(JSON.stringify(engine.Widget.timeline_def));
+      let timeline = engine.Widget.createTimeline();
       timeline.id = 'timeline_' + (this.timelines.length + 1);
       this.timelines.push(timeline);
       this.selectedTimeline = timeline;
@@ -845,14 +869,17 @@ export default {
 
   .property-group {
     display: flex;
-    flex-direction: column;
+    // flex-direction: column;
     gap: 12px;
+    flex-wrap: wrap;
+    justify-content: space-between;
   }
 
   .property-item {
     display: flex;
     flex-direction: column;
     gap: 4px;
+    flex: 0 0 48%;
     
     label {
       font-size: 12px;
@@ -943,6 +970,20 @@ export default {
         color: var(--el-text-color-secondary);
         margin: 0;
       }
+    }
+  }
+  
+  .anim-edit-dialog {
+    max-height: 60vh;
+    overflow-y: auto;
+    
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--el-border-color-light);
+      border-radius: 3px;
     }
   }
 }

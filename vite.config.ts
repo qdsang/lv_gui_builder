@@ -47,8 +47,8 @@ export default ({ command, mode }) => {
         minify: true,
         pages: [
           {
-            filename: 'index.html',
-            template: 'index.html',
+            filename: 'public/index.html',
+            template: 'public/index.html',
             entry: 'src/main.ts',
             injectOptions: {
               data: {

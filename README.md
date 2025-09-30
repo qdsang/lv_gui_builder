@@ -2,9 +2,15 @@
 [WIP] Drag end drop GUI designer for LVGL
 
 ## Demo
+<!-- 
+![Image](./docs/preview.png "LV GUI Builder Preview") -->
 
-![Image](./docs/preview.png "LV GUI Builder Preview")
-
+<table>
+<tr>
+    <td><a href="https://qdsang.github.io/lv_gui_builder/#/lv/builder/widget"><img src="./docs/preview.png" title="LV GUI Builder Preview" /></a></td>
+    <td><a href="https://qdsang.github.io/lv_gui_builder/#/lv/builder/widget"><img src="./docs/preview2.png" title="LV GUI Builder Preview" /></a></td>
+</tr>
+</table>
 
 ## Try It Online
 
@@ -60,14 +66,14 @@ v1
 - [X] Component size drag
 - [ ] Style grouping
 - [ ] Generate C
-- [!] Shortcuts
-- [!] Window Layout [golden-layout](https://golden-layout.com/) [vue-grid-layout](https://jbaysolutions.github.io/vue-grid-layout/guide/04-allow-ignore.html)
+- [X] Shortcuts
+- [X] Window Layout [golden-layout](https://golden-layout.com/) [vue-grid-layout](https://jbaysolutions.github.io/vue-grid-layout/guide/04-allow-ignore.html)
 
 v2  
 - [X] Project settings
 - [ ] Events
 - [ ] Font library https://lvgl.io/tools/font_conv_v5_3
-- [ ] Image library https://lvgl.io/tools/imageconverter_v9
+- [X] Image library https://lvgl.io/tools/imageconverter_v9
 - [ ] Color library
 - [x] Animation library
 - [ ] i18n

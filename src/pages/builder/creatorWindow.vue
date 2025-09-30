@@ -2,7 +2,17 @@
   <el-container class="main-container">
     <div class="aside-wrapper left" :class="{ 'is-collapsed': leftCollapsed }">
       <el-aside :width="leftWidth + 'px'" class="resizable-aside resizable-aside-left">
-        <slot name="left"></slot>
+        <div class="left-panel-container">
+          <div class="left-panel-top" :style="{ height: leftTopHeight + 'px' }">
+            <slot name="left-top"></slot>
+          </div>
+          <div class="left-panel-resize-handle" 
+            @mousedown="startResize($event, 'left-panel')"
+          ></div>
+          <div class="left-panel-bottom" :style="{ }">
+            <slot name="left-bottom"></slot>
+          </div>
+        </div>
       </el-aside>
       <div class="resize-handle left" 
         @mousedown="startResize($event, 'left')"
@@ -62,6 +72,8 @@ export default {
       leftWidth: 220,  // 左侧面板宽度
       rightWidth: 220, // 右侧面板宽度
       bottomHeight: 240, // 底部面板高度
+      leftTopHeight: 300, // 左侧上面板高度
+      leftBottomHeight: 200, // 左侧下面板高度
       leftCollapsed: false,  // 左侧面板折叠状态
       rightCollapsed: false, // 右侧面板折叠状态
       leftWidthBeforeCollapse: 280,  // 记录折叠前的宽度
@@ -82,6 +94,8 @@ export default {
         const savedRightWidth = localStorage.getItem('creatorWindow.rightWidth');
         const savedLeftWidthBeforeCollapse = localStorage.getItem('creatorWindow.leftWidthBeforeCollapse');
         const savedRightWidthBeforeCollapse = localStorage.getItem('creatorWindow.rightWidthBeforeCollapse');
+        const savedLeftTopHeight = localStorage.getItem('creatorWindow.leftTopHeight');
+        const savedLeftBottomHeight = localStorage.getItem('creatorWindow.leftBottomHeight');
 
         if (savedLeftCollapsed !== null) {
           this.leftCollapsed = JSON.parse(savedLeftCollapsed);
@@ -107,6 +121,14 @@ export default {
           this.rightWidthBeforeCollapse = JSON.parse(savedRightWidthBeforeCollapse);
         }
         
+        if (savedLeftTopHeight !== null) {
+          this.leftTopHeight = JSON.parse(savedLeftTopHeight);
+        }
+        
+        if (savedLeftBottomHeight !== null) {
+          this.leftBottomHeight = JSON.parse(savedLeftBottomHeight);
+        }
+        
         // 如果面板处于折叠状态，确保宽度为0
         if (this.leftCollapsed) {
           this.leftWidth = 0;
@@ -129,6 +151,8 @@ export default {
         localStorage.setItem('creatorWindow.rightWidth', JSON.stringify(this.rightWidth));
         localStorage.setItem('creatorWindow.leftWidthBeforeCollapse', JSON.stringify(this.leftWidthBeforeCollapse));
         localStorage.setItem('creatorWindow.rightWidthBeforeCollapse', JSON.stringify(this.rightWidthBeforeCollapse));
+        localStorage.setItem('creatorWindow.leftTopHeight', JSON.stringify(this.leftTopHeight));
+        localStorage.setItem('creatorWindow.leftBottomHeight', JSON.stringify(this.leftBottomHeight));
       } catch (error) {
         console.error('Failed to save panel states to localStorage:', error);
       }
@@ -144,12 +168,17 @@ export default {
       switch(panel) {
         case 'left':
           startWidth = this.leftWidth;
+          this.leftCollapsed = false;
           break;
         case 'right':
           startWidth = this.rightWidth;
+          this.rightCollapsed = false;
           break;
         case 'bottom':
           startHeight = this.bottomHeight;
+          break;
+        case 'left-panel':
+          startHeight = this.leftTopHeight;
           break;
       }
 
@@ -163,6 +192,10 @@ export default {
             break;
           case 'bottom':
             this.bottomHeight = Math.max(100, startHeight + startY - e.clientY);
+            break;
+          case 'left-panel':
+            this.leftTopHeight = Math.max(50, startHeight + e.clientY - startY);
+            // this.leftBottomHeight = Math.max(50, this.leftTopHeight + this.leftBottomHeight - this.leftTopHeight);
             break;
         }
       };
@@ -183,11 +216,15 @@ export default {
     toggleLeftPanel() {
       if (this.leftCollapsed) {
         this.leftWidth = this.leftWidthBeforeCollapse;
+        this.rightWidth = this.rightWidthBeforeCollapse;
       } else {
         this.leftWidthBeforeCollapse = this.leftWidth;
         this.leftWidth = 0;
+        this.rightWidthBeforeCollapse = this.rightWidth;
+        this.rightWidth = 0;
       }
       this.leftCollapsed = !this.leftCollapsed;
+      this.rightCollapsed = this.leftCollapsed;
       // 保存面板状态
       this.savePanelStates();
     },
@@ -248,6 +285,30 @@ export default {
   }
 }
 
+.left-panel-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.left-panel-top,
+.left-panel-bottom {
+  overflow: auto;
+}
+
+.left-panel-resize-handle {
+  height: 5px;
+  cursor: ns-resize;
+  flex-shrink: 0;
+  background: transparent;
+  transition: background-color 0.1s;
+  border-bottom: 1px solid var(--el-border-color);
+
+  &:hover {
+    background: var(--el-color-primary-light-8);
+  }
+}
+
 .resize-handle {
   position: absolute;
   top: 0;
@@ -285,10 +346,9 @@ export default {
 
 .resizable-aside {
   height: 100%;
-  overflow: scroll;
+  // overflow: scroll;
   background: var(--el-bg-color-overlay);
   border-right: 1px solid var(--el-border-color-lighter);
-  transition: width 0.1s;
 }
 .resizable-aside-right {
   border-left: 1px solid var(--el-border-color);
@@ -304,7 +364,7 @@ export default {
   align-items: center;
   justify-content: center;
   // background: var(--el-bg-color);
-  // border: 1px solid var(--el-border-color-lighter);
+  border: 1px solid var(--el-border-color-lighter);
   background: var(--el-bg-color-overlay);
   border-radius: 0 4px 4px 0;
   cursor: pointer;
@@ -316,14 +376,17 @@ export default {
   }
 
   &.left {
-    right: -15px;
-    border-left: none;
+    top: 5px;
+    right: 5px;
+    // border-left: none;
+    border-radius: 4px;
   }
 
   &.right {
     left: -15px;
     border-right: none;
     border-radius: 4px 0 0 4px;
+    display: none;
   }
 
   .el-icon {

@@ -48,8 +48,8 @@ export class RenderTargetManager {
     });
 
     // 将渲染目标添加到屏幕的组件组中
-    element.componentGroup.add(konvaImage);
-    element.componentGroup.getLayer().batchDraw();
+    element.componentChild.add(konvaImage);
+    element.componentChild.getLayer().batchDraw();
     
     // 保存渲染目标引用
     const renderTarget = {
@@ -61,9 +61,11 @@ export class RenderTargetManager {
     element.renderTarget = renderTarget;
     this.renderTargets.set(screenId, renderTarget);
 
+    this.autoUpdateRenderTargets();
+
     return renderCanvas;
   }
-
+  
   /**
    * 获取渲染Canvas
    * @param {string} screenId - 屏幕元素ID
@@ -109,6 +111,16 @@ export class RenderTargetManager {
     }
   }
 
+  autoUpdateRenderTargets() {
+    clearTimeout(this.autoUpdateRenderTargetsTimeout);
+    this.autoUpdateRenderTargetsTimeout = setTimeout(() => {
+      for (const screenId of this.renderTargets.keys()) {
+        this.updateRenderDisplay(screenId);
+      }
+      this.autoUpdateRenderTargets();
+    }, 100);
+  }
+
   /**
    * 销毁渲染目标
    * @param {string} screenId - 屏幕元素ID
@@ -118,8 +130,8 @@ export class RenderTargetManager {
     if (!element || element.type !== 'screen' || !element.renderTarget) return;
     
     // 从组件组中移除
-    if (element.renderTarget.konvaImage && element.componentGroup) {
-      element.componentGroup.remove(element.renderTarget.konvaImage);
+    if (element.renderTarget.konvaImage && element.componentChild) {
+      element.componentChild.remove(element.renderTarget.konvaImage);
     }
     
     // 移除canvas元素

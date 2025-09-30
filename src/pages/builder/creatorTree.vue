@@ -55,7 +55,7 @@ export default {
   methods: {
     getWidgetIcon(type) {
       let widget = engine.Widget.getWidget(type);
-      return widget.iconUrl;
+      return widget?.iconUrl;
     },
     clickNode: function (data, obj, tree_obj) {
       // console.log('click', data, obj, tree_obj);

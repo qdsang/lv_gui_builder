@@ -10,6 +10,10 @@ export class SelectionManager {
   constructor(canvas) {
     this.canvas = canvas;
 
+    this.canvas.eventSystem.on('canvasScale', (e) => {
+      this.updateSelectionSizeLabel();
+    });
+
     this.canvas.eventSystem.on('canvasDragMove', (e) => {
       this.updateSelectionSizeLabel();
     });
@@ -76,23 +80,12 @@ export class SelectionManager {
     // 遍历所有元素，检查是否在选择框内
     for (const [id, element] of this.canvas.elements) {
       let elementX, elementY, elementWidth, elementHeight;
-      
-      if (element.type === 'screen' && element.group) {
-        const absPos = element.group.getAbsolutePosition();
-        elementX = absPos.x;
-        elementY = absPos.y;
-        elementWidth = element.group.width();
-        elementHeight = element.group.height();
-      } else if (element.object) {
-        const absPos = element.object.getAbsolutePosition();
-        elementX = absPos.x;
-        elementY = absPos.y;
-        // 使用Konva的方法获取宽高
-        elementWidth = typeof element.object.width === 'function' ? element.object.width() : element.object.attrs.width || 0;
-        elementHeight = typeof element.object.height === 'function' ? element.object.height() : element.object.attrs.height || 0;
-      } else {
-        continue;
-      }
+    
+      const absPos = element.group.getAbsolutePosition();
+      elementX = absPos.x;
+      elementY = absPos.y;
+      elementWidth = element.group.width();
+      elementHeight = element.group.height();
       
       // 简单的碰撞检测
       if (elementX < maxX && elementX + elementWidth > minX && 

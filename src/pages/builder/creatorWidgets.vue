@@ -1,21 +1,24 @@
 <template>
-<div style="padding: 0 6px;">
+<div style="padding: 0 6px; overflow: hidden;">
   <el-collapse v-model="collapseModel" style="border: none;">
     <el-collapse-item v-for="(item, index) in creator_options" :key="item.value" :title="item.label" :name="item.value">
       <el-row v-if="item.children">
         <el-col v-for="(item2, index2) in item.children" 
           :key="item2.label" 
+          :xs="8"
           :sm="8" 
-          :lg="8" 
+          :md="7" 
+          :lg="6" 
+          :xl="5" 
           style="text-align: center;" 
           class="widget-item"
           draggable="true"
           @dragstart="handleDragStart($event, item2)"
           @dragend="handleDragEnd">
-          <div>
+          <div style="padding: 2px;">
             <img
               :src="imageMap[item2.img]"
-              style="width: 60%"
+              style="width: 80%"
             />
           </div>
           <span> {{ item2.label }} </span>

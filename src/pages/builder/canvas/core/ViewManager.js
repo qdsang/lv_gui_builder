@@ -21,6 +21,8 @@ export class ViewManager {
     if (!this.canvas.contentGroup || !this.canvas.screenGroup) return;
 
     const { fit = true, padding = 40 } = options;
+    
+    this.canvas.resetView();
 
     // 获取舞台尺寸
     const stageWidth = this.canvas.stage.width();
@@ -86,12 +88,7 @@ export class ViewManager {
     const element = this.canvas.elements.get(elementId);
     if (!element) return;
 
-    let node = null;
-    if (element.type === 'screen' && element.group) {
-      node = element.group;
-    } else if (element.object) {
-      node = element.object;
-    }
+    let node = element.group;
 
     if (!node) return;
 

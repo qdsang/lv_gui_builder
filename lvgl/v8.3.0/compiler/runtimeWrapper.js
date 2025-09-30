@@ -1,5 +1,6 @@
 /* wrapper: generate the related code, then use `mp_js_do_str` to excute them. */
-import { mp_js_do_str as mp_js_do_str2 } from './micropython.js';
+import { mp_js_do_str as mp_js_do_str2 } from '../micropython.js';
+import stdio from '../stdio.js';
 
 import { template_py_create, template_py_cb, 
     template_py_setter_simple, template_py_api_simple, 
@@ -7,15 +8,16 @@ import { template_py_create, template_py_cb,
 
 import { template_py_timeline, template_py_timeline_delete_all } from './runtimeTemplatePython.js';
 
-
 function mp_js_do_str(code) {
-    mp_js_do_str2(code);
+    if (!code) return;
     // console.log('mp_js_do_str', code);
-}
-
-// id = expr
-export const wrap_equal = (id, expr) => {
-    mp_js_do_str(`${id}=${expr}`);
+    let codes = code.split('\n');
+    for (let i = 0; i < codes.length; i++) {
+        let code = codes[i];
+        codes[i] = (i + 1) + ': ' + code.substring(0, 1000) + (code.length > 1000 ? '...': '');
+    }
+    stdio.out("run:\r\n" + codes.join('\r\n') + '\r\n');
+    mp_js_do_str2(code);
 }
 
 export const wrap_create_v2 = (node, query_attr = true) => {
@@ -28,7 +30,7 @@ export const wrap_create = (id, parent_id, type_s, query_attr = true) => {
     //     id + ".set_drag(1)",
     //     id + ".set_protect(lv.PROTECT.PRESS_LOST)",
     //     "query_attr(" + id + ",\'" + id + "\',\'" + type_s + "\')",
-    //     id + ".set_event_cb(lambda obj=" + id + ",event=-1,name=\'" + id + "\':walv_callback(obj,name,event))",
+    //     id + ".set_event_cb(lambda obj=" + id + ",event=-1,name=\'" + id + "\':lv_callback(obj,name,event))",
 
     let init_w = 80
     let init_h = 60
@@ -38,8 +40,8 @@ export const wrap_create = (id, parent_id, type_s, query_attr = true) => {
             `btns = ["Apply", "Close", ""]`,
             `${id}=lv.${type_s}(${parent_id},"Hello", "This is a message box with two buttons.", btns, True)`,
             `${id}.add_flag(lv.obj.FLAG.CLICKABLE)`,
-            `${id}.add_event_cb(lambda e: walv_callback(e,${id},"${id}"),lv.EVENT.PRESSING, None)`,
-            `${id}.add_event_cb(lambda e: walv_callback(e,${id},"${id}"),lv.EVENT.PRESSED, None)`,
+            `${id}.add_event_cb(lambda e: lv_callback(e,${id},"${id}"),lv.EVENT.PRESSING, None)`,
+            `${id}.add_event_cb(lambda e: lv_callback(e,${id},"${id}"),lv.EVENT.PRESSED, None)`,
         ];
     } else if (type_s == 'img') {
         code = [
@@ -52,8 +54,8 @@ export const wrap_create = (id, parent_id, type_s, query_attr = true) => {
             `style.set_outline_color(lv.palette_main(lv.PALETTE.BLUE))`,
             `${id}.add_style(style, 0)`,
             `${id}.add_flag(lv.obj.FLAG.CLICKABLE)`,
-            `${id}.add_event_cb(lambda e: walv_callback(e,${id},"${id}"),lv.EVENT.PRESSING, None)`,
-            `${id}.add_event_cb(lambda e: walv_callback(e,${id},"${id}"),lv.EVENT.PRESSED, None)`,
+            `${id}.add_event_cb(lambda e: lv_callback(e,${id},"${id}"),lv.EVENT.PRESSING, None)`,
+            `${id}.add_event_cb(lambda e: lv_callback(e,${id},"${id}"),lv.EVENT.PRESSED, None)`,
         ];
     } else {
         code = [
@@ -61,8 +63,8 @@ export const wrap_create = (id, parent_id, type_s, query_attr = true) => {
             `${id}.add_flag(lv.obj.FLAG.CLICKABLE)`,
             // `${id}.set_width(${init_w})`,
             // `${id}.set_height(${init_h})`,
-            `${id}.add_event_cb(lambda e: walv_callback(e,${id},"${id}"),lv.EVENT.PRESSING, None)`,
-            `${id}.add_event_cb(lambda e: walv_callback(e,${id},"${id}"),lv.EVENT.PRESSED, None)`,
+            `${id}.add_event_cb(lambda e: lv_callback(e,${id},"${id}"),lv.EVENT.PRESSING, None)`,
+            `${id}.add_event_cb(lambda e: lv_callback(e,${id},"${id}"),lv.EVENT.PRESSED, None)`,
         ];
     }
 
@@ -172,14 +174,20 @@ export const wrap_attr_setter_v2 = (node) => {
 
 // export const engineCreate()
 export const wrap_update_v2 = (node, action = 'update') => {
-    if (action == 'transform') {
+    if (action == 'show') {
+        wrap_show(node.id);
+        return;
+    } else if (action == 'hide') {
+        wrap_hide(node.id);
+        return;
+    } else if (action == 'transform') {
         wrap_attr_setter_v2(node);
         return;
     }
 
     wrap_style_setter_v2(node);
     wrap_attr_setter_v2(node);
-    if (node.show == false) {
+    if (node.data.show == false) {
         wrap_hide(node.id);
     } else {
         wrap_show(node.id);

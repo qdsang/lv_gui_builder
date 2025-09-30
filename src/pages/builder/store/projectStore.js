@@ -323,7 +323,7 @@ class ProjectStore {
 
   // 资源管理方法
   addAsset(type, asset) {
-    const id = Date.now().toString();
+    const id = 'asset://' + type + '/' + (asset.fileName || Date.now().toString());
     const assetWithId = { id, ...asset };
     
     if (!Array.isArray(this.projectData.assets[type])) {
@@ -363,6 +363,15 @@ class ProjectStore {
   }
 
   getAsset(type, id) {
+    if (!type) {
+      for (let key in this.projectData.assets) {
+        let v = this.getAsset(key, id);
+        if (v) {
+          return v;
+        }
+      }
+      return null;
+    }
     return this.projectData.assets[type].find(asset => asset.id === id);
   }
 
@@ -467,7 +476,71 @@ class ProjectStore {
     // console.log(this.projectData, xml);
     return xml;
   }
+
+  async importImage(file) {
+    let name = file.name;
+    var size = file['size'];
+    let type = file.type || file.raw.type;
+    let content = file.base64 || await imgToBase64(file.raw);
+    
+    type = 'image/jpeg';
+    content = await convertImage(content.toString(), type);
+
+    let imgInfo = await imgGetInfo(content.toString());
+    
+    let image = { path: name, name: name, type, content,
+          size, width: imgInfo.width, height: imgInfo.height
+    };
+
+    return this.addAsset('images', image)
+  }
 }
+
+async function imgGetInfo(url) {
+  var img = new Image()
+  return new Promise(function(resolve, reject) {
+    img.src = url;
+    img.onload = function() {
+      resolve({ width: img.width, height: img.height });
+    }
+  });
+}
+
+async function imgToBase64(file) {
+  var read = new FileReader()
+  read.readAsDataURL(file)
+  return new Promise(function(resolve, reject) {
+    read.onload = function(res) {
+      let base64 = res.target.result;
+      resolve(base64);
+    }
+  });
+}
+
+let convertImage = (function () {
+  var canvas = document.createElement('canvas');
+
+  var context2D = canvas.getContext('2d');
+
+  return function (base64, format) {
+    var image = new Image()
+    image.src = base64;
+    return new Promise(function(resolve, reject) {
+      image.onload = function() {
+        context2D.clearRect(0, 0, canvas.width, canvas.height);
+
+        canvas.width = image.naturalWidth;
+        canvas.height = image.naturalHeight;
+        image.crossOrigin = 'Anonymous';
+
+        context2D.drawImage(image, 0, 0);
+
+        let imgbase64 = canvas.toDataURL((format || 'image/png'), 1);
+        resolve(imgbase64);
+      }
+    });
+  };
+})();
 
 export const projectStore = new ProjectStore();
 

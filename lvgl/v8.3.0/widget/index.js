@@ -1,6 +1,6 @@
 
-import * as api from './widgetApis.js';
-import { style_setter } from './widgetStyles.js';
+import { widgetAttrs } from './widgetAttrs.js';
+import { widgetStyleSetter } from './widgetStyles.js';
 
 // ELEMENT.locale(ELEMENT.lang.en) //i18n
 
@@ -91,7 +91,7 @@ export const WidgetsOption = [
 
 
 let widgetMap = {
-  animimg: { group: '' },
+  animimg: { group: '', iconUrl: '/icon_404.png' },
   arc: { group: 'basics', parts: ['MAIN', 'INDICATOR', 'KNOB'] },
   bar: { group: 'visualiser' },
   btn: { group: 'basics', img: 'button' },
@@ -163,7 +163,7 @@ let groupMap = {
     children: [],
   },
 };
-for (let key in api.setter) {
+for (let key in widgetAttrs) {
   let item = widgetMap[key];
   let group = groupMap[item.group];
   if (!group) {
@@ -171,8 +171,8 @@ for (let key in api.setter) {
   }
 
   item.parts = item.parts || ['MAIN'];
-  item.attrs = api.setter[key];
-  item.styles = style_setter[key];
+  item.attrs = widgetAttrs[key];
+  item.styles = widgetStyleSetter[key];
 
   group.children.push({ value: key, label: item.name || key, img: item.img || item.name || key });
 }
@@ -187,71 +187,76 @@ const Categorize = {
 };
 
 let filterOutStyle = ['x', 'y', 'width', 'height'];
+let baseApi = ['min_width', 'min_height', 'max_width', 'max_height', 'align'];
 
 //get Base/Other categorize obj's apis
-for (let objKey in style_setter) {
-  let styleApis = style_setter[objKey];
-  let groupMap = {arc: [], bg: []};
-  let baseApiObjArray = [];
-  let otherApiObjArray = [];
+for (let objKey in widgetStyleSetter) {
+  let styleApis = widgetStyleSetter[objKey];
+  let groupMap = {base:[], bg: [], border: [], pad: [], arc: [], other: []};
+
   for (let apiKey in styleApis) {
     let inFilterOut = filterOutStyle.indexOf(apiKey) != -1;
     if (inFilterOut) {
       continue;
     }
     let apiObj = styleApis[apiKey];
-    if (apiObj.api.indexOf('arc_') == 0) {
-      groupMap['arc'].push(apiObj);
+    if (apiObj.categorize == Categorize.Base || baseApi.indexOf(apiObj.api) !== -1) {
+      groupMap.base.push(apiObj);
     } else if (apiObj.api.indexOf('bg_') == 0) {
-        groupMap['bg'].push(apiObj);
-    } else if (apiObj.categorize == Categorize.Base) {
-      baseApiObjArray.push(apiObj);
+      groupMap.bg.push(apiObj);
+    } else if (apiObj.api.indexOf('border_') == 0) {
+      groupMap.border.push(apiObj);
+    } else if (apiObj.api.indexOf('pad_') == 0) {
+      groupMap.pad.push(apiObj);
+    } else if (apiObj.api.indexOf('arc_') == 0) {
+      groupMap.arc.push(apiObj);
     } else if (apiObj.categorize == Categorize.Other) {
-      otherApiObjArray.push(apiObj);
+      groupMap.other.push(apiObj);
     }
   }
   let node = widgetMap[objKey];
-  baseApiObjArray.sort((a, b) => a.api - b.api);
+  groupMap.base.sort((a, b) => b.api - a.api);
 
   node.styleGroups = [
     {
       id: 'base',
       title: 'Base',
-      list: baseApiObjArray,
+      list: groupMap.base,
     },
     {
       id: 'bg',
       title: 'Background',
-      list: groupMap['bg'],
+      list: groupMap.bg,
+    },
+    {
+      id: 'border',
+      title: 'Border',
+      list: groupMap.border,
+    },
+    {
+      id: 'pad',
+      title: 'Pad',
+      list: groupMap.pad,
     },
     {
       id: 'arc',
       title: 'ARC',
-      list: groupMap['arc'],
+      list: groupMap.arc,
     },
     {
       id: 'other',
       title: 'Other',
-      list: otherApiObjArray,
+      list: groupMap.other,
     },
   ];
 }
 
-export function updateIcon(iconMap) {
-  for (let key in widgetMap) {
-    let icon = iconMap[key];
-    if (icon) {
-      widgetMap[key].iconUrl = icon;
-    } else {
-      widgetMap[key].iconUrl = '/icon_404.png';
-      // console.log('updateIcon widgetMap[key]', key)
-    }
-  }
-  // console.log('updateIcon', iconMap, widgetMap);
-}
-
 export function getWidget(type) {
   return widgetMap[type];
+}
+
+export function getWidgetSetter(type) {
+  return widgetAttrs[type];
 }
 
 export let fonts = [
@@ -263,141 +268,35 @@ export let fonts = [
   { label: '48', value: 'lv.font_montserrat_48' },
 ]
 
-export let timeline_anim_def = { objs: [], start_time: 0, valueMin: 0, valueMax: 100, time: 1000, playback_delay: 100, playback_time: 300, repeat_delay: 500, repeat_count: -1, path_cb: '', custom_exec_cb: '' };
-export let timeline_obj_def = { id: 'arc_0', attr: 'value' };
-export let timeline_def = { id: 'timeline1', title: '', anims: [ timeline_anim_def ]};
+let timeline_anim_def = { objs: [], start_time: 0, valueMin: 0, valueMax: 100, time: 1000, playback_delay: 100, playback_time: 300, repeat_delay: 500, repeat_count: -1, path_cb: '', custom_exec_cb: '' };
+let timeline_obj_def = { id: 'arc_0', attr: 'value' };
+let timeline_def = { id: 'timeline1', title: '', anims: [ timeline_anim_def ]};
 
-//The Python code to Initialize the environment
-export const EnvInitCode = (width, height) => [`
-import ujson
-import lvgl as lv
-lv.init()
-import SDL
+export function createTimeline() {
+  return JSON.parse(JSON.stringify(timeline_def));
+}
 
-print('boot init')
-WIDTH = ${width}
-HEIGHT = ${height}
+export function createTimelineObj() {
+  return JSON.parse(JSON.stringify(timeline_obj_def));
+}
 
-SDL.init(w=WIDTH, h=HEIGHT,fullscreen=False, auto_refresh=False)
-print('SDL init')
+export function createTimelineAnim() {
+  return JSON.parse(JSON.stringify(timeline_anim_def));
+}
 
-# Register SDL display driver.
-disp_buf1 = lv.disp_draw_buf_t()
 
-buf1_1 = bytes(WIDTH*HEIGHT)
-disp_buf1.init(buf1_1, None, len(buf1_1)//4)
-disp_drv = lv.disp_drv_t()
-disp_drv.init()
-disp_drv.draw_buf = disp_buf1
-disp_drv.flush_cb = SDL.monitor_flush
-disp_drv.hor_res = WIDTH
-disp_drv.ver_res = HEIGHT
-disp_drv.register()
-print('disp_drv init')
 
-# Regsiter SDL mouse driver
-indev_drv = lv.indev_drv_t()
-indev_drv.init()
-indev_drv.type = lv.INDEV_TYPE.POINTER
-indev_drv.read_cb = SDL.mouse_read
-indev_drv.register()
-print('indev_drv init')
 
-# Create a screen with a button and a label
-screen = lv.obj()
+// BUG: tmp icon 
+export function updateIcon(iconMap) {
+  for (let key in widgetMap) {
+    let icon = iconMap[key];
+    if (icon) {
+      widgetMap[key].iconUrl = icon;
+    } else {
+      widgetMap[key].iconUrl = '/icon_404.png';
+      // console.log('updateIcon widgetMap[key]', key)
+    }
+  }
+}
 
-screen.set_scrollbar_mode(lv.SCROLLBAR_MODE.OFF)  # 禁用滚动条
-screen.clear_flag(lv.obj.FLAG.SCROLLABLE)         # 禁用滚动功能
-
-# Load the screen
-lv.scr_load(screen)
-baseAttr = dir(lv.obj)
-
-print('boot ok')
-`,
-];
-
-/* Define special function for python*/
-
-// old getobjattr() function:
-// "def getobjattr(obj,id,type_s):",
-// "    d={}",
-// "    d['id']=id",
-// "    for i in dir(obj):",
-// "        if 'get_' in i:",
-// "            try:",
-// "                ret = eval(id + '.' + i + '()')",
-// "                if isinstance(ret, (int,float,str,bool)):",
-// "                    d[i] = ret",
-// "            except:",
-// "                pass",
-// "    for i in ATTR:",
-// "        d[i]=eval(id+'.'+ATTR[i]+'()')",
-// "    print('\x06'+ujson.dumps(d)+'\x15')",
-
-export const QueryCode = [
-  //Get and send JSON format text
-  'def query_attr(obj,id,type_s):',
-  "    d={}",
-  "    for i in ATTR['obj']:",
-  "        d[i]=eval(id+'.'+ATTR['obj'][i]+'()')",
-  "    d2 = {'action':'query_attr', 'id': id, 'data': d}",
-  "    print('\x06'+ujson.dumps(d2)+'\x15')",
-  "",
-  'def query_xy(obj,id):',
-  "    d={'x': obj.get_x(),'y': obj.get_y()}",
-  '    indev = lv.indev_get_act()',
-  '    vect = lv.point_t()',
-  '    indev.get_vect(vect)',
-  '    x = obj.get_x() + vect.x',
-  '    y = obj.get_y() + vect.y',
-  '    obj.set_pos(x, y)',
-  "    d2 = {'action':'query_xy', 'id': id, 'data': d}",
-  "    print('\x06'+ujson.dumps(d2)+'\x15')",
-  "",
-  //Callback: only for the lv.EVENT.DRAG_END
-  'def walv_callback(event,obj,id):',
-  '    code = event.get_code()',
-  '    query_xy(obj, id)',
-  '    if(code == lv.EVENT.PRESSED):',
-  '       query_attr(obj,id,0)',
-];
-
-export const Getter = {
-  obj: {
-    x: 'get_x',
-    y: 'get_y',
-    width: 'get_width',
-    height: 'get_height',
-  },
-
-  label: {
-    label: 'get_text',
-  },
-  img: {
-    label: 'get_src',
-  },
-};
-
-export const Setter = {
-  obj: {
-    x: 'set_x',
-    y: 'set_y',
-    width: 'set_width',
-    height: 'set_height',
-    drag: 'set_drag',
-    click: 'set_click',
-    hidden: 'set_hidden',
-    top: 'set_top',
-  },
-  btn: {
-    state: 'set_state',
-    toggle: 'set_toggle',
-    ink_wait_time: 'set_ink_wait_time',
-    ink_in_time: 'set_ink_in_time',
-  },
-  label: {
-    text: 'set_text',
-  },
-  led: {},
-};

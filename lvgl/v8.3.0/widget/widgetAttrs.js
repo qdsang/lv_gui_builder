@@ -1,4 +1,4 @@
-export const setter = {
+export const widgetAttrs = {
   obj: {},
   arc: {
     start_angle: {
@@ -1131,7 +1131,7 @@ let setterMap = {
   win: {group: ''},
 };
 
-for (let key in setter) {
+for (let key in widgetAttrs) {
   if (!setterMap[key]) setterMap[key] = {group: ''};
 }
 

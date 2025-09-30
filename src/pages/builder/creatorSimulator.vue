@@ -35,8 +35,6 @@ export default {
 
       isTransform: false,
       activeInfo: null,
-      transformFrameInfo: null,
-      transformInfo: {startX: 0, startY: 0, },
       
       // 组件管理
       components: new Map()
@@ -50,6 +48,9 @@ export default {
   },
   mounted() {
     engine.init();
+    engine.registerAssetServer((id) => {
+      return projectStore.getAsset('', id);
+    });
 
     let vm = this;
     engine.on('stdout', (e) => {
@@ -96,7 +97,10 @@ export default {
       const coords = this.screenToLvglCoords(event.clientX, event.clientY);
       
       try {
-        const widgetInfo = JSON.parse(event.dataTransfer.getData('widgetInfo'));
+        // event.dataTransfer.effectAllowed == "copyMove"
+        let widgetInfoStr = event.dataTransfer.getData('widgetInfo');
+        if (!widgetInfoStr) return;
+        const widgetInfo = JSON.parse(widgetInfoStr);
         console.log('handleDrop', widgetInfo);
         // 发送创建事件，包含位置信息
         this.$emit('event', {
@@ -131,13 +135,12 @@ export default {
     async initScreen({ width, height}) {
       this.screen.width = width;
       this.screen.height = height;
-      console.log('initScreen', width, height);
       
-      await engine.simulatorScreenSize(width, height);
+      await engine.simulatorScreenSize(this.screen);
 
       // await this.loadScreen();
     },
-    async loadScreen() {
+    async loadScreen({ width, height}) {
     // 初始化LVGL渲染目标
       const canvasComponent = this.$refs.canvasComponent;
       const canvasObject = canvasComponent.getCanvasObject();
@@ -147,8 +150,9 @@ export default {
         return;
       }
       
-      const width = this.screen.width || 480;
-      const height = this.screen.height || 480;
+      console.log('loadScreen', width, height);
+      this.screen.width = width;
+      this.screen.height = height;
 
       canvasObject.clearScreenComponents('screen');
 
@@ -160,23 +164,27 @@ export default {
       });
       
       // 为屏幕元素创建渲染目标
+      this.renderCanvas.width = width;
+      this.renderCanvas.height = height;
       const lvglCanvas = canvasObject.createRenderTarget('screen', {
         renderCanvas: this.renderCanvas,
         width: width,
         height: height,
       });
 
-      let widgets = projectStore.getComponents();
-      let components = [];
-      for (let id in widgets) {
-        if (id == 'screen') continue;
-        let widget = widgets[id];
-        this.createElement(widget);
-      }
+      // let widgets = projectStore.getComponents();
+      // let components = [];
+      // for (let id in widgets) {
+      //   if (id == 'screen') continue;
+      //   let widget = widgets[id];
+      //   this.createElement(widget);
+      // }
       
       canvasObject.centerView({ fit: true, padding: 40 });
     },
     createElement(widget) {
+      if (widget.type == 'screen') return;
+
       const canvasComponent = this.$refs.canvasComponent;
       const canvasObject = canvasComponent.getCanvasObject();
       let data = widget.data;
@@ -203,6 +211,20 @@ export default {
         zindex: widget.zindex,
       });
     },
+    updateView() {
+      const canvasComponent = this.$refs.canvasComponent;
+      const canvasObject = canvasComponent.getCanvasObject();
+      setTimeout(() => {
+        canvasObject.updateView();
+      }, 100);
+    },
+    centerView() {
+      const canvasComponent = this.$refs.canvasComponent;
+      const canvasObject = canvasComponent.getCanvasObject();
+      setTimeout(() => {
+        canvasObject.centerView({ fit: true, padding: 40 });
+      }, 100);
+    },
     deleteElement(screenid, id) {
       const canvasComponent = this.$refs.canvasComponent;
       const canvasObject = canvasComponent.getCanvasObject();
@@ -210,6 +232,9 @@ export default {
       canvasObject.removeElement(id);
     },
     activeFrame(info) {
+      const canvasObject = this.$refs.canvasComponent.getCanvasObject();
+      canvasObject.selectElement(info.id);
+
       if (info.type == 'screen') {
         this.isTransform = false;
         this.activeInfo = null;
@@ -220,15 +245,10 @@ export default {
         info.data[key] = parseInt(info.data[key], 10) || 0;
       }
       
-      this.transformFrameInfo = info.data;
       // this.renderFrame(info.data);
-      engine.simulatorUpdateAttr(info);
+      engine.simulatorWidget.updateAttr(info);
       this.isTransform = true;
       this.activeInfo = info;
-      
-
-      const canvasObject = this.$refs.canvasComponent.getCanvasObject();
-      canvasObject.selectElement(info.id);
     },
     renderFrame(data) {
       // 强制更新渲染显示

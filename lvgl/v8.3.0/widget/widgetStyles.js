@@ -1,4 +1,4 @@
-export const style_setter = {
+export const widgetStyleSetter = {
   obj: {
     pad_all: {
       type: 'function',
@@ -258,7 +258,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -330,7 +330,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -636,7 +636,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -654,7 +654,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -1196,7 +1196,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -1268,7 +1268,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -1574,7 +1574,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -1592,7 +1592,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -2134,7 +2134,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -2206,7 +2206,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -2512,7 +2512,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -2530,7 +2530,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -3072,7 +3072,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -3144,7 +3144,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -3450,7 +3450,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -3468,7 +3468,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -4010,7 +4010,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -4082,7 +4082,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -4388,7 +4388,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -4406,7 +4406,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -4948,7 +4948,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -5020,7 +5020,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -5326,7 +5326,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -5344,7 +5344,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -5886,7 +5886,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -5958,7 +5958,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -6264,7 +6264,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -6282,7 +6282,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -6824,7 +6824,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -6896,7 +6896,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -7202,7 +7202,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -7220,7 +7220,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -7762,7 +7762,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -7834,7 +7834,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -8140,7 +8140,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -8158,7 +8158,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -8700,7 +8700,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -8772,7 +8772,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -9078,7 +9078,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -9096,7 +9096,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -9638,7 +9638,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -9710,7 +9710,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -10016,7 +10016,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -10034,7 +10034,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -10576,7 +10576,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -10648,7 +10648,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -10954,7 +10954,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -10972,7 +10972,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -11514,7 +11514,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -11586,7 +11586,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -11892,7 +11892,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -11910,7 +11910,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -12452,7 +12452,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -12524,7 +12524,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -12830,7 +12830,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -12848,7 +12848,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -13390,7 +13390,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -13462,7 +13462,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -13768,7 +13768,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -13786,7 +13786,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -14328,7 +14328,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -14400,7 +14400,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -14706,7 +14706,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -14724,7 +14724,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -15266,7 +15266,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -15338,7 +15338,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -15644,7 +15644,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -15662,7 +15662,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -16204,7 +16204,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -16276,7 +16276,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -16582,7 +16582,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -16600,7 +16600,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -17142,7 +17142,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -17214,7 +17214,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -17520,7 +17520,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -17538,7 +17538,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -18080,7 +18080,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -18152,7 +18152,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -18458,7 +18458,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -18476,7 +18476,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -19018,7 +19018,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -19090,7 +19090,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -19396,7 +19396,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -19414,7 +19414,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -19956,7 +19956,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -20028,7 +20028,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -20334,7 +20334,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -20352,7 +20352,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -20894,7 +20894,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -20966,7 +20966,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -21272,7 +21272,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -21290,7 +21290,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -21832,7 +21832,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -21904,7 +21904,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -22210,7 +22210,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -22228,7 +22228,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -22770,7 +22770,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -22842,7 +22842,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -23148,7 +23148,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -23166,7 +23166,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -23708,7 +23708,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -23780,7 +23780,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -24086,7 +24086,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -24104,7 +24104,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -24646,7 +24646,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -24718,7 +24718,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -25024,7 +25024,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -25042,7 +25042,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -25584,7 +25584,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -25656,7 +25656,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -25962,7 +25962,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -25980,7 +25980,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -26522,7 +26522,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -26594,7 +26594,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -26900,7 +26900,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -26918,7 +26918,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -27460,7 +27460,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -27532,7 +27532,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -27838,7 +27838,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -27856,7 +27856,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -28398,7 +28398,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -28470,7 +28470,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -28776,7 +28776,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -28794,7 +28794,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -29336,7 +29336,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -29408,7 +29408,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -29714,7 +29714,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -29732,7 +29732,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -30274,7 +30274,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -30346,7 +30346,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -30652,7 +30652,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -30670,7 +30670,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -31212,7 +31212,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -31284,7 +31284,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -31590,7 +31590,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -31608,7 +31608,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -32150,7 +32150,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -32222,7 +32222,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -32528,7 +32528,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -32546,7 +32546,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -33088,7 +33088,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -33160,7 +33160,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -33466,7 +33466,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -33484,7 +33484,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -34026,7 +34026,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -34098,7 +34098,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -34404,7 +34404,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -34422,7 +34422,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -34964,7 +34964,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -35036,7 +35036,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -35342,7 +35342,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -35360,7 +35360,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -35902,7 +35902,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -35974,7 +35974,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -36280,7 +36280,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -36298,7 +36298,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -36840,7 +36840,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -36912,7 +36912,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -37218,7 +37218,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -37236,7 +37236,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -37778,7 +37778,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -37850,7 +37850,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -38156,7 +38156,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -38174,7 +38174,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {
@@ -38716,7 +38716,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_color',
       categorize: 1,
-      desc: '\u80cc\u666f\u989c\u8272',
+      desc: 'background color',
       input_type: 0,
     },
     bg_opa: {
@@ -38788,7 +38788,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'bg_img_src',
       categorize: 1,
-      desc: '\u80cc\u666f\u56fe\u7247',
+      desc: 'background image',
       input_type: 0,
     },
     bg_img_opa: {
@@ -39094,7 +39094,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_color',
       categorize: 1,
-      desc: '\u6587\u5b57\u989c\u8272',
+      desc: 'text color',
       input_type: 1,
     },
     text_opa: {
@@ -39112,7 +39112,7 @@ export const style_setter = {
       return_type: 'NoneType',
       api: 'text_font',
       categorize: 1,
-      desc: '\u6587\u5b57\u5927\u5c0f',
+      desc: 'text size',
       input_type: 3,
     },
     text_letter_space: {

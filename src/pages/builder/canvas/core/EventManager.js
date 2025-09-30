@@ -60,7 +60,7 @@ export class EventManager {
       event.evt.preventDefault();
       
       // 检查是否为触摸板双指操作（deltaX和deltaY同时存在且ctrlKey不存在）
-      const isTrackpadPan = event.evt.deltaX !== 0 && !event.evt.ctrlKey;
+      const isTrackpadPan = event.evt.deltaX !== 0 && !event.evt.ctrlKey || this.isTrackpadPanning;
       
       // 检查是否为双指缩放（在Mac上，双指捏合会触发带有ctrlKey的wheel事件）
       const isTrackpadZoom = event.evt.ctrlKey;

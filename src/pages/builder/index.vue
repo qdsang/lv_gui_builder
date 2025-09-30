@@ -73,14 +73,18 @@
     </el-header>
 
     <creator-window>
-      <template #left>
+      <template #left-top>
+        <el-tabs type="card" v-model="activeTabLeftTop">
+          <el-tab-pane label="Widget" name="widget">
+            <creator-widgets @create="handleCreator"></creator-widgets>
+          </el-tab-pane>
+        </el-tabs>
+      </template>
+      <template #left-bottom>
         <el-tabs type="card" v-model="activeTabLeft">
           <el-tab-pane label="Screen" name="screen">
             <el-tag class="widget-name">{{ selectNodeId }}</el-tag>
             <creator-tree :node-key="selectNodeId" @event="handleTreeEvent"></creator-tree>
-          </el-tab-pane>
-          <el-tab-pane label="Widget" name="widget">
-            <creator-widgets @create="handleCreator"></creator-widgets>
           </el-tab-pane>
         </el-tabs>
       </template>
@@ -98,7 +102,7 @@
               <el-button icon="el-icon-refresh" circle @click="refreshTerm"></el-button>
             </div> -->
 
-            <creator-term ref="term" :style="{ visibility: term_visible ? 'visible' : 'hidden' }" style="padding: 0 16px;"></creator-term>
+            <creator-term ref="term" :style="{ visibility: term_visible ? 'visible' : 'hidden' }"></creator-term>
           </el-tab-pane>
           <el-tab-pane label="Animation" name="anim" :lazy="true">
             <creator-anim @save="handleAnimSave"></creator-anim>
@@ -109,6 +113,8 @@
           <el-tab-pane label="Image" name="image" :lazy="true">
             <creator-image></creator-image>
           </el-tab-pane>
+          <el-tab-pane label="Color" name="color" :lazy="true"></el-tab-pane>
+          <el-tab-pane label="Theme" name="theme" :lazy="true"></el-tab-pane>
         </el-tabs>
       </template>
       <template #right>
@@ -201,8 +207,6 @@
         demoList: getDemoList(),
 
         //Simulator
-        screenWidth: 480,
-        screenHeight: 320,
         cursorX: 0,
         cursorY: 0,
 
@@ -217,6 +221,7 @@
         term_visible: true,
 
         // tabs
+        activeTabLeftTop: 'widget',
         activeTabLeft: 'screen',
         activeTab: 'Terminal',
 
@@ -307,36 +312,40 @@
         this.reset();
         projectStore.initProject(id);
       },
-      updateScreenSize() {
+      getScreenSize() {
         let screen = projectStore.getWidgetById('screen');
         const width = screen.data?.width;
         const height = screen.data?.height;
-        this.screenWidth = width;
-        this.screenHeight = height;
+        return { width, height };
       },
       async simulatorInit() {
         await this.$refs.simulator.initialComplete();
 
-        this.updateScreenSize();
-        await this.$refs.simulator.initScreen({width: this.screenWidth, height: this.screenHeight});
+        let screenSize = this.getScreenSize();
+        await this.$refs.simulator.initScreen(screenSize);
         this.initWidgets();
       },
       initWidgets() {
-        this.updateScreenSize();
-        this.$refs.simulator.loadScreen();
+        let screenSize = this.getScreenSize();
+        this.$refs.simulator.loadScreen(screenSize);
+        engine.simulatorScreenSize(screenSize);
 
         let widgets = projectStore.getComponents();
+
         for (let id in widgets) {
-          let info = widgets[id];
-          info.id = id;
+          let widget = widgets[id];
+          widget.id = id;
           
           if (id !== 'screen') {
-            engine.simulatorCreateWidget(info);
+            engine.simulatorWidget.create(widget);
             // this.$refs.simulator.createElement(info);
           }
-          engine.simulatorUpdateAttr(info);
+          this.$refs.simulator.createElement(widget);
+          engine.simulatorWidget.updateAttr(widget);
         }
-        engine.simulatorTimelineLoad(projectStore.getTimelines());
+        
+        this.$refs.simulator.updateView();
+        engine.simulatorTimeline.load(projectStore.getTimelines());
 
         this.activeNode('screen');
       },
@@ -350,12 +359,12 @@
               if (id == 'screen') {
                 continue;
               }
-              engine.simulatorDeleteWidget(id);
+              engine.simulatorWidget.delete(id);
             } catch (error) {
               console.error(error);
             }
           }
-          engine.simulatorTimelineStopAll();
+          engine.simulatorTimeline.stopAll();
         } catch (error) {
           console.error('index reset', error);
         }
@@ -373,49 +382,39 @@
           if (!droppedFiles.length) return;
 
           let files = Array.from(droppedFiles);
-          let file = files[0];
-          this.loadProjectFile(file);
-          
           console.log(files);
+          files.forEach(async file => {
+            if (file.type && file.type.includes('image/')) {
+              file.base64 = await this.readFileContent(file);
+              projectStore.importImage(file);
+
+              this.message({
+                message: "" + file.name + " imported successfully",
+                type: 'success',
+              });
+            } else if (file.type && file.type.includes('font/')) {
+              this.message({
+                message: "NO " + file.name + " imported successfully",
+                type: 'success',
+              });
+            } else {
+              this.loadProjectFile(file);
+            }
+          });
         } catch (error) {
           console.log(error);
         }
         return false;
       },
       async loadProjectFile(file) {
+        this.reset();
+        
         const content = await this.readFileContent(file);
         const projectId = file.name.split('.')[0];
         projectStore.importProject(projectId, JSON.parse(content));
 
-        this.reset();
         projectStore.initProject(projectId);
         this.initWidgets();
-      },
-      async processFiles(files) {
-        for (let i = 0; i < files.length; i++) {
-          const file = files[i];
-          
-          // 1. 获取文件名和元数据
-          const fileInfo = {
-            name: file.name,
-            type: file.type || '未知',
-            size: file.size,
-            lastModified: file.lastModified,
-            lastModifiedDate: file.lastModifiedDate.toString()
-          };
-          
-          // 2. 读取文件内容
-          if (file.type.includes('text') || file.type === '') {
-            try {
-              const content = await this.readFileContent(file);
-              this.contents += `文件: ${file.name}\n${content}\n\n`;
-            } catch (error) {
-              console.error(`读取 ${file.name} 失败:`, error);
-            }
-          } else {
-            this.contents += `无法预览 ${file.type} 类型的文件\n\n`;
-          }
-        }
       },
       
       readFileContent(file) {
@@ -464,12 +463,13 @@
 
             this.changeInfo(id, key);
           }
-          engine.simulatorUpdateAttr(node, json.action);
+          engine.simulatorWidget.updateAttr(node, json.action);
 
           if (json.action == 'query_xy') {
             // this.drawRect(data.x, data.y, data.width, data.height);
             this.activeNode(id);
           }
+          this.$refs.simulator.updateView();
         } catch (error) {
           console.error(error);
         }
@@ -480,14 +480,14 @@
       handleAnimSave() {
         dispatch_data_changed_event();
 
-        engine.simulatorTimelineStopAll();
-        engine.simulatorTimelineLoad(projectStore.getTimelines());
+        engine.simulatorTimeline.stopAll();
+        engine.simulatorTimeline.load(projectStore.getTimelines());
       },
       refreshTerm: function () {
         this.$refs.term.clear();
       },
       handleTreeEvent(event, node, data) {
-        console.log('handleTreeEvent', event, node, data);
+        // console.log('handleTreeEvent', event, node, data);
         this.handleEvent(event, data, data);
       },
 
@@ -496,7 +496,7 @@
         if (parent_id === null || parent_id == '') {
           this.activeNode('screen');
         }
-        let data = {};
+        let data = { x: 0, y: 0, width: 100, height: 100 };
         if (options) {
           data.x = options.x || 0;
           data.y = options.y || 0;
@@ -504,8 +504,8 @@
         console.log('handleCreator', type, parent_id, data);
         let widget = projectStore.createWidget({ type, parent: parent_id, data: data });
 
-        engine.simulatorCreateWidget(widget);
-        engine.simulatorUpdateAttr(widget);
+        engine.simulatorWidget.create(widget);
+        engine.simulatorWidget.updateAttr(widget);
         this.$refs.simulator.createElement(widget);
       },
 
@@ -513,8 +513,8 @@
       copyWidget: function (info2) {
         let widget = projectStore.copyWidget(info2);
 
-        engine.simulatorCreateWidget(widget);
-        engine.simulatorUpdateAttr(widget);
+        engine.simulatorWidget.create(widget);
+        engine.simulatorWidget.updateAttr(widget);
         this.$refs.simulator.createElement(widget);
 
         return widget;
@@ -535,7 +535,7 @@
         let widget = projectStore.getWidgetById(id);
         let list = projectStore.deleteWidget(widget);
         for (const child of list) {
-          engine.simulatorDeleteWidget(child.id);
+          engine.simulatorWidget.delete(child.id);
           this.$refs.simulator.deleteElement('', child.id);
         }
         
@@ -563,7 +563,9 @@
         } else if (event == 'show') {
           // wrap_font_load();
           data.show = true;
-          engine.simulatorUpdateAttr(widget);
+          widget.data.show = true;
+          engine.simulatorWidget.updateAttr(widget);
+          this.$refs.simulator.updateView();
 
           // let list = projectStore.getWidgetChildrenList(id, true);
           // for (const child of list) {
@@ -571,7 +573,9 @@
           // }
         } else if (event == 'hide') {
           data.show = false;
-          engine.simulatorUpdateAttr(widget);
+          widget.data.show = false;
+          engine.simulatorWidget.updateAttr(widget);
+          this.$refs.simulator.updateView();
 
           // let list = projectStore.getWidgetChildrenList(id, true);
           // for (const child of list) {
@@ -583,7 +587,7 @@
           let change = projectStore.updateWidgetTreeIndex();
           for (const item of change) {
             let widget2 = projectStore.getWidgetById(item.id);
-            engine.simulatorUpdateAttr(widget2);
+            engine.simulatorWidget.updateAttr(widget2);
             this.$refs.simulator.updateElementAttr(widget2);
           }
         }
@@ -600,7 +604,7 @@
           widget.data.y += speed;
         }
 
-        engine.simulatorUpdateAttr(widget);
+        engine.simulatorWidget.updateAttr(widget);
         this.$refs.simulator.updateElementAttr(widget);
         // wrap_attr_setter_v2(widget);
         this.activeNode(id);
@@ -646,7 +650,7 @@
         //   let args_list = node.data[body.api];
         //   wrap_setter_str(id, body.api, args_list);
         // }
-        engine.simulatorUpdateAttr(node);
+        engine.simulatorWidget.updateAttr(node);
         this.$refs.simulator.updateElementAttr(node);
       },
 
@@ -690,27 +694,6 @@
         saveAs(blob, `lv_builder_${fileName}.lv`);
       },
 
-      // changeScreenSize() {
-      //   let screen = projectStore.getWidgetById('screen');
-      //   screen.data.width = this.screenWidth;
-      //   screen.data.height = this.screenHeight;
-
-      //   // 更新 projectStore 数据
-      //   projectStore.projectData.settings.screen = {
-      //     width: this.screenWidth,
-      //     height: this.screenHeight
-      //   };
-
-      //   if (this.savePage({}, MSG_SAVE_PAGE_SUCC)) {
-      //     window.location.reload();
-      //   } else {
-      //     this.message({
-      //       message: 'Change failed',
-      //       type: 'error',
-      //     });
-      //   }
-      // },
-
       //Highlight object
       drawRect: (x, y, w, h) => {
         let ctx = document.getElementById('canvas').getContext('2d');
@@ -742,8 +725,8 @@
           } else {
             projectStore.changeWidgetId(projectStore.getWidgetById(id), newid);
 
-            engine.simulatorDeleteWidget(id);
-            engine.simulatorCreateWidget(projectStore.getWidgetById(newid));
+            engine.simulatorWidget.delete(id);
+            engine.simulatorWidget.create(projectStore.getWidgetById(newid));
             // wrap_rename(id, newid);
 
             this.activeNode(newid);
@@ -763,9 +746,10 @@
           type: 'success'
         });
 
+        let screenSize = this.getScreenSize();
         // 如果屏幕尺寸改变,需要重新初始化模拟器
-        if (config.settings.screen.width !== this.screenWidth || 
-            config.settings.screen.height !== this.screenHeight) {
+        if (config.settings.screen.width !== screenSize.width || 
+            config.settings.screen.height !== screenSize.height) {
           this.$confirm('Screen size changed. The page needs to be reloaded. Continue?', 'Warning', {
             confirmButtonText: 'OK',
             cancelButtonText: 'Cancel',
@@ -972,7 +956,7 @@
 
   .el-tabs__content {
     flex: 1;
-    overflow: scroll;
+    // overflow: scroll;
   }
   .el-tabs__content {
     padding: 8px;

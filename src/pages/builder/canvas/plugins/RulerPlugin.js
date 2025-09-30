@@ -478,7 +478,7 @@ export class RulerPlugin extends PluginInterface {
       startY = 0;
     }
     let endX = startX + element.object.width() * element.object.scaleX();
-    let endY = startY + element.object.height() * element.object.scaleX();
+    let endY = startY + element.object.height() * element.object.scaleY();
     
     // 更新顶部高亮
     this.topHighlight.setAttrs({

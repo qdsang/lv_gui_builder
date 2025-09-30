@@ -108,28 +108,28 @@ export default {
     handleSwitch(id) {
       const value = this.switchValue[id];
       if (value) {
-        engine.simulatorTimelineStart(id);
+        engine.simulatorTimeline.start(id);
       } else {
-        engine.simulatorTimelinePause(id);
+        engine.simulatorTimeline.pause(id);
       }
     },
     handleSlider(id) {
       const value = this.sliderValue[id];
       // console.log('handleSlider', id, value);
-      engine.simulatorTimelineProgress(id, value);
+      engine.simulatorTimeline.progress(id, value);
     },
 
     playAll() {
       this.timelines.forEach(timeline => {
         this.switchValue[timeline.id] = true;
-        engine.simulatorTimelineStart(timeline.id);
+        engine.simulatorTimeline.start(timeline.id);
       });
     },
 
     pauseAll() {
       this.timelines.forEach(timeline => {
         this.switchValue[timeline.id] = false;
-        engine.simulatorTimelinePause(timeline.id);
+        engine.simulatorTimeline.pause(timeline.id);
       });
     },
 

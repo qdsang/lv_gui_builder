@@ -34,12 +34,101 @@ export class ElementManager {
         element = this.createScreenComponent(id, options, parentId);
         break;
     }
+    // element = this.createComponent(id, options, parentId);
 
     // 保存元素引用
     this.canvas.elements.set(id, element);
 
     return element;
   }
+
+  // /**
+  //  * 创建屏幕组件
+  //  * @param {string} id - 元素ID
+  //  * @param {object} options - 元素配置选项
+  //  * @param {string} parentId - 父屏幕元素ID
+  //  * @returns {object} 屏幕组件对象
+  //  */
+  // createComponent(id, options, parentId) {
+    
+  //   // 创建屏幕组
+  //   const componentGroup = new this.canvas.Konva.Group({
+  //     x: options.x || 0,
+  //     y: options.y || 0,
+  //     width: options.width || 0,
+  //     height: options.height || 0,
+  //     draggable: false,
+  //     id: id
+  //   });
+
+  //   // 创建透明的组件占位符
+  //   const placeholder = new this.canvas.Konva.Rect({
+  //     x: options.x || 0,
+  //     y: options.y || 0,
+  //     width: options.width || 0,
+  //     height: options.height || 0,
+  //     fill: 'rgba(0,0,0,0)', // 透明填充
+  //     stroke: 'rgba(0,123,255,0)', // 默认不显示边框
+  //     strokeWidth: 1,
+  //     draggable: true
+  //   });
+
+  //   const title = options.type === 'screen' ? id : '';
+  //   // 创建ID文本（放在屏幕框外的左上角上方）
+  //   const titleText = new this.canvas.Konva.Text({
+  //     x: 0,
+  //     y: -20, // 放在屏幕框上方
+  //     text: title,
+  //     fontSize: 14,
+  //     fill: 'white',
+  //     fontStyle: 'bold'
+  //   });
+
+  //   // 创建组件组（用于放置屏幕内的组件）
+  //   const componentChild = new this.canvas.Konva.Group({
+  //     x: 0,
+  //     y: 0,
+  //     draggable: false,
+  //     name: 'child'
+  //   });
+  //   // 将背景、ID文本、尺寸标签和组件组添加到屏幕组
+  //   componentGroup.add(placeholder);
+  //   componentGroup.add(titleText);
+  //   componentGroup.add(componentChild);
+
+  //   if (options.type == 'screen') {
+  //     this.canvas.screenGroup.add(componentGroup);
+  //   } else {
+  //     const pElement = this.canvas.elements.get(parentId);
+  //     // 添加到屏幕的组件组
+  //     pElement.componentGroup.add(componentGroup);
+  //     // element.componentGroup.add(sizeLabel);
+  //     pElement.componentGroup.getLayer().batchDraw();
+      
+  //     // 保存组件引用
+  //     pElement.components.set(id, componentChild);
+  //   }
+
+  //   // 创建组件对象
+  //   const component = {
+  //     id: id,
+  //     type: options.type || 'component',
+  //     group: componentGroup,
+  //     object: placeholder,
+  //     componentGroup: componentChild,
+  //     titleText: titleText,
+  //     sizeLabel: null, // 保存尺寸标签引用
+  //     components: new Map(), // 子组件
+  //     renderTarget: null, // 渲染目标
+  //     options: options,
+  //     parent: null,
+  //     screenId: parentId,
+  //   };
+
+  //   this.createScreenComponentEvent(componentGroup, placeholder, id);
+
+  //   return component;
+  // }
 
   /**
    * 创建屏幕元素
@@ -85,7 +174,7 @@ export class ElementManager {
     });
 
     // 创建组件组（用于放置屏幕内的组件）
-    const componentGroup = new this.canvas.Konva.Group({
+    const componentChild = new this.canvas.Konva.Group({
       x: 0,
       y: 0,
       draggable: false
@@ -94,7 +183,7 @@ export class ElementManager {
     // 将背景、ID文本、尺寸标签和组件组添加到屏幕组
     screenGroup.add(placeholder);
     screenGroup.add(titleText);
-    screenGroup.add(componentGroup);
+    screenGroup.add(componentChild);
 
     // 将屏幕组添加到屏幕内容组
     this.canvas.screenGroup.add(screenGroup);
@@ -105,9 +194,9 @@ export class ElementManager {
       type: options.type || 'screen',
       group: screenGroup,
       object: placeholder,
-      titleText: titleText, // 保存标题文本引用
-      componentGroup: componentGroup,
+      componentChild: componentChild,
       components: new Map(), // 屏幕内的组件
+      titleText: titleText, // 保存标题文本引用
       sizeLabel: null, // 保存尺寸标签引用
       renderTarget: null, // 渲染目标
       options: options,
@@ -146,9 +235,9 @@ export class ElementManager {
     });
 
     // 添加到屏幕的组件组
-    element.componentGroup.add(placeholder);
-    // element.componentGroup.add(sizeLabel);
-    element.componentGroup.getLayer().batchDraw();
+    element.componentChild.add(placeholder);
+    // element.componentChild.add(sizeLabel);
+    element.componentChild.getLayer().batchDraw();
     
     // 保存组件引用
     element.components.set(id, placeholder);
@@ -157,9 +246,13 @@ export class ElementManager {
     const component = {
       id: id,
       type: options.type || 'component',
+      group: placeholder,
       object: placeholder,
+      componentChild: null,
+      components: new Map(), // 屏幕内的组件
       titleText: null,
       sizeLabel: null,
+      renderTarget: null, // 渲染目标
       options: options,
       parent: element,
       screenId: parentId,
@@ -168,6 +261,18 @@ export class ElementManager {
     this.createScreenComponentEvent(placeholder, placeholder, id);
 
     return component;
+  }
+
+  bindMethods(component) {
+    component.rect = function () {
+      let rect = {};
+      const absPos = this.group.getAbsolutePosition();
+      rect.x = absPos.x;
+      rect.y = absPos.y;
+      rect.width = element.group.width();
+      rect.height = element.group.height();
+      return rect;
+    };
   }
 
   createScreenComponentEvent(group, placeholder, id) {
@@ -190,8 +295,15 @@ export class ElementManager {
 
     // 绑定事件
     group.on('click tap', (e) => {
-      e.cancelBubble = true; // 阻止事件冒泡
-      this.canvas.handleElementClick(id, e);
+      let contextMenu = this.canvas.pluginManager.getPlugin('contextMenu');
+      if (e.evt.button == 2) {
+
+      } else if (contextMenu && contextMenu.isVisible) {
+        
+      } else {
+        e.cancelBubble = true; // 阻止事件冒泡
+        this.canvas.handleElementClick(id, e);
+      }
     });
 
     group.on('transformstart dragstart', (e) => {
@@ -219,20 +331,8 @@ export class ElementManager {
     const element = this.canvas.elements.get(id);
     if (!element) return;
 
-    // 根据元素类型进行不同的删除操作
-    switch (element.type) {
-      case 'screen':
-        // 从屏幕内容组中移除
-        if (element.group) {
-          element.group.destroy();
-        }
-        break;
-      default:
-        // 从屏幕内容组中移除
-        if (element.object) {
-          element.object.destroy();
-        }
-        break;
+    if (element.group) {
+      element.group.destroy();
     }
 
     // 从映射中删除
@@ -251,19 +351,9 @@ export class ElementManager {
     const element = this.canvas.elements.get(id);
     if (!element) return;
 
-    switch (element.type) {
-      case 'screen':
-        if (element.group) {
-          element.group.setAttrs(properties);
-          element.group.getLayer().batchDraw();
-        }
-        break;
-      default:
-        if (element.object) {
-          element.object.setAttrs(properties);
-          element.object.getLayer().batchDraw();
-        }
-        break;
+    if (element.group) {
+      element.group.setAttrs(properties);
+      element.group.getLayer().batchDraw();
     }
 
     // 触发元素变换事件，通知插件更新
@@ -283,7 +373,7 @@ export class ElementManager {
     if (!element || element.type !== 'screen') return;
 
     // 移除所有组件
-    const components = element.componentGroup.getChildren();
+    const components = element.componentChild.getChildren();
     for (let i = components.length - 1; i >= 0; i--) {
       const component = components[i];
       component.destroy();
@@ -292,6 +382,6 @@ export class ElementManager {
     // 清空组件映射
     element.components.clear();
     
-    element.componentGroup.getLayer().batchDraw();
+    element.componentChild.getLayer().batchDraw();
   }
 }

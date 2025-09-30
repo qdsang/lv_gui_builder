@@ -6,8 +6,9 @@ import {
     mp_js_init_repl,
     mp_js_process_char,
   } from './micropython.js';
-import * as WidgetData from "./widgetData.js";
-import { generateCode } from "./runtimeCompiler.js";
+import * as Widget from "./widget/index.js";
+
+import { generateCode } from "./compiler/runtimeCompiler.js";
 import {
   wrap_delete,
   wrap_rename,
@@ -21,10 +22,14 @@ import {
   wrap_timeline_progress,
 
   wrap_font_load,
-} from './runtimeWrapper.js';
+} from './compiler/runtimeWrapper.js';
 
 import * as wasm_file_api from './wasm_file_api.js';
 wasm_file_api;
+
+import envCode from "./envCode.js";
+import { registerAssetServer } from './assets.js';
+import stdio from './stdio.js';
 
 let runTime;
 let isInit = false;
@@ -34,8 +39,10 @@ export function init() {
   MicroPython.run();
 }
 
+
 export function on(event, callback) {
   if (event == 'stdout') {
+    stdio.register(callback);
     window.addEventListener(
       'python:stdout_print',
       (e) => {
@@ -46,7 +53,6 @@ export function on(event, callback) {
   }
 }
 
-let Widget = WidgetData;
 export { Widget };
 
 export async function simulatorInitWait() {
@@ -55,15 +61,13 @@ export async function simulatorInitWait() {
   }
 }
 
-export { mp_js_do_str };
-
 export function simulatorStdioInput(str) {
   mp_js_process_char(str);
 }
 
 export async function simulatorInit(ele) {
   await simulatorInitWait();
-  console.log('simulatorInit');
+  console.log('simulator Init');
 
   if (isInit) {
     return;
@@ -73,17 +77,11 @@ export async function simulatorInit(ele) {
 
   MicroPython.canvas = ele;
 
-  /* Bind mp_js_stdout */
-  // let mp_js_stdout = document.getElementById('mp_js_stdout');
-  // mp_js_stdout.value = '';
-
   /*Initialize MicroPython itself*/
   mp_js_init(20 * 1024 * 1024);
 
-  /* Add function querry_attr() & walv_callback() */
-  mp_js_do_str(WidgetData.QueryCode.join('\n'));
-  mp_js_do_str(`ATTR=` + JSON.stringify(WidgetData.Getter));
-  // wrap_equal('ATTR', JSON.stringify(WidgetData.Getter)); //Add ATTR to mpy, ATTR is common getter
+  /* Add function */
+  mp_js_do_str(envCode.QueryCode);
 
   /*Setup lv_task_handler loop*/
   var the_mp_handle_pending = MicroPython.cwrap('mp_handle_pending', null, [], { async: true });
@@ -101,13 +99,13 @@ export async function simulatorInit(ele) {
   await simulatorInitWait();
 }
 
-export async function simulatorScreenSize(width, height) {
+export async function simulatorScreenSize({ width, height }) {
   await simulatorInitWait();
   // console.log('ScreenSize');
   await new Promise(resolve => setTimeout(resolve, 100));
   
   /* Run init script */
-  mp_js_do_str(WidgetData.EnvInitCode(width, height).join('\n'));
+  mp_js_do_str(envCode.EnvInitCode(width, height).join('\n'));
 
   MicroPython.canvas.style.width = width+'px';
   MicroPython.canvas.style.height = height+'px';
@@ -115,41 +113,19 @@ export async function simulatorScreenSize(width, height) {
   await new Promise(resolve => setTimeout(resolve, 100));
 }
 
-export async function simulatorCreateWidget(widget) {
-  wrap_create_v2(widget, false);
-}
+export let simulatorWidget = {
+  create: async (widget) => wrap_create_v2(widget, false),
+  delete: async (id) => wrap_delete(id),
+  updateAttr: async (widget, action) => wrap_update_v2(widget, action),
+};
 
-export async function simulatorDeleteWidget(id) {
-  wrap_delete(id);
-}
-
-export async function simulatorUpdateAttr(widget, action) {
-  wrap_update_v2(widget, action);
-}
-
-export async function simulatorTimelineLoad(timelines) {
-  wrap_timeline_load(timelines);
-}
-export async function simulatorTimelineStopAll() {
-  wrap_timeline_stop_all();
-}
-export async function simulatorTimelineStart(id) {
-  wrap_timeline_start(id);
-}
-export async function simulatorTimelinePause(id) {
-  wrap_timeline_pause(id);
-}
-export async function simulatorTimelineProgress(id, v) {
-  wrap_timeline_progress(id, v);
-}
-
-export function simulatorUpdate(event) {
-    if (event.type == "element") {
-        // console.log(event.data)
-    } else if (event.type == "timeline") {
-        // console.log(event.data)
-    }
+export let simulatorTimeline = {
+  load: (timelines) => wrap_timeline_load(timelines),
+  start: (id) => wrap_timeline_start(id),
+  stopAll: () => wrap_timeline_stop_all(),
+  pause: (id) => wrap_timeline_pause(id),
+  progress: (id, v) => wrap_timeline_progress(id, v),
 }
 
 
-export { generateCode }
+export { generateCode, registerAssetServer }

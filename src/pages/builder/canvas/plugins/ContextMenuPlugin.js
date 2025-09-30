@@ -44,6 +44,40 @@ export class ContextMenuPlugin extends PluginInterface {
         condition: (element) => element !== null
       },
       {
+        text: '左对齐',
+        action: 'alignLeft',
+        condition: (element) => this.hasMultipleElementsSelected()
+      },
+      {
+        text: '居中对齐',
+        action: 'alignCenter',
+        condition: (element) => this.hasMultipleElementsSelected()
+      },
+      {
+        text: '右对齐',
+        action: 'alignRight',
+        condition: (element) => this.hasMultipleElementsSelected()
+      },
+      {
+        text: '顶部对齐',
+        action: 'alignTop',
+        condition: (element) => this.hasMultipleElementsSelected()
+      },
+      {
+        text: '垂直居中',
+        action: 'alignMiddle',
+        condition: (element) => this.hasMultipleElementsSelected()
+      },
+      {
+        text: '底部对齐',
+        action: 'alignBottom',
+        condition: (element) => this.hasMultipleElementsSelected()
+      },
+      {
+        separator: true,
+        condition: (element) => element !== null && this.hasMultipleElementsSelected()
+      },
+      {
         text: '居中视图',
         action: 'centerView',
         condition: () => true
@@ -222,6 +256,10 @@ export class ContextMenuPlugin extends PluginInterface {
     this.obserer = observer;
   }
 
+  hasMultipleElementsSelected() {
+    return this.canvas.selectedElements.size > 0;
+  }
+
   /**
    * 显示菜单
    * @param {number} x - 鼠标X坐标
@@ -236,14 +274,8 @@ export class ContextMenuPlugin extends PluginInterface {
     
     // 确定当前元素
     this.currentElement = null;
-    if (target && target !== this.canvas.stage && target !== this.canvas.screenGroup) {
-      // 查找对应的元素
-      for (const [id, element] of this.canvas.elements) {
-        if (element.object === target || element.group === target) {
-          this.currentElement = element;
-          break;
-        }
-      }
+    if (this.canvas.selectedElements.size > 0) {
+      this.currentElement = Array.from(this.canvas.selectedElements)[0];
     }
     
     // 清空菜单
@@ -388,6 +420,30 @@ export class ContextMenuPlugin extends PluginInterface {
         
       case 'resetView':
         this.canvas.resetView();
+        break;
+        
+      case 'alignLeft':
+        this.canvas.alignElements('left');
+        break;
+        
+      case 'alignCenter':
+        this.canvas.alignElements('center');
+        break;
+        
+      case 'alignRight':
+        this.canvas.alignElements('right');
+        break;
+        
+      case 'alignTop':
+        this.canvas.alignElements('top');
+        break;
+        
+      case 'alignMiddle':
+        this.canvas.alignElements('middle');
+        break;
+        
+      case 'alignBottom':
+        this.canvas.alignElements('bottom');
         break;
         
       default:

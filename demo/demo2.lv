@@ -1,7 +1,7 @@
 {
   "id": "default",
   "name": "Demo2 Project",
-  "description": "LVGL GUI Builder Demo Project",
+  "description": "LV Builder Demo",
   "version": "1.0.0",
   "versionCode": 1,
   "author": "Qdsang",
@@ -399,36 +399,6 @@
   },
   "assets": {
     "images": [
-      {
-        "id": "demo-arctic-code.jpg",
-        "title": "arctic code",
-        "path": "https://qdsang.github.io/lv_gui_builder/demo-arctic-code.jpg",
-        "size": 1000,
-        "width": 800,
-        "height": 800,
-        "data": "",
-        "value": ""
-      },
-      {
-        "id": "demo-pull-shark.jpg",
-        "title": "pull shark",
-        "path": "https://qdsang.github.io/lv_gui_builder/demo-pull-shark.jpg",
-        "size": 1000,
-        "width": 800,
-        "height": 800,
-        "data": "",
-        "value": ""
-      },
-      {
-        "id": "demo-starstruck.jpg",
-        "title": "starstruck",
-        "path": "https://qdsang.github.io/lv_gui_builder/demo-starstruck.jpg",
-        "size": 1000,
-        "width": 800,
-        "height": 800,
-        "data": "",
-        "value": ""
-      }
     ],
     "fonts": [
       {

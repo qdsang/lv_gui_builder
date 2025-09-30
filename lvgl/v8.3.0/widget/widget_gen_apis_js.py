@@ -5,7 +5,7 @@
 import json
 
 Setter = {}
-path = '/mnt/d/work/code/lv_micropython/lib/lv_bindings/gen/lv_mpy_example.json'  # Path to lv_mpy_example.json
+path = './lv_micropython/lib/lv_bindings/gen/lv_mpy_example.json'  # Path to lv_mpy_example.json
 
 with open(path) as f:
     data = json.load(f)

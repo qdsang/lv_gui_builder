@@ -4,7 +4,7 @@
   <el-collapse-item v-for="part in parts" :key="part" :title="'Style ' + part.toLowerCase() + countTip(part)" :name="part">
 
     <el-collapse v-model="collStyles" style="padding: 0 0 0 16px;">
-      <el-collapse-item v-for="styles in styleGroups" :title="styles.title" :name="part + '_' + styles.title" :key="styles.title">
+      <el-collapse-item v-for="styles in styleGroups" :title="styles.title + countTip2(part, styles)" :name="part + '_' + styles.title" :key="styles.title">
         <div v-for="api in styles.list" :key="api.api">
           <attr-setter2
               :id="id"
@@ -83,8 +83,27 @@ export default {
       this.$emit('change', { id, name, mode });
     },
     countTip(part) {
-      // console.log('part', part, this.partCountMap);
-      return ' (' + this.partCountMap[part] + ')';
+      let count = this.partCountMap[part] || 0;
+      return count ? (' (' + count + ')') : '';
+    },
+    countTip2(part, styles) {
+      let node = projectStore.getWidgetById(this.id);
+      let count = 0;
+      for (let key in styles.list) {
+        let style = styles.list[key];
+        let attrKey = style.api;
+        if (part) {
+          attrKey = part + '.' + attrKey;
+        }
+
+        let list = node.styles;
+        let isCheck = list.indexOf(attrKey) > -1;
+        if (isCheck) {
+          count++;
+        }
+      }
+      // console.log(styles);
+      return count ? (' (' + count + ')') : '';
     }
   },
 };
