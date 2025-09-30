@@ -164,6 +164,22 @@ export const wrap_attr_setter_v2 = (node) => {
     mp_js_do_str(code);
 }
 
+// export const engineCreate()
+export const engineAttrUpdate = (node) => {
+    wrap_style_setter_v2(node);
+    wrap_attr_setter_v2(node);
+    if (node.show == false) {
+        wrap_hide(node.id);
+    } else {
+        wrap_show(node.id);
+    }
+    
+    if (node.zindex) {
+        wrap_set_index(node.id, node.zindex);
+    }
+}
+
+
 export const wrap_attributes_setter_str = (id, infpool, widgpool) => {
     let code = [];
     for (const attr of infpool[id].attributes) {

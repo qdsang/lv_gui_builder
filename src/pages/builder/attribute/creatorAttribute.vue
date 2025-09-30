@@ -1,94 +1,52 @@
 <template>
   <div id="setting_attribute" style="height: 100%;">
-    <el-form ref="form" :model="currentWidget" label-width="55px">
+    <el-form ref="form" :model="currentWidget" label-width="55px" label-position="top" size="small" class="attrs-form">
       <el-form-item label="ID">
         <el-row>
           <el-col :span="24">
             <em> {{ id }} </em> {{ currentType }}&nbsp;
             <el-button icon="el-icon-edit" circle @click="editID"></el-button>
           </el-col>
-          <!-- <el-col :span="7">
-              <i class="el-icon-lock"></i><el-switch v-model="currentWidget.drag" v-on:input="bindWidgetBool('drag')"></el-switch>
-            </el-col> -->
         </el-row>
       </el-form-item>
-      <!-- <el-form-item label="CB"> -->
-        <!-- <el-button type="warning" icon="el-icon-plus" @click="enableCBInfo(id)">CB</el-button> -->
-        <!-- <el-switch
-          :value="currentWidget?.cb"
-          @change="enableCBInfo(id)"
-        ></el-switch>
-      </el-form-item> -->
-      <!-- <el-form-item label="align">
-        <el-row>
-          <el-col :span="12">
-          <align></align>
-          </el-col>
-        </el-row>
-      </el-form-item> -->
       <el-form-item label="Postion">
         <el-row>
-          <el-col :span="2"><strong>X:</strong></el-col>
           <el-col :span="10">
-            <el-input
-              placeholder="px"
-              v-model="currentWidget.x"
-              v-on:input="bindWidgetNumerical('x')"
-            ></el-input>
+            <el-input placeholder="px" v-model="currentWidget.x"
+              v-on:input="bindWidgetNumerical('x')">
+              <template #prepend>X</template>
+            </el-input>
           </el-col>
-          <el-col :span="2"><strong>Y:</strong></el-col>
+          <el-col :span="2"></el-col>
           <el-col :span="10">
-            <el-input
-              placeholder="px"
-              v-model="currentWidget.y"
-              v-on:input="bindWidgetNumerical('y')"
-            ></el-input>
+            <el-input placeholder="px" v-model="currentWidget.y"
+              v-on:input="bindWidgetNumerical('y')">
+              <template #prepend>Y</template>
+            </el-input>
           </el-col>
         </el-row>
       </el-form-item>
 
       <el-form-item label="Size">
         <el-row>
-          <el-col :span="2"><strong>W:</strong></el-col>
           <el-col :span="10">
-            <el-input
-              placeholder="px"
-              v-model="currentWidget.width"
-              v-on:input="bindWidgetNumerical('width')"
-            ></el-input>
+            <el-input placeholder="px" v-model="currentWidget.width"
+              v-on:input="bindWidgetNumerical('width')">
+              <template #prepend>W</template>
+            </el-input>
           </el-col>
-          <el-col :span="2"><strong>H:</strong></el-col>
+          <el-col :span="2"></el-col>
           <el-col :span="10">
-            <el-input
-              placeholder="px"
-              v-model="currentWidget.height"
-              v-on:input="bindWidgetNumerical('height')"
-            ></el-input>
+            <el-input placeholder="px" v-model="currentWidget.height"
+              v-on:input="bindWidgetNumerical('height')">
+              <template #prepend>H</template>
+            </el-input>
           </el-col>
         </el-row>
       </el-form-item>
-<!-- 
-      <el-form-item label="Other">
-        <el-row>
-          <el-col :span="12">
-            DRAG<el-switch v-model="currentWidget.drag" v-on:input="bindWidgetBool('drag')"></el-switch>
-          </el-col>
-          <el-col :span="12">
-            CLICK<el-switch v-model="currentWidget.click" v-on:input="bindWidgetBool('click')"></el-switch>
-          </el-col>												
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            HIDDEN<el-switch v-model="currentWidget.hidden" v-on:input="bindWidgetBool('hidden')"></el-switch>
-          </el-col>
-          <el-col :span="12">
-            TOP<el-switch v-model="currentWidget.top" v-on:input="bindWidgetBool('top')"></el-switch>
-          </el-col>												
-        </el-row>
-      </el-form-item> -->
     </el-form>
 
-    <el-divider style="margin: 10px 0"></el-divider>
+    <!-- <el-divider style="margin: 10px 0"></el-divider> -->
 
     <!-- method area -->
     <div style="padding: 0 0 10px;">
@@ -115,14 +73,7 @@
 </template>
 
 <script lang="ts">
-import { reverse_del_node, pool_delete, setArgvs, dispatch_data_changed_event, debounceFun } from '../utils.js';
-
-import {
-  wrap_simple_setter,
-} from '../runtimeWrapper.js';
-
 import * as api from '@lvgl/v8.3.0/widgetApis.js';
-
 
 import AttrAlign from './AttrAlign.vue';
 import AttrSetter2 from './AttrSetter2.vue';
@@ -164,18 +115,9 @@ export default {
     handleSetterChange({ id, name, mode }) {
       this.$emit('change', { id, name, mode });
     },
-    // User enable CallBack template
-    enableCBInfo: function (id) {
-      let widget = projectStore.getWidgetById(id);
-      // dispatch_data_changed_event();
-
-      widget.cb = !widget.cb;
-    },
 
     // Apply change to the widget: number
     bindWidgetNumerical: function (attribute) {
-      dispatch_data_changed_event();
-
       let value = this.currentWidget[attribute];
 
       if (value == null) {
@@ -183,27 +125,11 @@ export default {
       }
 
       let id = this.id;
-
-      wrap_simple_setter(id, attribute, value);
-
-      // this.changeInfo(id, attribute);
-    },
-
-    // Apply change to the widget: boolean
-    bindWidgetBool: function (attribute) {
-      let value = this.currentWidget[attribute];
-
-      if (value == true) {
-        value = 'True';
-      } else {
-        value = 'False';
-      }
-
-      let id = this.id;
-
-      wrap_simple_setter(id, attribute, value);
-
-      // this.reverseInfo(id, attribute);
+      let widget = projectStore.getWidgetById(id);
+      let attrKey = attribute;
+      widget.data[attrKey] = value;
+      
+      this.handleSetterChange({ id, name: attrKey, mode: 'styles'});
     },
 
     // Lock the widget, so it can't move anymore
@@ -224,7 +150,17 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-
+.attrs-form {
+  :deep(.el-input-group__prepend) {
+    padding: 0 10px;
+  }
+  :deep(.el-form-item--small) {
+    margin-bottom: 6px;
+  }
+  :deep(.el-form-item--label-top .el-form-item__label) {
+    margin-bottom: 0;
+  }
+}
 </style>
 <style lang="less">
 </style>

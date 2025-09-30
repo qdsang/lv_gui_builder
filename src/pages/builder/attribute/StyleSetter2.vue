@@ -1,7 +1,7 @@
 <template>
 
 <el-collapse v-model="collPart">
-  <el-collapse-item v-for="part in parts" :key="part" :title="'STYLE ' + part" :name="part">
+  <el-collapse-item v-for="part in parts" :key="part" :title="'Style ' + part.toLowerCase()" :name="part">
 
     <el-collapse v-model="collStyles" style="padding: 0 0 0 16px;">
       <el-collapse-item v-for="styles in styleGroups" :title="styles.title" :name="part + '_' + styles.title" :key="styles.title">

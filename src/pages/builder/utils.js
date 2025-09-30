@@ -1,16 +1,5 @@
 
 import { Data_Changed_Event } from  './common/constant.js';
-import { wrap_delete } from './runtimeWrapper.js';
-
-export const reverse_del_node = (node, record) => {
-    let childs = node.children;
-    for (const iter of childs) {
-        reverse_del_node(iter, record);
-        wrap_delete(iter.label);
-        record.push(iter.label);
-    }
-    childs.splice(0, childs.length);
-}
 
 export const pool_delete = (pool, list) => {
     for (const i of list) {

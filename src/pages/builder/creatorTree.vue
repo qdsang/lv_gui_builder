@@ -105,6 +105,9 @@ export default {
 }
 </style>
 <style lang="less">
+.el-tree--highlight-current .el-tree-node.is-current>.el-tree-node__content {
+  background-color: #4A5878;
+}
 .creator-tree-view {
   // width: 100%;
   .el-tree-node__content {

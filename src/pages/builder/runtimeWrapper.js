@@ -1,11 +1,17 @@
 /* wrapper: generate the related code, then use `mp_js_do_str` to excute them. */
-import { mp_js_do_str } from '@lvgl/v8.3.0/index.js';
+import { mp_js_do_str as mp_js_do_str2 } from '@lvgl/v8.3.0/index.js';
 
 import { template_py_create, template_py_cb, 
     template_py_setter_simple, template_py_api_simple, 
     template_py_styles, template_py_attrs, } from '@lvgl/v8.3.0/runtimeTemplatePython.js';
 
 import { template_py_timeline, template_py_timeline_delete_all } from '@lvgl/v8.3.0/runtimeTemplatePython.js';
+
+
+function mp_js_do_str(code) {
+    mp_js_do_str2(code);
+    // console.log('mp_js_do_str', code);
+}
 
 // id = expr
 export const wrap_equal = (id, expr) => {
@@ -163,6 +169,27 @@ export const wrap_attr_setter_v2 = (node) => {
     // console.log('wrap_attr_setter_v2', code);
     mp_js_do_str(code);
 }
+
+// export const engineCreate()
+export const engineAttrUpdate = (node, action = 'update') => {
+    if (action == 'transform') {
+        wrap_attr_setter_v2(node);
+        return;
+    }
+
+    wrap_style_setter_v2(node);
+    wrap_attr_setter_v2(node);
+    if (node.show == false) {
+        wrap_hide(node.id);
+    } else {
+        wrap_show(node.id);
+    }
+    
+    if (node.zindex) {
+        wrap_set_index(node.id, node.zindex);
+    }
+}
+
 
 export const wrap_attributes_setter_str = (id, infpool, widgpool) => {
     let code = [];

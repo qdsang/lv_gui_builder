@@ -1716,10 +1716,10 @@ events@^3.3.0:
   resolved "https://repo.huaweicloud.com/repository/npm/events/-/events-3.3.0.tgz#31a95ad0a924e2d2c419a813aeb2c4e878ea7400"
   integrity sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==
 
-fabric@^6.7.1:
-  version "6.7.1"
-  resolved "https://repo.huaweicloud.com/repository/npm/fabric/-/fabric-6.7.1.tgz#1b0926d7e061af41ab86a6fde8bee9f2454f6379"
-  integrity sha512-dLxSmIvN4InJf4xOjbl1LFWh8WGOUIYtcuDIGs2IN0Z9lI0zGobfesDauyEhI1+owMLTPCCiEv01rpYXm7g2EQ==
+fabric@6.6.7:
+  version "6.6.7"
+  resolved "https://repo.huaweicloud.com/repository/npm/fabric/-/fabric-6.6.7.tgz#a6e860690cc6bfbd500d100fad3fbf3005c9a2aa"
+  integrity sha512-5wLf0F9PouwfgG11nsPs7mSVIGTRG3R3I4fCE9iT8fpQyG8OKHSe1N6/KVGRgAgrQN2AAh2xF+K/Gv5UVfkqlQ==
   optionalDependencies:
     canvas "^2.11.2"
     jsdom "^20.0.1"
@@ -2306,6 +2306,11 @@ keyv@^4.5.3:
   integrity sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==
   dependencies:
     json-buffer "3.0.1"
+
+konva@^9.3.22:
+  version "9.3.22"
+  resolved "https://repo.huaweicloud.com/repository/npm/konva/-/konva-9.3.22.tgz#aa979c410127dda20bf0788ab70a414648c25a91"
+  integrity sha512-yQI5d1bmELlD/fowuyfOp9ff+oamg26WOCkyqUyc+nczD/lhRa3EvD2MZOoc4c1293TAubW9n34fSQLgSeEgSw==
 
 less@^4.1.3:
   version "4.4.0"

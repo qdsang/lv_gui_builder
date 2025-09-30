@@ -8,7 +8,7 @@
 </template>
 
 <script lang="ts">
-import { wrap_align } from '../runtimeWrapper.js';
+import { engineAttrUpdate } from '../runtimeWrapper.js';
 
 export default {
   name : 'lvgl-attr-align',
@@ -31,7 +31,9 @@ export default {
   watch: {
     align: function (type) {
       // wrap_align(this.id, 'None', type, 0, 0);
-      wrap_align(this.id, type, 0, 0);
+      // wrap_align(this.id, type, 0, 0);
+      let node = null;
+      engineAttrUpdate(node);
     }
   },
 };

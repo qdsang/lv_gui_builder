@@ -52,7 +52,72 @@ export default {
       rightWidthBeforeCollapse: 320,
     }
   },
+  mounted() {
+    // 从本地存储加载面板状态
+    this.loadPanelStates();
+  },
   methods: {
+    // 从本地存储加载面板状态
+    loadPanelStates() {
+      try {
+        const savedLeftCollapsed = localStorage.getItem('creatorWindow.leftCollapsed');
+        const savedRightCollapsed = localStorage.getItem('creatorWindow.rightCollapsed');
+        const savedLeftWidth = localStorage.getItem('creatorWindow.leftWidth');
+        const savedRightWidth = localStorage.getItem('creatorWindow.rightWidth');
+        const savedLeftWidthBeforeCollapse = localStorage.getItem('creatorWindow.leftWidthBeforeCollapse');
+        const savedRightWidthBeforeCollapse = localStorage.getItem('creatorWindow.rightWidthBeforeCollapse');
+
+        if (savedLeftCollapsed !== null) {
+          this.leftCollapsed = JSON.parse(savedLeftCollapsed);
+        }
+        
+        if (savedRightCollapsed !== null) {
+          this.rightCollapsed = JSON.parse(savedRightCollapsed);
+        }
+        
+        if (savedLeftWidth !== null) {
+          this.leftWidth = JSON.parse(savedLeftWidth);
+        }
+        
+        if (savedRightWidth !== null) {
+          this.rightWidth = JSON.parse(savedRightWidth);
+        }
+        
+        if (savedLeftWidthBeforeCollapse !== null) {
+          this.leftWidthBeforeCollapse = JSON.parse(savedLeftWidthBeforeCollapse);
+        }
+        
+        if (savedRightWidthBeforeCollapse !== null) {
+          this.rightWidthBeforeCollapse = JSON.parse(savedRightWidthBeforeCollapse);
+        }
+        
+        // 如果面板处于折叠状态，确保宽度为0
+        if (this.leftCollapsed) {
+          this.leftWidth = 0;
+        }
+        
+        if (this.rightCollapsed) {
+          this.rightWidth = 0;
+        }
+      } catch (error) {
+        console.error('Failed to load panel states from localStorage:', error);
+      }
+    },
+    
+    // 保存面板状态到本地存储
+    savePanelStates() {
+      try {
+        localStorage.setItem('creatorWindow.leftCollapsed', JSON.stringify(this.leftCollapsed));
+        localStorage.setItem('creatorWindow.rightCollapsed', JSON.stringify(this.rightCollapsed));
+        localStorage.setItem('creatorWindow.leftWidth', JSON.stringify(this.leftWidth));
+        localStorage.setItem('creatorWindow.rightWidth', JSON.stringify(this.rightWidth));
+        localStorage.setItem('creatorWindow.leftWidthBeforeCollapse', JSON.stringify(this.leftWidthBeforeCollapse));
+        localStorage.setItem('creatorWindow.rightWidthBeforeCollapse', JSON.stringify(this.rightWidthBeforeCollapse));
+      } catch (error) {
+        console.error('Failed to save panel states to localStorage:', error);
+      }
+    },
+
     // 开始拖拽调整宽度
     startResize(event, side) {
       event.preventDefault();
@@ -75,6 +140,8 @@ export default {
       const handleMouseUp = () => {
         document.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('mouseup', handleMouseUp);
+        // 保存面板状态
+        this.savePanelStates();
       };
       
       document.addEventListener('mousemove', handleMouseMove);
@@ -90,6 +157,8 @@ export default {
         this.leftWidth = 0;
       }
       this.leftCollapsed = !this.leftCollapsed;
+      // 保存面板状态
+      this.savePanelStates();
     },
 
     // 切换右侧面板
@@ -101,6 +170,8 @@ export default {
         this.rightWidth = 0;
       }
       this.rightCollapsed = !this.rightCollapsed;
+      // 保存面板状态
+      this.savePanelStates();
     },
   }
 }
@@ -199,13 +270,14 @@ export default {
   }
 
   &.left {
-    right: -16px;
+    right: -15px;
     border-left: none;
   }
 
   &.right {
-    left: -16px;
+    left: -15px;
     border-right: none;
+    border-radius: 4px 0 0 4px;
   }
 
   .el-icon {

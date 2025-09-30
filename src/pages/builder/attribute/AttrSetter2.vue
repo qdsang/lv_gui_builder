@@ -186,6 +186,48 @@ export default {
         }
       }
     },
+    updateAttr(id, mode, part, api, args) {
+      let attrKey = api;
+      if (part) {
+        attrKey = part + '.' + attrKey;
+      }
+
+      let args_list = [];
+      for (const arg of args) {
+        // if (arg['value'] === "") {
+        //     continue
+        // }
+        if (arg['type'] === 'char*') {
+          args_list.push(`"${arg['value']}"`);
+        } else if (arg['type'] === 'bool') {
+          if (arg['value'] === true) {
+            args_list.push('True');
+          } else {
+            args_list.push('False');
+          }
+        } else {
+          args_list.push(arg.value);
+        }
+        // TODO: We can check each value's type here
+      }
+
+      console.log('updateAttr', id, this);
+      let node = projectStore.getWidgetById(id);
+      let data = node.data; // this.widgpool[id];
+
+      let index = this.list.indexOf(attrKey);
+      if (index == -1) {
+        this.list.push(attrKey);
+      }
+      
+      // if (!node.data) node.data = {};
+      
+      // node.data[attrKey] = this.args;
+      node.data[attrKey] = args_list.toString();
+      // data[attrKey] = args_list.toString();
+      // wrap_setter_str(id, this.body.api, args_list.toString());
+      this.$emit('change', { id, name: this.name, mode: this.mode });
+    },
     checkArgs: function () {
       let attrKey = this.body.api;
       if (this.part) {
@@ -234,6 +276,14 @@ export default {
   },
 };
 </script>
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+input[type=checkbox] {
+    cursor: pointer;
+    opacity: 0.7;
+    vertical-align: middle;
+    margin: 2px 2px 4px 4px;
+}
+
+</style>
 
 <style lang="less"></style>

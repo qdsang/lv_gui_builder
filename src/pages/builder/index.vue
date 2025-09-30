@@ -16,7 +16,7 @@
               <span>Demo</span>
             </template>
             <el-menu-item v-for="item in demoList" :key="item" :index="'k'+item">
-              <el-link :href="`#/lv/editor/${item}`">{{ item }}</el-link>
+              <el-link :href="`#/lv/builder/${item}`">{{ item }}</el-link>
             </el-menu-item>
           </el-sub-menu>
           
@@ -50,18 +50,18 @@
 
       <div class="header-right">
         <el-button-group class="action-buttons">
-          <el-tooltip content="Generate Code" placement="bottom">
+          <!-- <el-tooltip content="Generate Code" placement="bottom">
             <el-button @click="generateCode">
               <el-icon><DocumentAdd /></el-icon>
               Generate
             </el-button>
-          </el-tooltip>
-          <el-tooltip content="Save Project" placement="bottom">
+          </el-tooltip> -->
+          <!-- <el-tooltip content="Save Project" placement="bottom">
             <el-button @click="savePage">
               <el-icon><Select /></el-icon>
               Save
             </el-button>
-          </el-tooltip>
+          </el-tooltip> -->
           <el-tooltip content="Export Project Lv File" placement="bottom">
             <el-button @click="exportCodeAsLV">
               <el-icon><FolderOpened /></el-icon>
@@ -87,7 +87,7 @@
       <template #center>
         <el-tabs type="card" v-model="activeTab" @tab-change="handleTabChange" style="border: none;">
           <el-tab-pane label="Simulator" name="simulator">
-            <creator-simulator ref="simulator" @cursor="cursorXY" @event="handleSimulatorEvent" @console="handleSimulatorConsole"></creator-simulator>
+            <creator-simulator ref="simulator" @event="handleSimulatorEvent" @console="handleSimulatorConsole"></creator-simulator>
             <creator-anim-console></creator-anim-console>
           </el-tab-pane>
           <el-tab-pane label="Anim" name="anim" :lazy="true">
@@ -114,44 +114,6 @@
           <i class="el-icon-monitor">REPL Terminal</i>
           <el-switch v-model="term_visible"></el-switch>
           <el-button icon="el-icon-refresh" circle @click="refreshTerm"></el-button>
-          <i style="float: right">X: {{ cursorX }}, Y: {{ cursorY }} &nbsp;
-            <el-tooltip :value="editScreenSize" manual effect="light" placement="top">
-              <template #content><div slot="content" style="color: red">* Changing the resolution will reload the page</div></template>
-              <div style="display: inline-block">
-                Size:
-                <el-input
-                  :disabled="!editScreenSize"
-                  v-model.number="screenWidth"
-                  style="width: 50px"
-                  size="small"
-                  type="text"
-                ></el-input>
-                x
-                <el-input
-                  :disabled="!editScreenSize"
-                  v-model.number="screenHeight"
-                  style="width: 55px"
-                  size="small"
-                  type="text"
-                ></el-input>
-              </div>
-            </el-tooltip>
-            <el-button
-              style="margin-left: 10px"
-              v-show="editScreenSize"
-              icon="el-icon-close"
-              circle
-              @click="editScreenSize = false"
-            >
-            </el-button>
-            <el-button
-              :type="editScreenSize ? 'success' : 'primary'"
-              :icon="editScreenSize ? 'el-icon-check' : 'el-icon-edit'"
-              circle
-              @click="editScreenSize ? changeScreenSize() : (editScreenSize = true)"
-            >
-            </el-button>
-          </i>
         </div>
 
         <creator-term ref="term" :style="{ visibility: term_visible ? 'visible' : 'hidden' }" style="padding: 0 16px;"></creator-term>
@@ -181,25 +143,20 @@
 </template>
 
 <script lang="ts">
-  import * as api from '@lvgl/v8.3.0/widgetApis.js';
-  import { python_generator, c_generator } from '@lvgl/v8.3.0/runtimeCompiler.js';
-
+  import { code_generator } from '@lvgl/v8.3.0/runtimeCompiler.js';
   
   import { setArgvs, dispatch_data_changed_event, debounceFun, saveAs } from './utils.js';
   import { Categorize, Data_Changed_Event, MSG_AUTO_SAVE_PAGE_SUCC, MSG_SAVE_PAGE_SUCC } from  './common/constant.js';
   import {
     wrap_delete,
-    wrap_setter_str,
     wrap_rename,
 
     wrap_create_v2,
-    wrap_show, wrap_hide, wrap_set_index,
-    wrap_style_setter_v2,
-    wrap_attr_setter_v2,
     wrap_timeline_load,
     wrap_timeline_stop_all,
 
     wrap_font_load,
+    engineAttrUpdate,
   } from './runtimeWrapper.js';
 
   import { projectStore } from './store/projectStore';
@@ -264,11 +221,10 @@
 
         // Which node in TreeView was checked
         selectNodeId: null,
+        selectNodeIds: [],
 
         //Terminal
         term_visible: true,
-
-        editScreenSize: false,
 
         // tabs
         activeTabLeft: 'screen',
@@ -358,7 +314,7 @@
         this.clearSimulatorWidgets();
         projectStore.initProject(id);
 
-        let screen = this.getWidgetById('screen');
+        let screen = projectStore.getWidgetById('screen');
         const width = screen.data?.width;
         const height = screen.data?.height;
         this.screenWidth = width;
@@ -379,12 +335,7 @@
           if (id !== 'screen') {
             wrap_create_v2(info, false);
           }
-          wrap_attr_setter_v2(info);
-          wrap_style_setter_v2(info);
-
-          if (info.zindex) {
-            wrap_set_index(id, info.zindex);
-          }
+          engineAttrUpdate(info);
         }
         wrap_timeline_load(projectStore.getTimelines());
 
@@ -410,16 +361,15 @@
           // this.activeNode('unknown');
         }
       },
-      getWidgetById(id) {
-        return projectStore.getWidgetById(id);
-      },
-
       handleSimulatorEvent(json) {
         if (json.action == 'click') {
           this.activeNode();
           return;
         } else if (json.action == 'create') {
           this.handleCreator(json.type, json.position);
+          return;
+        } else if (json.action == 'active') {
+          this.activeNode(json.id);
           return;
         }
 
@@ -428,13 +378,15 @@
 
         try {
           let id = json.id;
-          let node = this.getWidgetById(id);
+          let node = projectStore.getWidgetById(id);
+          if (!node) return;
           let data = node.data;
           for (let key in json.data) {
             data[key] = json.data[key];
 
             this.changeInfo(id, key);
           }
+          engineAttrUpdate(node, json.action);
 
           if (json.action == 'query_xy') {
             // this.drawRect(data.x, data.y, data.width, data.height);
@@ -475,8 +427,9 @@
         let widget = projectStore.createWidget({ type, parent: parent_id, data: data });
 
         wrap_create_v2(widget, false);
-        wrap_attr_setter_v2(widget);
-        wrap_style_setter_v2(widget);
+        engineAttrUpdate(widget);
+        // wrap_attr_setter_v2(widget);
+        // wrap_style_setter_v2(widget);
       },
 
       //Parametres are the String type
@@ -484,8 +437,9 @@
         let widget = projectStore.copyWidget(info2);
 
         wrap_create_v2(widget, false);
-        wrap_attr_setter_v2(widget);
-        wrap_style_setter_v2(widget);
+        engineAttrUpdate(widget);
+        // wrap_attr_setter_v2(widget);
+        // wrap_style_setter_v2(widget);
 
         return widget;
       },
@@ -502,7 +456,7 @@
           return; // Not support delete screen now
         }
         
-        let widget = this.getWidgetById(id);
+        let widget = projectStore.getWidgetById(id);
         let list = projectStore.deleteWidget(widget);
         for (const child of list) {
           wrap_delete(child.id);
@@ -520,37 +474,43 @@
 
       handleEvent(event, widget, data) {
         let id = widget ? widget.id : this.selectNodeId;
-        widget = this.getWidgetById(id);
+        widget = projectStore.getWidgetById(id);
         if (event == 'delete') {
           this.deleteNode(widget);
         } else if (event == 'copy' || event == 'paste') {
-          let info = this.getWidgetById(id);
+          let info = projectStore.getWidgetById(id);
           let widget2 = this.copyWidget(info);
           console.log('copy', info, widget2);
         } else if (event == 'show') {
           // wrap_font_load();
           data.show = true;
-          let list = projectStore.getWidgetChildrenList(id, true);
-          for (const child of list) {
-            wrap_show(child.id);
-          }
+          engineAttrUpdate(widget);
+
+          // let list = projectStore.getWidgetChildrenList(id, true);
+          // for (const child of list) {
+          //   wrap_show(child.id);
+          // }
         } else if (event == 'hide') {
           data.show = false;
-          let list = projectStore.getWidgetChildrenList(id, true);
-          for (const child of list) {
-            wrap_hide(child.id);
-          }
+          engineAttrUpdate(widget);
+
+          // let list = projectStore.getWidgetChildrenList(id, true);
+          // for (const child of list) {
+          //   wrap_hide(child.id);
+          // }
         } else if (event == 'click') {
           this.activeNode(id);
         } else if (event == 'sort') {
           let change = projectStore.updateWidgetTreeIndex();
           for (const item of change) {
-            wrap_set_index(item.id, item.zindex);
+            let widget2 = projectStore.getWidgetById(item.id);
+            engineAttrUpdate(widget2);
+            // wrap_set_index(item.id, item.zindex);
           }
         }
       },
       handleMove(direction, speed = 1) {
-        let widget = this.getWidgetById(this.selectNodeId);
+        let widget = projectStore.getWidgetById(this.selectNodeId);
         if (widget.type == 'screen') {
           return;
         }
@@ -561,48 +521,52 @@
           widget.data.y += speed;
         }
 
-        wrap_attr_setter_v2(widget);
+        engineAttrUpdate(widget);
+        // wrap_attr_setter_v2(widget);
         this.activeNode(id);
         // console.log('move', widget, direction, speed);
       },
       activeNode: function (id = 'screen') {
-        let info = this.getWidgetById(id);
+        let ids = [];
+        if (Array.isArray(id)) {
+          ids = id;
+          id = ids[0];
+        } else {
+          ids = [id];
+        }
+        let info = projectStore.getWidgetById(id);
         this.$refs.simulator.activeFrame(info);
 
         if (this.selectNodeId == id) {
           return;
         }
 
-        console.log('selectNode', id);
+        console.log('selectNode', ids);
         this.selectNodeId = id;
+        this.selectNodeIds = ids;
       },
 
       changeInfo: function (id, attribute_name) {
-        let index = this.getWidgetById(id).attributes.indexOf(attribute_name);
+        let index = projectStore.getWidgetById(id).attributes.indexOf(attribute_name);
         if (index == -1) {
-          this.getWidgetById(id).attributes.push(attribute_name);
+          projectStore.getWidgetById(id).attributes.push(attribute_name);
         }
-      },
-      
-      // Update the X & Y below the Simulator
-      cursorXY: function (cursorX, cursorY) {
-        this.cursorX = cursorX;
-        this.cursorY = cursorY;
       },
 
       handleSetterChange({ id, name, mode }) {
         console.log('handleSetterChange', id, name, mode);
         dispatch_data_changed_event();
-        let node = this.getWidgetById(id);
-        let type = node.type;
+        let node = projectStore.getWidgetById(id);
+        // let type = node.type;
 
-        if (mode == 'styles') {
-          wrap_style_setter_v2(node);
-        } else {
-          let body = api.setter[type][name];
-          let args_list = node.data[body.api];
-          wrap_setter_str(id, body.api, args_list);
-        }
+        // if (mode == 'styles') {
+        //   wrap_style_setter_v2(node);
+        // } else {
+        //   let body = api.setter[type][name];
+        //   let args_list = node.data[body.api];
+        //   wrap_setter_str(id, body.api, args_list);
+        // }
+        engineAttrUpdate(node);
       },
 
       // Take a screenshot for the Simulator
@@ -622,17 +586,14 @@
           config: this.projectConfig // 添加项目配置
         };
         
-        if (projectStore.projectData.settings.output.format == 'c') {
-          preview_code = c_generator(screen, this.projectConfig?.name || this.act_FileName);
-        } else {
-          preview_code = python_generator(screen, this.projectConfig?.name || this.act_FileName);
-        }
+        let codeGen = code_generator(projectStore.projectData.settings.output.format, screen, this.projectConfig?.name || this.act_FileName);
+        preview_code = codeGen.code;
         
         await this.$refs.editor.setValue(preview_code);
-        this.message({
-          message: 'Generate code successfully',
-          type: 'success'
-        });
+        // this.message({
+        //   message: 'Generate code successfully',
+        //   type: 'success'
+        // });
       },
       // Save code to lvgl file.
       savePage: async function (event, msg = MSG_SAVE_PAGE_SUCC) {
@@ -646,28 +607,29 @@
         let code = projectStore.saveLv();//JSON.stringify(json, null, 2);
         let blob = new Blob([code], {type: "text/plain;charset=utf-8"});
         let fileName = +new Date();
-        saveAs(blob, `lv_gui_${fileName}.lv`);
+        saveAs(blob, `lv_builder_${fileName}.lv`);
       },
-      changeScreenSize() {
-        let screen = this.getWidgetById('screen');
-        screen.data.width = this.screenWidth;
-        screen.data.height = this.screenHeight;
 
-        // 更新 projectStore 数据
-        projectStore.projectData.settings.screen = {
-          width: this.screenWidth,
-          height: this.screenHeight
-        };
+      // changeScreenSize() {
+      //   let screen = projectStore.getWidgetById('screen');
+      //   screen.data.width = this.screenWidth;
+      //   screen.data.height = this.screenHeight;
 
-        if (this.savePage({}, MSG_SAVE_PAGE_SUCC)) {
-          window.location.reload();
-        } else {
-          this.message({
-            message: 'Change failed',
-            type: 'error',
-          });
-        }
-      },
+      //   // 更新 projectStore 数据
+      //   projectStore.projectData.settings.screen = {
+      //     width: this.screenWidth,
+      //     height: this.screenHeight
+      //   };
+
+      //   if (this.savePage({}, MSG_SAVE_PAGE_SUCC)) {
+      //     window.location.reload();
+      //   } else {
+      //     this.message({
+      //       message: 'Change failed',
+      //       type: 'error',
+      //     });
+      //   }
+      // },
 
       //Highlight object
       drawRect: (x, y, w, h) => {
@@ -692,13 +654,13 @@
         })
         .then(({ value }) => {
           let newid = value;
-          if (this.getWidgetById(newid)) {
+          if (projectStore.getWidgetById(newid)) {
             ElMessage({
               type: 'info',
               message: `Already exists:${value}`,
             })
           } else {
-            projectStore.changeWidgetId(this.getWidgetById(id), newid);
+            projectStore.changeWidgetId(projectStore.getWidgetById(id), newid);
 
             wrap_rename(id, newid);
             this.activeNode(newid);

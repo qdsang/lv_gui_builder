@@ -89,6 +89,7 @@ export async function simulatorInit(ele) {
 export async function ScreenSize(width, height) {
   await simulatorInitWait();
   // console.log('ScreenSize');
+  await new Promise(resolve => setTimeout(resolve, 100));
   
   /* Run init script */
   mp_js_do_str(WidgetData.EnvInitCode(width, height).join('\n'));
