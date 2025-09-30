@@ -7,7 +7,7 @@
 
 <table>
 <tr>
-    <td><a href="https://qdsang.github.io/lv_gui_builder/#/lv/builder/widget"><img src="./docs/preview.png" title="LV GUI Builder Preview" /></a></td>
+    <td><a href="https://qdsang.github.io/lv_gui_builder/#/lv/builder/demo1"><img src="./docs/preview.png" title="LV GUI Builder Preview" /></a></td>
     <td><a href="https://qdsang.github.io/lv_gui_builder/#/lv/builder/widget"><img src="./docs/preview2.png" title="LV GUI Builder Preview" /></a></td>
 </tr>
 </table>

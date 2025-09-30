@@ -79,17 +79,16 @@ export class SelectionManager {
     
     // 遍历所有元素，检查是否在选择框内
     for (const [id, element] of this.canvas.elements) {
-      let elementX, elementY, elementWidth, elementHeight;
-    
-      const absPos = element.group.getAbsolutePosition();
-      elementX = absPos.x;
-      elementY = absPos.y;
-      elementWidth = element.group.width();
-      elementHeight = element.group.height();
+      // 使用Konva的getClientRect方法获取元素的边界框（已考虑缩放）
+      const elementRect = element.group.getClientRect({
+        relativeTo: this.canvas.contentGroup  // 相对于图层坐标
+      });
       
-      // 简单的碰撞检测
-      if (elementX < maxX && elementX + elementWidth > minX && 
-          elementY < maxY && elementY + elementHeight > minY) {
+      // 简单的碰撞检测 - 检查两个矩形是否相交
+      if (minX < elementRect.x + elementRect.width && 
+          maxX > elementRect.x && 
+          minY < elementRect.y + elementRect.height && 
+          maxY > elementRect.y) {
         this.canvas.selectElement(id, true); // 添加到选择中而不是替换
       }
     }
