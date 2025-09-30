@@ -1,6 +1,6 @@
 {
   "id": "default",
-  "name": "Demo2 Project",
+  "name": "Demo3 Project",
   "description": "LVGL GUI Builder Demo Project",
   "version": "1.0.0",
   "versionCode": 1,
@@ -25,11 +25,12 @@
       "data": {
         "width": 800,
         "height": 480,
-        "x": "0",
-        "y": "0",
+        "x": 0,
+        "y": 0,
         "MAIN.bg_img_src": "",
         "MAIN.bg_color": "#000000"
-      }
+      },
+      "uuid": "f8068fc1-d4ed-4420-b522-6b13686f720b"
     },
     "obj_3": {
       "parent": "screen",
@@ -58,7 +59,8 @@
         "MAIN.radius": "333",
         "MAIN.bg_color": "#605F5F",
         "MAIN.border_width": "0"
-      }
+      },
+      "uuid": "9a55ba0e-d341-49dc-84be-04afc4c61648"
     },
     "arc_0": {
       "parent": "screen",
@@ -109,7 +111,8 @@
         "INDICATOR.arc_color": "#589EF8",
         "MAIN.arc_rounded": "False",
         "MAIN.arc_color": "#E3E3E3"
-      }
+      },
+      "uuid": "991979a3-d81d-4a77-832e-114fea641fa7"
     },
     "label_speed": {
       "parent": "screen",
@@ -138,7 +141,8 @@
         "set_text": "\"100KM/H\"",
         "MAIN.text_font": "lv.font_montserrat_16",
         "MAIN.text_color": "#FFFFFF"
-      }
+      },
+      "uuid": "f1f1333d-f24c-48d9-a4ef-f7de77b9a1f2"
     },
     "label_soc": {
       "parent": "screen",
@@ -167,7 +171,8 @@
         "MAIN.text_color": "#FFFFFF",
         "MAIN.text_font": "lv.font_montserrat_16",
         "set_text": "\"99%\""
-      }
+      },
+      "uuid": "f03089f3-e06b-4139-9ec0-959f5bec38f8"
     },
     "label_kw": {
       "parent": "screen",
@@ -196,7 +201,8 @@
         "MAIN.text_color": "#FFFFFF",
         "MAIN.text_font": "lv.font_montserrat_16",
         "set_text": "\"99.9KW\""
-      }
+      },
+      "uuid": "dcb8c062-bf8b-4b04-9857-7d78e76bf34e"
     },
     "label_c": {
       "parent": "screen",
@@ -225,7 +231,8 @@
         "MAIN.text_color": "#FFFFFF",
         "MAIN.text_font": "lv.font_montserrat_16",
         "set_text": "\"36.6°\""
-      }
+      },
+      "uuid": "4735fb72-74ad-4fdc-bbfc-e53dd6e3dcd0"
     },
     "arc_right": {
       "parent": "screen",
@@ -257,8 +264,8 @@
         "INDICATOR.arc_color"
       ],
       "data": {
-        "y": 20,
-        "x": 190,
+        "y": -301,
+        "x": -159,
         "height": 460,
         "width": 460,
         "set_start_angle": "30",
@@ -275,7 +282,8 @@
         "INDICATOR.arc_color": "#65C266",
         "set_range": ",",
         "set_mode": "2"
-      }
+      },
+      "uuid": "8346c41d-031c-4ff6-af66-0160c476e6c7"
     },
     "arc_left": {
       "parent": "screen",
@@ -307,8 +315,8 @@
         "INDICATOR.arc_color"
       ],
       "data": {
-        "y": 20,
-        "x": 150,
+        "y": -305,
+        "x": 505,
         "height": 460,
         "width": 460,
         "set_start_angle": "120",
@@ -324,7 +332,8 @@
         "INDICATOR.arc_width": "22",
         "INDICATOR.arc_color": "#65C266",
         "set_mode": "0"
-      }
+      },
+      "uuid": "a0b92ff6-66cc-4200-a7e4-7d9f014f2a71"
     }
   },
   "animations": {
@@ -432,27 +441,9 @@
     ],
     "fonts": [
       {
-        "id": "montserrat_24",
-        "name": "Montserrat 24",
-        "path": "lv.font_montserrat_24",
-        "value": ""
-      },
-      {
-        "id": "montserrat_22",
-        "name": "Montserrat 22",
-        "path": "lv.font_montserrat_22",
-        "value": ""
-      },
-      {
-        "id": "montserrat_20",
-        "name": "Montserrat 20",
-        "path": "lv.font_montserrat_20",
-        "value": ""
-      },
-      {
-        "id": "montserrat_18",
-        "name": "Montserrat 18",
-        "path": "lv.font_montserrat_18",
+        "id": "montserrat_14",
+        "name": "Montserrat 14",
+        "path": "lv.font_montserrat_14",
         "value": ""
       },
       {
@@ -462,9 +453,27 @@
         "value": ""
       },
       {
-        "id": "montserrat_14",
-        "name": "Montserrat 14",
-        "path": "lv.font_montserrat_14",
+        "id": "montserrat_18",
+        "name": "Montserrat 18",
+        "path": "lv.font_montserrat_18",
+        "value": ""
+      },
+      {
+        "id": "montserrat_20",
+        "name": "Montserrat 20",
+        "path": "lv.font_montserrat_20",
+        "value": ""
+      },
+      {
+        "id": "montserrat_22",
+        "name": "Montserrat 22",
+        "path": "lv.font_montserrat_22",
+        "value": ""
+      },
+      {
+        "id": "montserrat_24",
+        "name": "Montserrat 24",
+        "path": "lv.font_montserrat_24",
         "value": ""
       }
     ],

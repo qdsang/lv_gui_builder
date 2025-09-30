@@ -1,14 +1,22 @@
 /**
- * 选择管理插件
+ * 选择管理器
  * 负责管理KonvaCanvas中的元素选择功能
  */
-export class SelectionPlugin {
+export class SelectionManager {
   /**
    * 构造函数
    * @param {KonvaCanvas} canvas - KonvaCanvas实例
    */
   constructor(canvas) {
     this.canvas = canvas;
+
+    this.canvas.eventSystem.on('canvasDragMove', (e) => {
+      this.updateSelectionSizeLabel();
+    });
+
+    this.canvas.eventSystem.on('transform', (e) => {
+      this.updateSelectionSizeLabel();
+    });
   }
 
   /**
@@ -57,7 +65,7 @@ export class SelectionPlugin {
     const maxY = Math.max(y1, y2);
     
     // 获取当前按键状态
-    const isShiftPressed = false; // 需要从EventPlugin获取状态
+    const isShiftPressed = false; // 需要从EventManager获取状态
     
     // 如果没有按住shift键或ctrl/cmd键，则先取消所有选择
     const shouldClearSelection = !(window.event && (window.event.shiftKey || window.event.ctrlKey || window.event.metaKey));
@@ -115,22 +123,15 @@ export class SelectionPlugin {
 
     // 添加到选中集合
     this.canvas.selectedElements.add(id);
-    this.canvas.container.dispatchEvent(new CustomEvent('event', { detail: { action: 'active', elementId: id } }));
+    // 使用新的事件系统
+    this.canvas.eventSystem.emit('select', {
+      elementId: id,
+      element: element,
+      type: 'select'
+    });
 
     // 附加变换器到选中的元素
-    let node = null;
-    switch (element.type) {
-      case 'screen':
-        if (element.background) {
-          node = element.background;
-        }
-        break;
-      default:
-        if (element.object) {
-          node = element.object;
-        }
-        break;
-    }
+    let node = element.object;
     
     // 如果有节点被选中，则附加变换器
     if (node) {
@@ -150,16 +151,16 @@ export class SelectionPlugin {
       }
     }
     
-    // 创建或更新尺寸标签
-    if (node) {
-      const width = node.width();
-      const height = node.height();
-      const x = node.x();
-      const y = node.y();
-      
-      // 更新尺寸标签（如果元素被选中）
-      this.updateSizeLabel(element, width, height, x, y);
-    }
+    // 更新尺寸标签（如果元素被选中）
+    this.updateSizeLabel(element);
+    
+    // 触发选择变化事件
+    this.canvas.eventSystem.emit('selectionChange', {
+      action: 'select',
+      elementId: id,
+      selectedElements: Array.from(this.canvas.selectedElements),
+      type: 'selectionChange'
+    });
   }
 
   /**
@@ -173,27 +174,13 @@ export class SelectionPlugin {
     // 从选中集合中移除
     this.canvas.selectedElements.delete(id);
 
-    switch (element.type) {
-      case 'screen':
-        if (element.background) {
-          // 移除高亮
-          element.background.setAttrs({
-            stroke: 'rgba(0,123,255,0)',
-            strokeWidth: 1
-          });
-          element.background.getLayer().batchDraw();
-        }
-        break;
-      default:
-        if (element.object) {
-          // 移除高亮
-          element.object.setAttrs({
-            stroke: 'rgba(0,123,255,0)',
-            strokeWidth: 1
-          });
-          element.object.getLayer().batchDraw();
-        }
-        break;
+    if (element.object) {
+      // 移除高亮
+      element.object.setAttrs({
+        stroke: 'rgba(0,123,255,0)',
+        strokeWidth: 1
+      });
+      element.object.getLayer()?.batchDraw();
     }
     
     // 移除尺寸标签
@@ -211,9 +198,7 @@ export class SelectionPlugin {
       const remainingElement = this.canvas.elements.get(remainingId);
       if (remainingElement) {
         let node = null;
-        if (remainingElement.type === 'screen' && remainingElement.background) {
-          node = remainingElement.background;
-        } else if (remainingElement.object) {
+        if (remainingElement.object) {
           node = remainingElement.object;
         }
         
@@ -222,6 +207,21 @@ export class SelectionPlugin {
         }
       }
     }
+    
+    // 触发取消选中事件
+    this.canvas.eventSystem.emit('deselect', {
+      elementId: id,
+      element: element,
+      type: 'deselect'
+    });
+    
+    // 触发选择变化事件
+    this.canvas.eventSystem.emit('selectionChange', {
+      action: 'deselect',
+      elementId: id,
+      selectedElements: Array.from(this.canvas.selectedElements),
+      type: 'selectionChange'
+    });
   }
 
   /**
@@ -241,22 +241,49 @@ export class SelectionPlugin {
     
     // 清除变换器的附加节点
     this.canvas.transformer.nodes([]);
+    
+    // 触发取消所有选中事件
+    this.canvas.eventSystem.emit('deselectAll', {
+      type: 'deselectAll'
+    });
+    
+    // 触发选择变化事件
+    this.canvas.eventSystem.emit('selectionChange', {
+      action: 'deselectAll',
+      selectedElements: [],
+      type: 'selectionChange'
+    });
   }
   
+  updateSelectionSizeLabel() {
+    for (let elementId of this.canvas.selectedElements) {
+      let element = this.canvas.getElement(elementId);
+      this.updateSizeLabel(element);
+    }
+  }
+
   /**
    * 更新尺寸标签
    * @param {object} element - 元素对象
-   * @param {number} width - 元素宽度
-   * @param {number} height - 元素高度
-   * @param {number} x - 元素x坐标
-   * @param {number} y - 元素y坐标
    */
-  updateSizeLabel(element, width, height, x, y) {
+  updateSizeLabel(element) {
+    // 附加变换器到选中的元素
+    let node = element.object;
+    
+    const width = node.width() * node.scaleX();
+    const height = node.height() * node.scaleY();
+    if (element.type == 'screen') {
+      node = element.group;
+    }
+    const x = node.x();
+    const y = node.y();
+
     // 如果没有尺寸标签，则创建一个
     if (!element.sizeLabel) {
       this.createSizeLabel(element, width, height, x, y);
       return;
     }
+    
     
     // 更新标签文本
     const labelGroup = element.sizeLabel;
@@ -264,7 +291,7 @@ export class SelectionPlugin {
     const text = labelGroup.findOne('Text');
     
     if (text) {
-      text.text(`${Math.round(width)}x${Math.round(height)}`);
+      text.text(`${parseInt(width)}x${parseInt(height)}`);
       
       // 重新计算背景大小
       const textWidth = text.width();
@@ -279,9 +306,30 @@ export class SelectionPlugin {
         text.y((background.height() - textHeight) / 2);
       }
       
-      // 更新标签位置（在元素底部居中）
-      labelGroup.x(x + (width / 2) - (background.width() / 2));
-      labelGroup.y(y + height + 5);
+      // 计算标签位置（底部居中）
+      const scale = this.canvas.scale;
+      const contentX = this.canvas.contentGroup ? this.canvas.contentGroup.x() : 0;
+      const contentY = this.canvas.contentGroup ? this.canvas.contentGroup.y() : 0;
+      
+      // 使用元素的绝对坐标来计算标签位置
+      let absoluteX = x;
+      let absoluteY = y;
+      
+      // 如果是屏幕内元素，需要加上屏幕的位置
+      if (element.screenId && element.screenId !== element.id) {
+        const screenElement = this.canvas.elements.get(element.screenId);
+        if (screenElement && screenElement.group) {
+          absoluteX = screenElement.group.x() + x;
+          absoluteY = screenElement.group.y() + y;
+        }
+      }
+      
+      // 标签位置应该是元素绝对位置加上偏移量
+      const labelX = absoluteX * scale + contentX + (width * scale / 2) - (background.width() / 2);
+      const labelY = absoluteY * scale + contentY + height * scale + 5;
+      
+      labelGroup.x(labelX);
+      labelGroup.y(labelY);
       
       labelGroup.getLayer().batchDraw();
     }
@@ -315,7 +363,7 @@ export class SelectionPlugin {
     const labelText = new this.canvas.Konva.Text({
       x: 0,
       y: 0,
-      text: `${Math.round(width)}x${Math.round(height)}`,
+      text: `${parseInt(width)}x${parseInt(height)}`,
       fontSize: 12,
       fill: 'white',
       align: 'center',
@@ -332,10 +380,32 @@ export class SelectionPlugin {
     labelText.x((labelBackground.width() - textWidth) / 2);
     labelText.y((labelBackground.height() - textHeight) / 2);
     
+    // 计算标签位置（底部居中）
+    const scale = this.canvas.scale;
+    const contentX = this.canvas.contentGroup ? this.canvas.contentGroup.x() : 0;
+    const contentY = this.canvas.contentGroup ? this.canvas.contentGroup.y() : 0;
+    
+    // 使用元素的绝对坐标来计算标签位置
+    let absoluteX = x;
+    let absoluteY = y;
+    
+    // 如果是屏幕内元素，需要加上屏幕的位置
+    if (element.screenId && element.screenId !== element.id) {
+      const screenElement = this.canvas.elements.get(element.screenId);
+      if (screenElement && screenElement.group) {
+        absoluteX = screenElement.group.x() + x;
+        absoluteY = screenElement.group.y() + y;
+      }
+    }
+    
+    // 标签位置应该是元素绝对位置加上偏移量
+    const labelX = absoluteX * scale + contentX + (width * scale / 2) - (labelBackground.width() / 2);
+    const labelY = absoluteY * scale + contentY + height * scale + 5;
+    
     // 创建尺寸标签组
     const sizeLabelGroup = new this.canvas.Konva.Group({
-      x: x + (width / 2) - (labelBackground.width() / 2), // 底部居中
-      y: y + height + 5 // 在元素底部5像素处
+      x: labelX,
+      y: labelY
     });
     
     // 添加背景和文本到组

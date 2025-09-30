@@ -2,6 +2,14 @@ import { dispatch_data_changed_event } from '../utils.js';
 import { reactive } from 'vue'  // Vue 3
 import * as lvFile from './lvFile.js';
 
+const uuidv4 = () => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    var r = (Math.random() * 16) | 0,
+      v = c == 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+};
+
 let predefineColors = [
   '#ff4500',
   '#ff8c00',
@@ -76,6 +84,12 @@ class ProjectStore {
     this.updateTree();
   }
 
+  importProject(projectId, projectData) {
+    this.currentProject = projectId;
+    this.projectData = projectData;
+    this.saveProject();
+  }
+  
   // 从localStorage加载项目数据
   loadProject() {
     if (!this.currentProject) {
@@ -104,20 +118,25 @@ class ProjectStore {
   }
 
   componentCheck() {
-    let pool = this.projectData.components;
-    if (!pool['screen']) {
+    let components = this.projectData.components;
+    if (!components['screen']) {
       this.createWidget({ id: 'screen', type: 'screen', data: { x: 0, y: 0, width: 480, height: 480 } });
     }
-    for (const id in pool) {
-      let widget = pool[id];
+    for (const id in components) {
+      let widget = components[id];
       if (widget.id != id) {
-        pool[widget.id] = widget;
-        delete pool[id];
+        components[widget.id] = widget;
+        delete components[id];
       }
+      widget.uuid = widget.uuid || uuidv4();
       widget.attributes = widget.attributes || [];
       widget.apis = widget.apis || [];
       widget.styles = widget.styles || [];
       widget.data = widget.data || {};
+      widget.data.x = parseInt(widget.data.x) || 0;
+      widget.data.y = parseInt(widget.data.y) || 0;
+      widget.data.width = parseInt(widget.data.width) || 0;
+      widget.data.height = parseInt(widget.data.height) || 0;
     }
 
     // 检查字体
@@ -159,6 +178,7 @@ class ProjectStore {
     let widgetInfo = {
       parent: '',
       id: id,
+      uuid: uuidv4(),
       type: widget.type,
       zindex: 0,
       cb: false,
@@ -176,8 +196,9 @@ class ProjectStore {
 
   copyWidget(widget) {
     let id = this.makeWidgetId(widget);
+    let uuid = uuidv4();
     let widget2 = JSON.parse(JSON.stringify(widget));
-    let widgetWithId = { ...widget2, id };
+    let widgetWithId = { ...widget2, id, uuid };
     this.projectData.components[id] = widgetWithId;
     
     this.updateTree();
@@ -441,8 +462,9 @@ class ProjectStore {
   }
 
   saveLv() {
-    let xml = lvFile.jsonToLv(this.projectData);
-    console.log(this.projectData, xml);
+    // let xml = lvFile.jsonToLv(this.projectData);
+    let xml = JSON.stringify(this.projectData, null, 2);
+    // console.log(this.projectData, xml);
     return xml;
   }
 }

@@ -268,8 +268,7 @@ export let timeline_obj_def = { id: 'arc_0', attr: 'value' };
 export let timeline_def = { id: 'timeline1', title: '', anims: [ timeline_anim_def ]};
 
 //The Python code to Initialize the environment
-export const EnvInitCode = (width, height) => [
-  `
+export const EnvInitCode = (width, height) => [`
 import ujson
 import lvgl as lv
 lv.init()
@@ -278,15 +277,14 @@ import SDL
 print('boot init')
 WIDTH = ${width}
 HEIGHT = ${height}
-ZOOM = 0
-FULLSCREEN = False
 
-SDL.init(w=WIDTH, h=HEIGHT,fullscreen=FULLSCREEN, auto_refresh=False)
-# Register SDL display driver.
-disp_buf1 = lv.disp_draw_buf_t()
+SDL.init(w=WIDTH, h=HEIGHT,fullscreen=False, auto_refresh=False)
 print('SDL init')
 
-buf1_1 = bytes(WIDTH*10)
+# Register SDL display driver.
+disp_buf1 = lv.disp_draw_buf_t()
+
+buf1_1 = bytes(WIDTH*HEIGHT)
 disp_buf1.init(buf1_1, None, len(buf1_1)//4)
 disp_drv = lv.disp_drv_t()
 disp_drv.init()

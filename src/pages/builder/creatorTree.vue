@@ -20,8 +20,8 @@
         <div class="node-right">
           <el-button class="btn" v-show="!(data.show == false)" icon="el-icon-view" circle @click.stop @click="hide(node, data)"></el-button>
           <el-button class="btn" v-show="data.show == false" icon="el-icon-hide" circle @click.stop @click="show(node, data)"></el-button>
-          <el-button class="btn" icon="el-icon-copy-document" circle @click.stop @click="copy(node, data)"></el-button>
-          <el-button class="btn" icon="el-icon-delete" circle @click.stop @click="remove(node, data)"></el-button>
+          <!-- <el-button class="btn" icon="el-icon-copy-document" circle @click.stop @click="copy(node, data)"></el-button> -->
+          <!-- <el-button class="btn" icon="el-icon-delete" circle @click.stop @click="remove(node, data)"></el-button> -->
         </div>
       </div>
     </template>
@@ -29,8 +29,7 @@
 </template>
 
 <script lang="ts">
-
-import * as engine from '@lvgl/v8.3.0/index.js';
+import engine from './engine.js';
 import { projectStore } from './store/projectStore';
 
 export default {

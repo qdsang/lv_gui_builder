@@ -14,8 +14,17 @@
       </div>
     </div>
 
-    <el-main style="padding: 0">
-      <slot name="center"></slot>
+    <el-main style="padding: 0; display: flex; flex-direction: column;">
+      <div class="center-content" style="flex: 1; overflow: hidden; position: relative;">
+        <slot name="center"></slot>
+      </div>
+      <div class="center-bottom-resize-handle" 
+        @mousedown="startResize($event, 'bottom')"
+        :class="{'dark-resize-handle': isDarkMode}"
+      ></div>
+      <div class="center-bottom" :style="{height: bottomHeight + 'px', flexShrink: 0, position: 'relative'}">
+        <slot name="bottom"></slot>
+      </div>
     </el-main>
 
     <div class="aside-wrapper right" :class="{ 'is-collapsed': rightCollapsed }">
@@ -42,10 +51,17 @@ export default {
     CaretLeft,
     CaretRight,
   },
+  props: {
+    isDarkMode: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       leftWidth: 220,  // 左侧面板宽度
       rightWidth: 220, // 右侧面板宽度
+      bottomHeight: 240, // 底部面板高度
       leftCollapsed: false,  // 左侧面板折叠状态
       rightCollapsed: false, // 右侧面板折叠状态
       leftWidthBeforeCollapse: 280,  // 记录折叠前的宽度
@@ -118,34 +134,49 @@ export default {
       }
     },
 
-    // 开始拖拽调整宽度
-    startResize(event, side) {
+    // 开始调整面板大小
+    startResize(event, panel) {
       event.preventDefault();
       const startX = event.clientX;
-      const startWidth = side === 'left' ? this.leftWidth : this.rightWidth;
+      const startY = event.clientY;
       
-      const handleMouseMove = (e) => {
-        const delta = e.clientX - startX;
-        if (side === 'left') {
-          this.leftCollapsed = false;
-          const newWidth = startWidth + delta;
-          this.leftWidth = Math.max(100, Math.min(newWidth, 600)); // 限制最小/最大宽度
-        } else {
-          this.rightCollapsed = false;
-          const newWidth = startWidth - delta;
-          this.rightWidth = Math.max(100, Math.min(newWidth, 600));
+      let startWidth, startHeight;
+      switch(panel) {
+        case 'left':
+          startWidth = this.leftWidth;
+          break;
+        case 'right':
+          startWidth = this.rightWidth;
+          break;
+        case 'bottom':
+          startHeight = this.bottomHeight;
+          break;
+      }
+
+      const doDrag = (e) => {
+        switch(panel) {
+          case 'left':
+            this.leftWidth = Math.max(100, startWidth + e.clientX - startX);
+            break;
+          case 'right':
+            this.rightWidth = Math.max(100, startWidth + startX - e.clientX);
+            break;
+          case 'bottom':
+            this.bottomHeight = Math.max(100, startHeight + startY - e.clientY);
+            break;
         }
       };
-      
-      const handleMouseUp = () => {
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
-        // 保存面板状态
+
+      const stopDrag = () => {
+        document.removeEventListener('mousemove', doDrag);
+        document.removeEventListener('mouseup', stopDrag);
+        
+        // 保存面板状态到本地存储
         this.savePanelStates();
       };
-      
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
+
+      document.addEventListener('mousemove', doDrag);
+      document.addEventListener('mouseup', stopDrag);
     },
 
     // 切换左侧面板
@@ -239,6 +270,19 @@ export default {
   }
 }
 
+.center-bottom-resize-handle {
+  height: 5px;
+  cursor: ns-resize;
+  flex-shrink: 0;
+  background: transparent;
+  transition: background-color 0.1s;
+  border-bottom: 1px solid var(--el-border-color);
+
+  &:hover {
+    background: var(--el-color-primary-light-8);
+  }
+}
+
 .resizable-aside {
   height: 100%;
   overflow: scroll;
@@ -248,18 +292,20 @@ export default {
 }
 .resizable-aside-right {
   border-left: 1px solid var(--el-border-color);
+  border-right: 0 none;
 }
 
 .collapse-handle {
   position: absolute;
-  top: 50%;
+  top: 0;
   width: 16px;
-  height: 60px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--el-bg-color);
-  border: 1px solid var(--el-border-color-lighter);
+  // background: var(--el-bg-color);
+  // border: 1px solid var(--el-border-color-lighter);
+  background: var(--el-bg-color-overlay);
   border-radius: 0 4px 4px 0;
   cursor: pointer;
   z-index: 10;

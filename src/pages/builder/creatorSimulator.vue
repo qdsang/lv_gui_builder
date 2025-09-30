@@ -1,5 +1,5 @@
 <template>
-  <div id="mp_js_stdout" class="simulator-container"  @click="handleClick" @dragover="handleDragOver" @drop="handleDrop">
+  <div class="simulator-container" @click="handleClick" @dragover="handleDragOver" @drop="handleDrop">
     <!-- 使用适配KonvaCanvas的组件 -->
     <Canvas 
       ref="canvasComponent"
@@ -11,10 +11,7 @@
 </template>
 
 <script lang="ts">
-import {
-  engineAttrUpdate,
-} from './runtimeWrapper.js';
-import * as engine from '@lvgl/v8.3.0/index.js';
+import engine from './engine.js';
 
 import { projectStore } from './store/projectStore';
 
@@ -96,8 +93,6 @@ export default {
     
     // 处理拖放事件
     handleDrop(event) {
-      event.preventDefault();
-      
       const coords = this.screenToLvglCoords(event.clientX, event.clientY);
       
       try {
@@ -112,6 +107,7 @@ export default {
             y: coords.y
           }
         });
+        event.preventDefault();
       } catch (error) {
         console.error('Failed to parse widget info:', error);
       }
@@ -137,9 +133,9 @@ export default {
       this.screen.height = height;
       console.log('initScreen', width, height);
       
-      await engine.ScreenSize(width, height);
+      await engine.simulatorScreenSize(width, height);
 
-      await this.loadScreen();
+      // await this.loadScreen();
     },
     async loadScreen() {
     // 初始化LVGL渲染目标
@@ -153,6 +149,8 @@ export default {
       
       const width = this.screen.width || 480;
       const height = this.screen.height || 480;
+
+      canvasObject.clearScreenComponents('screen');
 
       // 创建屏幕元素
       canvasObject.createElement('screen', {
@@ -173,49 +171,43 @@ export default {
       for (let id in widgets) {
         if (id == 'screen') continue;
         let widget = widgets[id];
-        let data = widget.data;
-        components.push({
-          id: id,
-          type: widget.type,
-          parent: widget.parent,
-          zindex: widget.zindex,
-          x: data.x,
-          y: data.y,
-          width: data.width,
-          height: data.height,
-        });
-      }
-
-      // components.push({
-      //   id: 'main2',
-      //   type: 'label',
-      //   parent: '',
-      //   zindex: 0,
-      //   x: 0,
-      //   y: 0,
-      //   width: 200,
-      //   height: 200,
-      // });
-      // components.push({
-      //   id: 'main3',
-      //   type: 'label',
-      //   parent: '',
-      //   zindex: 0,
-      //   x: 150,
-      //   y: 150,
-      //   width: 100,
-      //   height: 100,
-      // });
-
-      console.log('updateComponents', components);
-
-      // 添加所有组件
-      for (const component of components) {
-        canvasObject.createElement(component.id, component, 'screen');
+        this.createElement(widget);
       }
       
-      canvasObject.centerView({ fit: true, padding: 20 });
-      
+      canvasObject.centerView({ fit: true, padding: 40 });
+    },
+    createElement(widget) {
+      const canvasComponent = this.$refs.canvasComponent;
+      const canvasObject = canvasComponent.getCanvasObject();
+      let data = widget.data;
+      let component = {
+        id: widget.id,
+        type: widget.type,
+        parent: widget.parent,
+        zindex: widget.zindex,
+        x: data.x,
+        y: data.y,
+        width: data.width,
+        height: data.height,
+      };
+      canvasObject.createElement(component.id, component, 'screen');
+    },
+    updateElementAttr(widget) {
+      const canvasComponent = this.$refs.canvasComponent;
+      const canvasObject = canvasComponent.getCanvasObject();
+      canvasObject.updateElement(widget.id, {
+        x: widget.data.x,
+        y: widget.data.y,
+        width: widget.data.width,
+        height: widget.data.height,
+        zindex: widget.zindex,
+      });
+    },
+    deleteElement(screenid, id) {
+      const canvasComponent = this.$refs.canvasComponent;
+      const canvasObject = canvasComponent.getCanvasObject();
+      canvasObject.deselectElement(id);
+      canvasObject.removeElement(id);
     },
     activeFrame(info) {
       if (info.type == 'screen') {
@@ -230,7 +222,7 @@ export default {
       
       this.transformFrameInfo = info.data;
       // this.renderFrame(info.data);
-      engineAttrUpdate(info);
+      engine.simulatorUpdateAttr(info);
       this.isTransform = true;
       this.activeInfo = info;
       
@@ -274,12 +266,7 @@ export default {
         this.buffer.splice(0, this.buffer.length);
       }
       if (['\x06', '\x15', ''].indexOf(text) == -1) {
-        if (this.consoleTmp == '\r' && text == '\n') {
-
-        } else {
-          this.$emit('console', text);
-        }
-        this.consoleTmp = text;
+        this.$emit('console', text);
       }
       return text;
     },
@@ -287,7 +274,7 @@ export default {
     // 处理元素修改事件
     handleElementModified(event) {
       const { action, elementId, element, transform, data } = event.detail;
-      console.log('event:', action, elementId, data);
+      // console.log('event:', action, elementId, data);
       
       // 发送事件到父组件
       this.$emit('event', {
@@ -304,6 +291,7 @@ export default {
 <style lang="less" scoped>
 .simulator-container {
   position: relative;
+  height: 100%;
 }
 </style>
 

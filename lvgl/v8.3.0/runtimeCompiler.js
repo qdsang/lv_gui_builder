@@ -2,7 +2,7 @@
 import { template_py_create, template_py_cb, template_py_setter_simple, template_py_api_simple, template_py_style_simple, template_py_styles, template_py_timeline } from './runtimeTemplatePython.js';
 import { template_c_create, template_c_setter_simple, template_c_cb, template_c_style_simple, template_c_api_simple, template_c_all, template_c_styles } from './runtimeTemplateC.js';
 
-export function code_generator(lang, screen, actFileName) {
+export function generateCode(lang, screen, actFileName) {
     let code = '';
     if (lang == 'c') {
         code = c_generator(screen, actFileName);

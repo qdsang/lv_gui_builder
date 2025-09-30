@@ -1,5 +1,5 @@
 <template>
-  <el-container class="main">
+  <el-container class="main" @drop="handleDrop">
     <el-header class="header-container">
       <div class="header-left">
         <div class="logo-section">
@@ -85,12 +85,22 @@
         </el-tabs>
       </template>
       <template #center>
+        <creator-simulator ref="simulator" @event="handleSimulatorEvent" @console="handleSimulatorConsole"></creator-simulator>
+        <creator-anim-console></creator-anim-console>
+      </template>
+      <template #bottom>
+
         <el-tabs type="card" v-model="activeTab" @tab-change="handleTabChange" style="border: none;">
-          <el-tab-pane label="Simulator" name="simulator">
-            <creator-simulator ref="simulator" @event="handleSimulatorEvent" @console="handleSimulatorConsole"></creator-simulator>
-            <creator-anim-console></creator-anim-console>
+          <el-tab-pane label="Terminal" name="Terminal">
+            <!-- <div style="margin: 10px">
+              <i class="el-icon-monitor">REPL Terminal</i>
+              <el-switch v-model="term_visible"></el-switch>
+              <el-button icon="el-icon-refresh" circle @click="refreshTerm"></el-button>
+            </div> -->
+
+            <creator-term ref="term" :style="{ visibility: term_visible ? 'visible' : 'hidden' }" style="padding: 0 16px;"></creator-term>
           </el-tab-pane>
-          <el-tab-pane label="Anim" name="anim" :lazy="true">
+          <el-tab-pane label="Animation" name="anim" :lazy="true">
             <creator-anim @save="handleAnimSave"></creator-anim>
           </el-tab-pane>
           <el-tab-pane label="Font" name="font" :lazy="true">
@@ -99,24 +109,7 @@
           <el-tab-pane label="Image" name="image" :lazy="true">
             <creator-image></creator-image>
           </el-tab-pane>
-          <el-tab-pane label="Code" name="code" :lazy="true">
-            <creator-editor ref="editor" @event="generateCode"></creator-editor>
-          </el-tab-pane>
-          <el-tab-pane label="Project" name="project" :lazy="true">
-            <creator-project-settings 
-              ref="projectSettings"
-              @save="handleProjectSettingsChange"
-            />
-          </el-tab-pane>
         </el-tabs>
-
-        <div style="margin: 10px">
-          <i class="el-icon-monitor">REPL Terminal</i>
-          <el-switch v-model="term_visible"></el-switch>
-          <el-button icon="el-icon-refresh" circle @click="refreshTerm"></el-button>
-        </div>
-
-        <creator-term ref="term" :style="{ visibility: term_visible ? 'visible' : 'hidden' }" style="padding: 0 16px;"></creator-term>
       </template>
       <template #right>
         <el-tabs type="card" model-value="args" class="tab-full">
@@ -126,6 +119,15 @@
           </el-tab-pane>
           <el-tab-pane label="Event" name="event">
             
+          </el-tab-pane>
+          <el-tab-pane label="Code" name="code" :lazy="true">
+            <creator-editor ref="editor" @event="generateCode"></creator-editor>
+          </el-tab-pane>
+          <el-tab-pane label="Project" name="project" :lazy="true">
+            <creator-project-settings 
+              ref="projectSettings"
+              @save="handleProjectSettingsChange"
+            />
           </el-tab-pane>
           <!-- <el-tab-pane label="样式" name="style" style="height: 800px;overflow: scroll">
             <div style="padding-left: 10px">
@@ -142,22 +144,10 @@
   </el-container>
 </template>
 
-<script lang="ts">
-  import { code_generator } from '@lvgl/v8.3.0/runtimeCompiler.js';
-  
+<script lang="ts">  
   import { setArgvs, dispatch_data_changed_event, debounceFun, saveAs } from './utils.js';
   import { Categorize, Data_Changed_Event, MSG_AUTO_SAVE_PAGE_SUCC, MSG_SAVE_PAGE_SUCC } from  './common/constant.js';
-  import {
-    wrap_delete,
-    wrap_rename,
-
-    wrap_create_v2,
-    wrap_timeline_load,
-    wrap_timeline_stop_all,
-
-    wrap_font_load,
-    engineAttrUpdate,
-  } from './runtimeWrapper.js';
+  import engine from './engine.js';
 
   import { projectStore } from './store/projectStore';
   import { initDemo, initDemoProject, getDemoList } from './store/demo';
@@ -228,7 +218,7 @@
 
         // tabs
         activeTabLeft: 'screen',
-        activeTab: 'simulator',
+        activeTab: 'Terminal',
 
         // 添加项目配置
         projectConfig: null,
@@ -258,6 +248,8 @@
           'meta+x': () => this.handleEvent('cut'),
           'delete': () => this.handleEvent('delete'),
           'backspace': () => this.handleEvent('delete'),
+          'ctrl+0': () => this.handleEvent('zoom-1'),
+          'meta+0': () => this.handleEvent('zoom-1'),
           
         },
       };
@@ -294,8 +286,9 @@
       window.addEventListener('keydown', this.handleKeyDown);
 
       initDemo();
+
       this.initProject();
-      this.mpylvInit();
+      this.simulatorInit();
     },
     beforeDestroy() {
       // 移除键盘事件监听
@@ -311,56 +304,141 @@
           initDemoProject(id);
         }
 
-        this.clearSimulatorWidgets();
+        this.reset();
         projectStore.initProject(id);
-
+      },
+      updateScreenSize() {
         let screen = projectStore.getWidgetById('screen');
         const width = screen.data?.width;
         const height = screen.data?.height;
         this.screenWidth = width;
         this.screenHeight = height;
       },
-      async mpylvInit() {
+      async simulatorInit() {
         await this.$refs.simulator.initialComplete();
 
+        this.updateScreenSize();
         await this.$refs.simulator.initScreen({width: this.screenWidth, height: this.screenHeight});
         this.initWidgets();
       },
       initWidgets() {
+        this.updateScreenSize();
+        this.$refs.simulator.loadScreen();
+
         let widgets = projectStore.getComponents();
         for (let id in widgets) {
           let info = widgets[id];
           info.id = id;
           
           if (id !== 'screen') {
-            wrap_create_v2(info, false);
+            engine.simulatorCreateWidget(info);
+            // this.$refs.simulator.createElement(info);
           }
-          engineAttrUpdate(info);
+          engine.simulatorUpdateAttr(info);
         }
-        wrap_timeline_load(projectStore.getTimelines());
+        engine.simulatorTimelineLoad(projectStore.getTimelines());
 
         this.activeNode('screen');
       },
-      clearSimulatorWidgets() {
+      reset() {
         try {
           let widgets = projectStore.getComponents();
           for (let id in widgets) {
             try {
+              this.$refs.simulator.deleteElement('', id);
+
               if (id == 'screen') {
                 continue;
               }
-              wrap_delete(id);
+              engine.simulatorDeleteWidget(id);
             } catch (error) {
               console.error(error);
             }
           }
-          wrap_timeline_stop_all();
+          engine.simulatorTimelineStopAll();
         } catch (error) {
+          console.error('index reset', error);
         }
         if (this.selectNodeId) {
           // this.activeNode('unknown');
         }
       },
+      handleDrop(event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        try {
+          // 获取拖放的文件
+          const droppedFiles = event.dataTransfer.files;
+          if (!droppedFiles.length) return;
+
+          let files = Array.from(droppedFiles);
+          let file = files[0];
+          this.loadProjectFile(file);
+          
+          console.log(files);
+        } catch (error) {
+          console.log(error);
+        }
+        return false;
+      },
+      async loadProjectFile(file) {
+        const content = await this.readFileContent(file);
+        const projectId = file.name.split('.')[0];
+        projectStore.importProject(projectId, JSON.parse(content));
+
+        this.reset();
+        projectStore.initProject(projectId);
+        this.initWidgets();
+      },
+      async processFiles(files) {
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          
+          // 1. 获取文件名和元数据
+          const fileInfo = {
+            name: file.name,
+            type: file.type || '未知',
+            size: file.size,
+            lastModified: file.lastModified,
+            lastModifiedDate: file.lastModifiedDate.toString()
+          };
+          
+          // 2. 读取文件内容
+          if (file.type.includes('text') || file.type === '') {
+            try {
+              const content = await this.readFileContent(file);
+              this.contents += `文件: ${file.name}\n${content}\n\n`;
+            } catch (error) {
+              console.error(`读取 ${file.name} 失败:`, error);
+            }
+          } else {
+            this.contents += `无法预览 ${file.type} 类型的文件\n\n`;
+          }
+        }
+      },
+      
+      readFileContent(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          
+          reader.onload = () => {
+            resolve(reader.result);
+          };
+          
+          reader.onerror = () => {
+            reject(new Error(`读取 ${file.name} 失败`));
+          };
+          
+          // 根据文件类型选择读取方式
+          if (file.type.startsWith('image/')) {
+            reader.readAsDataURL(file); // 读取为DataURL
+          } else {
+            reader.readAsText(file); // 默认按文本读取
+          }
+        });
+      },
+
       handleSimulatorEvent(json) {
         if (json.action == 'click') {
           this.activeNode();
@@ -386,7 +464,7 @@
 
             this.changeInfo(id, key);
           }
-          engineAttrUpdate(node, json.action);
+          engine.simulatorUpdateAttr(node, json.action);
 
           if (json.action == 'query_xy') {
             // this.drawRect(data.x, data.y, data.width, data.height);
@@ -402,8 +480,8 @@
       handleAnimSave() {
         dispatch_data_changed_event();
 
-        wrap_timeline_stop_all();
-        wrap_timeline_load(projectStore.getTimelines());
+        engine.simulatorTimelineStopAll();
+        engine.simulatorTimelineLoad(projectStore.getTimelines());
       },
       refreshTerm: function () {
         this.$refs.term.clear();
@@ -426,20 +504,18 @@
         console.log('handleCreator', type, parent_id, data);
         let widget = projectStore.createWidget({ type, parent: parent_id, data: data });
 
-        wrap_create_v2(widget, false);
-        engineAttrUpdate(widget);
-        // wrap_attr_setter_v2(widget);
-        // wrap_style_setter_v2(widget);
+        engine.simulatorCreateWidget(widget);
+        engine.simulatorUpdateAttr(widget);
+        this.$refs.simulator.createElement(widget);
       },
 
       //Parametres are the String type
       copyWidget: function (info2) {
         let widget = projectStore.copyWidget(info2);
 
-        wrap_create_v2(widget, false);
-        engineAttrUpdate(widget);
-        // wrap_attr_setter_v2(widget);
-        // wrap_style_setter_v2(widget);
+        engine.simulatorCreateWidget(widget);
+        engine.simulatorUpdateAttr(widget);
+        this.$refs.simulator.createElement(widget);
 
         return widget;
       },
@@ -459,7 +535,8 @@
         let widget = projectStore.getWidgetById(id);
         let list = projectStore.deleteWidget(widget);
         for (const child of list) {
-          wrap_delete(child.id);
+          engine.simulatorDeleteWidget(child.id);
+          this.$refs.simulator.deleteElement('', child.id);
         }
         
         this.activeNode('screen');
@@ -477,14 +554,16 @@
         widget = projectStore.getWidgetById(id);
         if (event == 'delete') {
           this.deleteNode(widget);
-        } else if (event == 'copy' || event == 'paste') {
+        } else if (event == 'copy') {
+
+        } else if (event == 'paste') {
           let info = projectStore.getWidgetById(id);
           let widget2 = this.copyWidget(info);
           console.log('copy', info, widget2);
         } else if (event == 'show') {
           // wrap_font_load();
           data.show = true;
-          engineAttrUpdate(widget);
+          engine.simulatorUpdateAttr(widget);
 
           // let list = projectStore.getWidgetChildrenList(id, true);
           // for (const child of list) {
@@ -492,7 +571,7 @@
           // }
         } else if (event == 'hide') {
           data.show = false;
-          engineAttrUpdate(widget);
+          engine.simulatorUpdateAttr(widget);
 
           // let list = projectStore.getWidgetChildrenList(id, true);
           // for (const child of list) {
@@ -504,8 +583,8 @@
           let change = projectStore.updateWidgetTreeIndex();
           for (const item of change) {
             let widget2 = projectStore.getWidgetById(item.id);
-            engineAttrUpdate(widget2);
-            // wrap_set_index(item.id, item.zindex);
+            engine.simulatorUpdateAttr(widget2);
+            this.$refs.simulator.updateElementAttr(widget2);
           }
         }
       },
@@ -521,7 +600,8 @@
           widget.data.y += speed;
         }
 
-        engineAttrUpdate(widget);
+        engine.simulatorUpdateAttr(widget);
+        this.$refs.simulator.updateElementAttr(widget);
         // wrap_attr_setter_v2(widget);
         this.activeNode(id);
         // console.log('move', widget, direction, speed);
@@ -566,7 +646,8 @@
         //   let args_list = node.data[body.api];
         //   wrap_setter_str(id, body.api, args_list);
         // }
-        engineAttrUpdate(node);
+        engine.simulatorUpdateAttr(node);
+        this.$refs.simulator.updateElementAttr(node);
       },
 
       // Take a screenshot for the Simulator
@@ -578,7 +659,6 @@
 
       // Generate the code and print them to the editor.
       generateCode: async function () {
-        this.activeTab = 'code';
         let preview_code = '';
         let screen = {
           info: projectStore.getComponents(),
@@ -586,7 +666,7 @@
           config: this.projectConfig // 添加项目配置
         };
         
-        let codeGen = code_generator(projectStore.projectData.settings.output.format, screen, this.projectConfig?.name || this.act_FileName);
+        let codeGen = engine.generateCode(projectStore.projectData.settings.output.format, screen, this.projectConfig?.name || this.act_FileName);
         preview_code = codeGen.code;
         
         await this.$refs.editor.setValue(preview_code);
@@ -662,7 +742,10 @@
           } else {
             projectStore.changeWidgetId(projectStore.getWidgetById(id), newid);
 
-            wrap_rename(id, newid);
+            engine.simulatorDeleteWidget(id);
+            engine.simulatorCreateWidget(projectStore.getWidgetById(newid));
+            // wrap_rename(id, newid);
+
             this.activeNode(newid);
           }
         })
@@ -713,8 +796,8 @@
         // 检查是否有对应的快捷键处理函数
         const handler = this.shortcuts[key];
         if (handler) {
-          event.preventDefault(); // 阻止默认行为
-          handler();
+          let ret = handler();
+          if (ret == false) event.preventDefault(); // 阻止默认行为
         } else {
           console.log('no handler', key);
         }

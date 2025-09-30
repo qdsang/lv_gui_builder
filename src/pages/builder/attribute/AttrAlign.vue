@@ -8,7 +8,7 @@
 </template>
 
 <script lang="ts">
-import { engineAttrUpdate } from '../runtimeWrapper.js';
+import engine from '../engine.js';
 
 export default {
   name : 'lvgl-attr-align',
@@ -33,7 +33,7 @@ export default {
       // wrap_align(this.id, 'None', type, 0, 0);
       // wrap_align(this.id, type, 0, 0);
       let node = null;
-      engineAttrUpdate(node);
+      engine.simulatorUpdateAttr(node);
     }
   },
 };

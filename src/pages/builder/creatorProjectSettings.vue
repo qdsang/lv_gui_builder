@@ -261,7 +261,7 @@ export default {
     overflow: hidden;
 
     .settings-menu {
-      width: 200px;
+      width: 100px;
       border-right: 1px solid var(--el-border-color-light);
       
       :deep(.el-menu) {

@@ -119,30 +119,18 @@ export default {
     // Apply change to the widget: number
     bindWidgetNumerical: function (attribute) {
       let value = this.currentWidget[attribute];
-
-      if (value == null) {
-        value = 0;
+      if (isNaN(parseInt(value))) {
+        return;
       }
 
       let id = this.id;
       let widget = projectStore.getWidgetById(id);
       let attrKey = attribute;
-      widget.data[attrKey] = value;
+      widget.data[attrKey] = parseInt(value) || 0;
       
-      this.handleSetterChange({ id, name: attrKey, mode: 'styles'});
+      this.handleSetterChange({ id, name: attrKey, mode: 'transform'});
     },
 
-    // Lock the widget, so it can't move anymore
-    // lock_widget: function() {
-    //     let drag_state = this.currentWidget["get_drag"];
-    //     if(drag_state == true) {
-    //         drag_state = "True";
-    //     } else {
-    //         drag_state = "False";
-    //     }
-
-    //     mp_js_do_str(this.id + ".set_drag(" + drag_state + ')');
-    // },
     editID() {
       this.$emit('change-id', this.id);
     },

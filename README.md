@@ -1,4 +1,4 @@
-# lvgl gui builder
+# lv builder
 [WIP] Drag end drop GUI designer for LVGL
 
 ## Demo
@@ -40,7 +40,7 @@ npm run serve
 npm run preview
 
 
-open http://localhost:5173/#/editor2
+open http://localhost:5173/#/lv/builder/demo1
 ```
 
 

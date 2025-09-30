@@ -1,7 +1,7 @@
 <template>
 
 <el-collapse v-model="collPart">
-  <el-collapse-item v-for="part in parts" :key="part" :title="'Style ' + part.toLowerCase()" :name="part">
+  <el-collapse-item v-for="part in parts" :key="part" :title="'Style ' + part.toLowerCase() + countTip(part)" :name="part">
 
     <el-collapse v-model="collStyles" style="padding: 0 0 0 16px;">
       <el-collapse-item v-for="styles in styleGroups" :title="styles.title" :name="part + '_' + styles.title" :key="styles.title">
@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts">
-import * as engine from '@lvgl/v8.3.0/index.js';
+import engine from '../engine.js';
 
 import AttrSetter2 from './AttrSetter2.vue';
 
@@ -69,10 +69,23 @@ export default {
       }
       this.parts = widget.parts;
       this.styleGroups = widget.styleGroups;
+
+      this.partCountMap = {};
+      for (let key in node.styles) {
+        let part = node.styles[key].split('.')[0];
+        if (!this.partCountMap[part]) {
+          this.partCountMap[part] = 0;
+        }
+        this.partCountMap[part]++;
+      }
     },
     handleSetterChange({ id, name, mode }) {
       this.$emit('change', { id, name, mode });
     },
+    countTip(part) {
+      // console.log('part', part, this.partCountMap);
+      return ' (' + this.partCountMap[part] + ')';
+    }
   },
 };
 </script>

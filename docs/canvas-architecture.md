@@ -11,10 +11,10 @@
 1. **Canvas.vue**
    - 主画布组件
    - Vue组件包装器，提供Vue集成
-   - 管理CanvasFabric实例的生命周期
+   - 管理KonvaCanvas实例的生命周期
 
-2. **CanvasFabric.js**
-   - 基于fabric.js的画布实现
+2. **KonvaCanvas.js**
+   - 基于Konva.js的画布实现
    - 纯JavaScript类，不依赖Vue
    - 提供缩放、拖动、插件系统等核心功能
    - 支持LVGL内容渲染
@@ -34,6 +34,30 @@
 3. **具体插件实现**
    - RulerPlugin: 比例尺插件
    - GridPlugin: 网格插件（示例）
+
+### 核心管理器
+
+为了更好地管理画布的各种功能，我们实现了多个专门的管理器：
+
+1. **ElementManager 元素管理器**
+   - 管理画布中的所有元素
+   - 提供元素的创建、删除、查找等功能
+
+2. **ViewManager 视图管理器**
+   - 管理画布的视图状态
+   - 处理缩放、平移等视图操作
+
+3. **SelectionManager 选择管理器**
+   - 管理元素的选择状态
+   - 提供多选、单选等功能
+
+4. **AlignmentManager 对齐管理器**
+   - 处理元素的对齐功能
+   - 提供各种对齐操作
+
+5. **EventManager 事件管理器**
+   - 管理画布的事件系统
+   - 处理用户交互事件
 
 ### 工具函数
 
@@ -63,15 +87,15 @@ Vue组件主要负责以下职责：
    - 处理Vue特定的逻辑
 
 2. **实例管理**
-   - 创建和销毁CanvasFabric实例
+   - 创建和销毁KonvaCanvas实例
    - 暴露公共API给父组件
 
-### CanvasFabric职责
+### KonvaCanvas职责
 
-CanvasFabric类主要负责以下职责：
+KonvaCanvas类主要负责以下职责：
 
 1. **画布管理**
-   - 初始化和管理fabric.js画布
+   - 初始化和管理Konva.js画布
    - 管理屏幕组和其他可视化元素
 
 2. **交互处理**
@@ -98,6 +122,30 @@ CanvasFabric类主要负责以下职责：
 2. **生命周期管理**
    - 实现标准的插件生命周期方法
    - 管理插件内部资源
+
+### 管理器职责
+
+各个管理器负责特定领域的功能：
+
+1. **ElementManager**
+   - 管理画布元素的生命周期
+   - 提供元素操作接口
+
+2. **ViewManager**
+   - 管理视图变换和显示
+   - 处理缩放和平移操作
+
+3. **SelectionManager**
+   - 管理元素选择状态
+   - 提供选择相关功能
+
+4. **AlignmentManager**
+   - 处理元素对齐逻辑
+   - 提供对齐操作接口
+
+5. **EventManager**
+   - 管理画布事件系统
+   - 协调各组件间的事件交互
 
 ### 工具函数职责
 
@@ -147,7 +195,14 @@ CanvasFabric类主要负责以下职责：
 ```
 src/pages/builder/canvas/
 ├── Canvas.vue              # Vue组件包装器
-├── CanvasFabric.js         # 基于fabric.js的画布实现
+├── KonvaCanvas.js          # 基于Konva.js的画布实现
+├── core/                   # 核心管理器目录
+│   ├── ElementManager.js   # 元素管理器
+│   ├── ViewManager.js      # 视图管理器
+│   ├── SelectionManager.js # 选择管理器
+│   ├── AlignmentManager.js # 对齐管理器
+│   ├── EventManager.js     # 事件管理器
+│   └── EventSystem.js      # 事件系统
 ├── plugins/                # 插件目录
 │   ├── CanvasPlugin.js     # 插件基类
 │   ├── PluginManager.js    # 插件管理器
@@ -227,12 +282,12 @@ export default {
 ### 组件开发
 
 1. **保持组件简洁**：Vue组件应只关注UI渲染和状态管理
-2. **使用纯JavaScript实现核心逻辑**：复杂逻辑应在CanvasFabric类中实现
+2. **使用纯JavaScript实现核心逻辑**：复杂逻辑应在KonvaCanvas类中实现
 3. **明确定义接口**：组件应提供清晰的公共接口
 
-### CanvasFabric开发
+### KonvaCanvas开发
 
-1. **关注核心功能**：CanvasFabric应专注于画布管理和交互处理
+1. **关注核心功能**：KonvaCanvas应专注于画布管理和交互处理
 2. **通过插件扩展功能**：新功能应尽可能通过插件实现
 3. **提供清晰的API**：公共方法应有明确的输入输出
 
@@ -242,6 +297,12 @@ export default {
 2. **实现必要方法**：根据插件需求实现相应的生命周期方法
 3. **错误处理**：在插件方法中添加适当的错误处理
 4. **资源管理**：在destroy方法中正确释放资源
+
+### 管理器开发
+
+1. **单一职责**：每个管理器应只负责一个特定领域
+2. **接口清晰**：提供明确的公共接口
+3. **低耦合**：管理器之间应尽量减少直接依赖
 
 ### 工具函数开发
 

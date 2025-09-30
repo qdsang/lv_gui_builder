@@ -77,7 +77,7 @@
 
 <script>
 import { ref } from 'vue'
-import { wrap_timeline_start, wrap_timeline_pause, wrap_timeline_progress } from './runtimeWrapper.js';
+import engine from './engine.js';
 import { VideoCameraFilled, Close } from '@element-plus/icons-vue'
 import { projectStore } from './store/projectStore.js';
 
@@ -108,28 +108,28 @@ export default {
     handleSwitch(id) {
       const value = this.switchValue[id];
       if (value) {
-        wrap_timeline_start(id);
+        engine.simulatorTimelineStart(id);
       } else {
-        wrap_timeline_pause(id);
+        engine.simulatorTimelinePause(id);
       }
     },
     handleSlider(id) {
       const value = this.sliderValue[id];
       // console.log('handleSlider', id, value);
-      wrap_timeline_progress(id, value);
+      engine.simulatorTimelineProgress(id, value);
     },
 
     playAll() {
       this.timelines.forEach(timeline => {
         this.switchValue[timeline.id] = true;
-        wrap_timeline_start(timeline.id);
+        engine.simulatorTimelineStart(timeline.id);
       });
     },
 
     pauseAll() {
       this.timelines.forEach(timeline => {
         this.switchValue[timeline.id] = false;
-        wrap_timeline_pause(timeline.id);
+        engine.simulatorTimelinePause(timeline.id);
       });
     },
 
@@ -159,7 +159,7 @@ export default {
 <style lang="less" scoped>
 .anim-console-wrapper {
   position: absolute;
-  top: 8px;
+  top: 24px;
   right: 8px;
   z-index: 2000;
 

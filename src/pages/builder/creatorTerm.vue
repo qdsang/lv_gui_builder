@@ -1,7 +1,7 @@
 <template>
   <div
     id="mpy_repl"
-    style="height: 270px"
+    style="height: 200px"
     :style="{ visibility: term_visible ? 'visible' : 'hidden' }"
   >
   </div>
@@ -12,7 +12,7 @@ import { Terminal } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
 import '@xterm/xterm/css/xterm.css';
 
-import * as engine from '@lvgl/v8.3.0/index.js';
+import engine from './engine.js';
 
 export default {
   name : 'creator-simulator',

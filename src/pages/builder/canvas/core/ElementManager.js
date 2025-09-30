@@ -1,8 +1,8 @@
 /**
- * 元素管理插件
+ * 元素管理器
  * 负责管理KonvaCanvas中的元素创建、删除和操作
  */
-export class ElementPlugin {
+export class ElementManager {
   /**
    * 构造函数
    * @param {KonvaCanvas} canvas - KonvaCanvas实例
@@ -48,7 +48,10 @@ export class ElementPlugin {
    * @returns {object} 屏幕元素对象
    */
   createScreenElement(id, options = {}) {
-    const { width = this.canvas.options.width, height = this.canvas.options.height } = options;
+    const {
+      width = this.canvas.options.width,
+      height = this.canvas.options.height
+    } = options;
     
     // 创建屏幕组
     const screenGroup = new this.canvas.Konva.Group({
@@ -59,35 +62,26 @@ export class ElementPlugin {
       draggable: true
     });
 
-    // 创建半透明黑色背景
-    const background = new this.canvas.Konva.Rect({
+    // 创建半透明黑色
+    const placeholder = new this.canvas.Konva.Rect({
       x: 0,
       y: 0,
       width: width,
       height: height,
       fill: 'rgba(0, 0, 0, 0.3)', // 半透明黑色背景
       stroke: 'rgba(0,123,255,0)', // 默认不显示边框
-      strokeWidth: 1
+      strokeWidth: 1,
+      id: id
     });
 
     // 创建ID文本（放在屏幕框外的左上角上方）
-    const idText = new this.canvas.Konva.Text({
+    const titleText = new this.canvas.Konva.Text({
       x: 0,
       y: -20, // 放在屏幕框上方
       text: id,
       fontSize: 14,
       fill: 'white',
       fontStyle: 'bold'
-    });
-    
-    // 创建尺寸标签（放在屏幕框外的右下角下方）
-    const sizeLabel = new this.canvas.Konva.Text({
-      x: width - 60,
-      y: height + 5,
-      text: `${width}×${height}`,
-      fontSize: 12,
-      fill: 'white',
-      fontStyle: 'normal'
     });
 
     // 创建组件组（用于放置屏幕内的组件）
@@ -98,9 +92,8 @@ export class ElementPlugin {
     });
 
     // 将背景、ID文本、尺寸标签和组件组添加到屏幕组
-    screenGroup.add(background);
-    screenGroup.add(idText);
-    screenGroup.add(sizeLabel);
+    screenGroup.add(placeholder);
+    screenGroup.add(titleText);
     screenGroup.add(componentGroup);
 
     // 将屏幕组添加到屏幕内容组
@@ -109,49 +102,19 @@ export class ElementPlugin {
     // 创建屏幕元素对象
     const element = {
       id: id,
-      type: 'screen',
+      type: options.type || 'screen',
       group: screenGroup,
-      background: background, // 保存背景引用
-      idText: idText, // 保存ID文本引用
-      sizeLabel: sizeLabel, // 保存尺寸标签引用
+      object: placeholder,
+      titleText: titleText, // 保存标题文本引用
       componentGroup: componentGroup,
       components: new Map(), // 屏幕内的组件
+      sizeLabel: null, // 保存尺寸标签引用
       renderTarget: null, // 渲染目标
-      options: options
+      options: options,
+      parent: null,
     };
 
-    // 绑定鼠标悬停事件显示边框
-    screenGroup.on('mouseenter', () => {
-      if (!this.canvas.selectedElements.has(id)) {
-        background.stroke('rgba(0,123,255,0.5)');
-        background.strokeWidth(1);
-        background.getLayer().batchDraw();
-      }
-    });
-
-    screenGroup.on('mouseleave', () => {
-      if (!this.canvas.selectedElements.has(id)) {
-        background.stroke('rgba(0,123,255,0)');
-        background.strokeWidth(1);
-        background.getLayer().batchDraw();
-      }
-    });
-
-    // 绑定事件
-    screenGroup.on('click tap', (e) => {
-      e.cancelBubble = true; // 阻止事件冒泡
-      this.canvas.handleElementClick(id, e);
-    });
-
-    // 在拖动和变换过程中都触发修改事件
-    screenGroup.on('transform dragmove', (e) => {
-      this.canvas.onElementModified(id, e);
-    });
-
-    // 拖动和变换结束时也触发修改事件
-    screenGroup.on('transformend dragend', (e) => {
-      this.canvas.onElementModified(id, e);
-    });
+    this.createScreenComponentEvent(screenGroup, placeholder, id);
 
     return element;
   }
@@ -181,49 +144,6 @@ export class ElementPlugin {
       draggable: true,
       id: id
     });
-    
-    // 创建尺寸标签（放在组件右下角下方）
-    // const sizeLabel = new this.canvas.Konva.Text({
-    //   x: options.width || 100 - 60,
-    //   y: options.height || 100 + 5,
-    //   text: `${options.width || 100}×${options.height || 100}`,
-    //   fontSize: 12,
-    //   fill: 'white',
-    //   fontStyle: 'normal'
-    // });
-
-    // 绑定鼠标悬停事件显示边框
-    placeholder.on('mouseenter', () => {
-      if (!this.canvas.selectedElements.has(id)) {
-        placeholder.stroke('rgba(0,123,255,0.5)');
-        placeholder.strokeWidth(1);
-        placeholder.getLayer().batchDraw();
-      }
-    });
-
-    placeholder.on('mouseleave', () => {
-      if (!this.canvas.selectedElements.has(id)) {
-        placeholder.stroke('rgba(0,123,255,0)');
-        placeholder.strokeWidth(1);
-        placeholder.getLayer().batchDraw();
-      }
-    });
-
-    // 绑定事件
-    placeholder.on('click tap', (e) => {
-      e.cancelBubble = true; // 阻止事件冒泡
-      this.canvas.handleElementClick(id, e);
-    });
-
-    // 在拖动和变换过程中都触发修改事件
-    placeholder.on('transform dragmove', (e) => {
-      this.canvas.onElementModified(id, e);
-    });
-
-    // 拖动和变换结束时也触发修改事件
-    placeholder.on('transformend dragend', (e) => {
-      this.canvas.onElementModified(id, e);
-    });
 
     // 添加到屏幕的组件组
     element.componentGroup.add(placeholder);
@@ -238,12 +158,57 @@ export class ElementPlugin {
       id: id,
       type: options.type || 'component',
       object: placeholder,
+      titleText: null,
       sizeLabel: null,
       options: options,
-      parent: element
+      parent: element,
+      screenId: parentId,
     };
 
+    this.createScreenComponentEvent(placeholder, placeholder, id);
+
     return component;
+  }
+
+  createScreenComponentEvent(group, placeholder, id) {
+    // 绑定鼠标悬停事件显示边框
+    group.on('mouseenter', () => {
+      if (!this.canvas.selectedElements.has(id)) {
+        placeholder.stroke('rgba(0,123,255,0.7)');
+        placeholder.strokeWidth(1);
+        placeholder.getLayer().batchDraw();
+      }
+    });
+
+    group.on('mouseleave', () => {
+      if (!this.canvas.selectedElements.has(id)) {
+        placeholder.stroke('rgba(0,123,255,0)');
+        placeholder.strokeWidth(1);
+        placeholder.getLayer().batchDraw();
+      }
+    });
+
+    // 绑定事件
+    group.on('click tap', (e) => {
+      e.cancelBubble = true; // 阻止事件冒泡
+      this.canvas.handleElementClick(id, e);
+    });
+
+    group.on('transformstart dragstart', (e) => {
+      e.cancelBubble = true; // 阻止事件冒泡
+      this.canvas.deselectAllElements();
+      this.canvas.selectElement(id);
+    });
+
+    // 在拖动和变换过程中都触发修改事件
+    group.on('transform dragmove', (e) => {
+      this.canvas.onElementModified(id, e);
+    });
+
+    // 拖动和变换结束时也触发修改事件
+    group.on('transformend dragend', (e) => {
+      this.canvas.onElementModified(id, e);
+    });
   }
 
   /**
@@ -300,6 +265,13 @@ export class ElementPlugin {
         }
         break;
     }
+
+    // 触发元素变换事件，通知插件更新
+    this.canvas.eventSystem.emit('elementTransform', {
+      elementId: id,
+      action: 'transform',
+      type: 'elementTransform'
+    });
   }
 
   /**

@@ -7,6 +7,21 @@ import {
     mp_js_process_char,
   } from './micropython.js';
 import * as WidgetData from "./widgetData.js";
+import { generateCode } from "./runtimeCompiler.js";
+import {
+  wrap_delete,
+  wrap_rename,
+
+  wrap_create_v2,
+  wrap_update_v2,
+  wrap_timeline_load,
+  wrap_timeline_stop_all,
+  wrap_timeline_start,
+  wrap_timeline_pause,
+  wrap_timeline_progress,
+
+  wrap_font_load,
+} from './runtimeWrapper.js';
 
 import * as wasm_file_api from './wasm_file_api.js';
 wasm_file_api;
@@ -86,7 +101,7 @@ export async function simulatorInit(ele) {
   await simulatorInitWait();
 }
 
-export async function ScreenSize(width, height) {
+export async function simulatorScreenSize(width, height) {
   await simulatorInitWait();
   // console.log('ScreenSize');
   await new Promise(resolve => setTimeout(resolve, 100));
@@ -100,6 +115,33 @@ export async function ScreenSize(width, height) {
   await new Promise(resolve => setTimeout(resolve, 100));
 }
 
+export async function simulatorCreateWidget(widget) {
+  wrap_create_v2(widget, false);
+}
+
+export async function simulatorDeleteWidget(id) {
+  wrap_delete(id);
+}
+
+export async function simulatorUpdateAttr(widget, action) {
+  wrap_update_v2(widget, action);
+}
+
+export async function simulatorTimelineLoad(timelines) {
+  wrap_timeline_load(timelines);
+}
+export async function simulatorTimelineStopAll() {
+  wrap_timeline_stop_all();
+}
+export async function simulatorTimelineStart(id) {
+  wrap_timeline_start(id);
+}
+export async function simulatorTimelinePause(id) {
+  wrap_timeline_pause(id);
+}
+export async function simulatorTimelineProgress(id, v) {
+  wrap_timeline_progress(id, v);
+}
 
 export function simulatorUpdate(event) {
     if (event.type == "element") {
@@ -110,7 +152,4 @@ export function simulatorUpdate(event) {
 }
 
 
-export function generateCode(lang) {
-
-}
-
+export { generateCode }

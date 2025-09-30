@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="height: 100%;">
     <div class="mode-switch">
       <el-tooltip content="Switch between C and Python mode" placement="bottom">
         <el-radio-group v-model="config.format" @change="generateCode">
@@ -29,7 +29,7 @@
         showPrintMargin: false,
         highlightActiveLine: true,
       }"
-      style="height: 420px" @click.stop @mousedown.stop @mouseup.stop @keypress.stop @keyup.stop @keydown.stop @contextmenu.stop />
+      style="height: 600px" @click.stop @mousedown.stop @mouseup.stop @keypress.stop @keyup.stop @keydown.stop @contextmenu.stop />
   </div>
 </template>
 

@@ -28,7 +28,7 @@
 
 <script lang="ts">
 
-import * as engine from '@lvgl/v8.3.0/index.js';
+import engine from './engine.js';
 
 // let imageList = import.meta.glob('../../../lvgl/v8.3.0/objects/*.png',{eager:true, as: 'url' })
 let imageList = import.meta.glob('./objects/*.png', { eager:true })
