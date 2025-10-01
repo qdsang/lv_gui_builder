@@ -20,6 +20,12 @@
             </el-menu-item>
           </el-sub-menu>
           
+          <el-menu-item index="home">
+            <el-link href="https://github.com/qdsang/lv_gui_builder" target="_blank">
+              <el-icon><Link /></el-icon>
+              Github
+            </el-link>
+          </el-menu-item>
           <el-menu-item index="font">
             <el-link href="#/lv/font" target="_blank">
               <el-icon><Link /></el-icon>

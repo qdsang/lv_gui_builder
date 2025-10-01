@@ -1,14 +1,12 @@
-# lv builder
+# LV Builder
 [WIP] Drag end drop GUI designer for LVGL
 
 ## Demo
-<!-- 
-![Image](./docs/preview.png "LV GUI Builder Preview") -->
 
 <table>
 <tr>
-    <td><a href="https://qdsang.github.io/lv_gui_builder/#/lv/builder/demo1"><img src="./docs/preview.png" title="LV GUI Builder Preview" /></a></td>
-    <td><a href="https://qdsang.github.io/lv_gui_builder/#/lv/builder/widget"><img src="./docs/preview2.png" title="LV GUI Builder Preview" /></a></td>
+    <td><a href="https://qdsang.github.io/lv_gui_builder/#/lv/builder/demo1"><img src="./docs/preview.png" title="LV Builder Preview" /></a></td>
+    <td><a href="https://qdsang.github.io/lv_gui_builder/#/lv/builder/widget"><img src="./docs/preview2.png" title="LV Builder Preview" /></a></td>
 </tr>
 </table>
 
