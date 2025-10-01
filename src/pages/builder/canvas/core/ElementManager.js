@@ -1,3 +1,15 @@
+import Konva from 'konva';
+
+class CanvasComponentGroup extends Konva.Group {
+  getClientRect(config) {
+    // 回退机制：查找特定名称的矩形
+    const namedRect = this.findOne('.placeholder');
+    return namedRect 
+      ? namedRect.getClientRect(config) 
+      : super.getClientRect(config);
+  }
+}
+
 /**
  * 元素管理器
  * 负责管理KonvaCanvas中的元素创建、删除和操作
@@ -26,15 +38,15 @@ export class ElementManager {
     let element;
     
     // 根据元素类型创建不同类型的元素
-    switch (options.type) {
-      case 'screen':
-        element = this.createScreenElement(id, options);
-        break;
-      default:
-        element = this.createScreenComponent(id, options, parentId);
-        break;
-    }
-    // element = this.createComponent(id, options, parentId);
+    // switch (options.type) {
+    //   case 'screen':
+    //     element = this.createScreenElement(id, options);
+    //     break;
+    //   default:
+    //     element = this.createScreenComponent(id, options, parentId);
+    //     break;
+    // }
+    element = this.createComponent(id, options, parentId);
 
     // 保存元素引用
     this.canvas.elements.set(id, element);
@@ -42,93 +54,101 @@ export class ElementManager {
     return element;
   }
 
-  // /**
-  //  * 创建屏幕组件
-  //  * @param {string} id - 元素ID
-  //  * @param {object} options - 元素配置选项
-  //  * @param {string} parentId - 父屏幕元素ID
-  //  * @returns {object} 屏幕组件对象
-  //  */
-  // createComponent(id, options, parentId) {
-    
-  //   // 创建屏幕组
-  //   const componentGroup = new this.canvas.Konva.Group({
-  //     x: options.x || 0,
-  //     y: options.y || 0,
-  //     width: options.width || 0,
-  //     height: options.height || 0,
-  //     draggable: false,
-  //     id: id
-  //   });
+  /**
+   * 创建屏幕组件
+   * @param {string} id - 元素ID
+   * @param {object} options - 元素配置选项
+   * @param {string} parentId - 父屏幕元素ID
+   * @returns {object} 屏幕组件对象
+   */
+  createComponent(id, options, parentId) {
+    console.log('createComponent', id, options, parentId);
+    // 创建屏幕组
+    const componentGroup = new CanvasComponentGroup({
+      x: options.x || 0,
+      y: options.y || 0,
+      width: options.width || 0,
+      height: options.height || 0,
+      draggable: true,
+      id: id
+    });
 
-  //   // 创建透明的组件占位符
-  //   const placeholder = new this.canvas.Konva.Rect({
-  //     x: options.x || 0,
-  //     y: options.y || 0,
-  //     width: options.width || 0,
-  //     height: options.height || 0,
-  //     fill: 'rgba(0,0,0,0)', // 透明填充
-  //     stroke: 'rgba(0,123,255,0)', // 默认不显示边框
-  //     strokeWidth: 1,
-  //     draggable: true
-  //   });
+    // 创建透明的组件占位符
+    const placeholder = new this.canvas.Konva.Rect({
+      x: 0,
+      y: 0,
+      width: options.width || 0,
+      height: options.height || 0,
+      fill: 'rgba(0,0,0,0)', // 透明填充
+      stroke: 'rgba(0,123,255,0)', // 默认不显示边框
+      strokeWidth: 1,
+      draggable: false,
+      name: 'placeholder',
+    });
 
-  //   const title = options.type === 'screen' ? id : '';
-  //   // 创建ID文本（放在屏幕框外的左上角上方）
-  //   const titleText = new this.canvas.Konva.Text({
-  //     x: 0,
-  //     y: -20, // 放在屏幕框上方
-  //     text: title,
-  //     fontSize: 14,
-  //     fill: 'white',
-  //     fontStyle: 'bold'
-  //   });
+    const title = options.type === 'screen' ? id : '';
+    // 创建ID文本（放在屏幕框外的左上角上方）
+    const titleText = new this.canvas.Konva.Text({
+      x: 0,
+      y: -20, // 放在屏幕框上方
+      text: title,
+      fontSize: 14,
+      fill: 'white',
+      fontStyle: 'bold'
+    });
 
-  //   // 创建组件组（用于放置屏幕内的组件）
-  //   const componentChild = new this.canvas.Konva.Group({
-  //     x: 0,
-  //     y: 0,
-  //     draggable: false,
-  //     name: 'child'
-  //   });
-  //   // 将背景、ID文本、尺寸标签和组件组添加到屏幕组
-  //   componentGroup.add(placeholder);
-  //   componentGroup.add(titleText);
-  //   componentGroup.add(componentChild);
+    // 创建组件组（用于放置屏幕内的组件）
+    const componentChild = new this.canvas.Konva.Group({
+      x: 0,
+      y: 0,
+      draggable: false,
+      name: 'child'
+    });
+    // 将背景、ID文本、尺寸标签和组件组添加到屏幕组
+    componentGroup.add(placeholder);
+    componentGroup.add(titleText);
+    componentGroup.add(componentChild);
 
-  //   if (options.type == 'screen') {
-  //     this.canvas.screenGroup.add(componentGroup);
-  //   } else {
-  //     const pElement = this.canvas.elements.get(parentId);
-  //     // 添加到屏幕的组件组
-  //     pElement.componentGroup.add(componentGroup);
-  //     // element.componentGroup.add(sizeLabel);
-  //     pElement.componentGroup.getLayer().batchDraw();
+    let screenId = null;
+    if (options.type == 'screen') {
+      screenId = id;
+      this.canvas.screenGroup.add(componentGroup);
+    } else {
+      const pElement = this.canvas.elements.get(parentId);
+      // 添加到屏幕的组件组
+      pElement.componentGroup.add(componentGroup);
+      pElement.componentGroup.getLayer().batchDraw();
       
-  //     // 保存组件引用
-  //     pElement.components.set(id, componentChild);
-  //   }
+      screenId = pElement.screenId;
+      // 保存组件引用
+      // pElement.components.set(id, componentChild);
+      // if (pElement.type !== 'screen') {
+      //   const psElement = this.canvas.elements.get(screenId);
+      //   psElement.components.set(id, componentChild);
+      // }
+    }
 
-  //   // 创建组件对象
-  //   const component = {
-  //     id: id,
-  //     type: options.type || 'component',
-  //     group: componentGroup,
-  //     object: placeholder,
-  //     componentGroup: componentChild,
-  //     titleText: titleText,
-  //     sizeLabel: null, // 保存尺寸标签引用
-  //     components: new Map(), // 子组件
-  //     renderTarget: null, // 渲染目标
-  //     options: options,
-  //     parent: null,
-  //     screenId: parentId,
-  //   };
+    // 创建组件对象
+    const component = {
+      id: id,
+      type: options.type || 'component',
+      group: componentGroup,
+      object: placeholder,
+      componentGroup: componentChild,
+      componentChild: componentChild,
+      titleText: titleText,
+      sizeLabel: null, // 保存尺寸标签引用
+      components: new Map(), // 子组件
+      renderTarget: null, // 渲染目标
+      options: options,
+      parentId: parentId,
+      screenId: screenId,
+    };
 
-  //   this.createScreenComponentEvent(componentGroup, placeholder, id);
+    this.createScreenComponentEvent(componentGroup, placeholder, id);
 
-  //   return component;
-  // }
+    return component;
+  }
 
   /**
    * 创建屏幕元素

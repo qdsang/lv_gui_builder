@@ -197,7 +197,7 @@ export default {
         width: data.width,
         height: data.height,
       };
-      canvasObject.createElement(component.id, component, 'screen');
+      canvasObject.createElement(component.id, component, component.parent);
     },
     updateElementAttr(widget) {
       const canvasComponent = this.$refs.canvasComponent;

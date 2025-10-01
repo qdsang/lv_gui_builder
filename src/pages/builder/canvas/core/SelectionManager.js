@@ -124,31 +124,14 @@ export class SelectionManager {
 
     // 附加变换器到选中的元素
     let node = element.object;
-    
-    // 如果有节点被选中，则附加变换器
-    if (node) {
-      // 高亮选中元素
-      node.setAttrs({
-        stroke: 'rgba(0,123,255,0.8)',
-        strokeWidth: 2
-      });
-      node.getLayer().batchDraw();
-      
-      // 如果是单选，则附加变换器
-      if (this.canvas.selectedElements.size === 1) {
-        this.canvas.transformer.nodes([node]);
-      } else {
-        // 多选时将所有选中的元素附加到变换器
-        const selectedNodes = [];
-        for (const selectedId of this.canvas.selectedElements) {
-          const selectedElement = this.canvas.elements.get(selectedId);
-          if (selectedElement && selectedElement.object && selectedElement.type !== 'screen') {
-            selectedNodes.push(selectedElement.object);
-          }
-        }
-        this.canvas.transformer.nodes(selectedNodes);
-      }
-    }
+    // 高亮选中元素
+    node.setAttrs({
+      stroke: 'rgba(0,123,255,0.8)',
+      strokeWidth: 2
+    });
+    node.getLayer().batchDraw();
+
+    this.updateTransformerNodes();
     
     // 更新尺寸标签（如果元素被选中）
     this.updateSizeLabel(element);
@@ -188,34 +171,7 @@ export class SelectionManager {
       element.sizeLabel = null;
     }
     
-    // 如果这是当前选中的元素，清除变换器
-    if (this.canvas.selectedElements.size === 0) {
-      this.canvas.transformer.nodes([]);
-    } else if (this.canvas.selectedElements.size === 1) {
-      // 如果只剩一个元素被选中，重新附加变换器
-      const remainingId = Array.from(this.canvas.selectedElements)[0];
-      const remainingElement = this.canvas.elements.get(remainingId);
-      if (remainingElement) {
-        let node = null;
-        if (remainingElement.object) {
-          node = remainingElement.object;
-        }
-        
-        if (node) {
-          this.canvas.transformer.nodes([node]);
-        }
-      }
-    } else {
-      // 如果还有多个元素被选中，更新变换器
-      const selectedNodes = [];
-      for (const selectedId of this.canvas.selectedElements) {
-        const selectedElement = this.canvas.elements.get(selectedId);
-        if (selectedElement && selectedElement.object) {
-          selectedNodes.push(selectedElement.object);
-        }
-      }
-      this.canvas.transformer.nodes(selectedNodes);
-    }
+    this.updateTransformerNodes();
     
     // 触发取消选中事件
     this.canvas.eventSystem.emit('deselect', {
@@ -231,6 +187,37 @@ export class SelectionManager {
       selectedElements: Array.from(this.canvas.selectedElements),
       type: 'selectionChange'
     });
+  }
+
+  updateTransformerNodes() {
+    // 如果这是当前选中的元素，清除变换器
+    if (this.canvas.selectedElements.size === 0) {
+      this.canvas.transformer.nodes([]);
+    } else if (this.canvas.selectedElements.size === 1) {
+      // 如果只剩一个元素被选中，重新附加变换器
+      const remainingId = Array.from(this.canvas.selectedElements)[0];
+      const remainingElement = this.canvas.elements.get(remainingId);
+      if (remainingElement) {
+        let node = null;
+        if (remainingElement.group) {
+          node = remainingElement.group;
+        }
+        
+        if (node) {
+          this.canvas.transformer.nodes([node]);
+        }
+      }
+    } else {
+      // 如果还有多个元素被选中，更新变换器
+      const selectedNodes = [];
+      for (const selectedId of this.canvas.selectedElements) {
+        const selectedElement = this.canvas.elements.get(selectedId);
+        if (selectedElement && selectedElement.group) {
+          selectedNodes.push(selectedElement.group);
+        }
+      }
+      this.canvas.transformer.nodes(selectedNodes);
+    }
   }
 
   /**
@@ -277,22 +264,27 @@ export class SelectionManager {
    */
   updateSizeLabel(element) {
     // 附加变换器到选中的元素
-    let node = element.object;
+    let node = element.group;
     
     const width = node.width() * node.scaleX();
     const height = node.height() * node.scaleY();
     if (element.type == 'screen') {
       node = element.group;
     }
-    const x = node.x();
-    const y = node.y();
+    const elementRect = element.group.getClientRect({
+      relativeTo: this.canvas.contentGroup  // 相对于图层坐标
+    });
+    const x = elementRect.x;
+    const y = elementRect.y;
+    // const x = node.x();
+    // const y = node.y();
+    // console.log('updateSizeLabel', elementRect, width, height, x, y);
 
     // 如果没有尺寸标签，则创建一个
     if (!element.sizeLabel) {
       this.createSizeLabel(element, width, height, x, y);
       return;
     }
-    
     
     // 更新标签文本
     const labelGroup = element.sizeLabel;
@@ -317,6 +309,7 @@ export class SelectionManager {
       
       // 计算标签位置（底部居中）
       const scale = this.canvas.scale;
+      
       const contentX = this.canvas.contentGroup ? this.canvas.contentGroup.x() : 0;
       const contentY = this.canvas.contentGroup ? this.canvas.contentGroup.y() : 0;
       
@@ -389,32 +382,10 @@ export class SelectionManager {
     labelText.x((labelBackground.width() - textWidth) / 2);
     labelText.y((labelBackground.height() - textHeight) / 2);
     
-    // 计算标签位置（底部居中）
-    const scale = this.canvas.scale;
-    const contentX = this.canvas.contentGroup ? this.canvas.contentGroup.x() : 0;
-    const contentY = this.canvas.contentGroup ? this.canvas.contentGroup.y() : 0;
-    
-    // 使用元素的绝对坐标来计算标签位置
-    let absoluteX = x;
-    let absoluteY = y;
-    
-    // 如果是屏幕内元素，需要加上屏幕的位置
-    if (element.screenId && element.screenId !== element.id) {
-      const screenElement = this.canvas.elements.get(element.screenId);
-      if (screenElement && screenElement.group) {
-        absoluteX = screenElement.group.x() + x;
-        absoluteY = screenElement.group.y() + y;
-      }
-    }
-    
-    // 标签位置应该是元素绝对位置加上偏移量
-    const labelX = absoluteX * scale + contentX + (width * scale / 2) - (labelBackground.width() / 2);
-    const labelY = absoluteY * scale + contentY + height * scale + 5;
-    
     // 创建尺寸标签组
     const sizeLabelGroup = new this.canvas.Konva.Group({
-      x: labelX,
-      y: labelY
+      x: 0,
+      y: 0
     });
     
     // 添加背景和文本到组
@@ -427,5 +398,7 @@ export class SelectionManager {
     
     // 保存尺寸标签引用
     element.sizeLabel = sizeLabelGroup;
+
+    this.updateSizeLabel(element);
   }
 }

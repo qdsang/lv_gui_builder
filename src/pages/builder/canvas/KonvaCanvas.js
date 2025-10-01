@@ -168,35 +168,27 @@ export class KonvaCanvas {
       ]
     });
     
+    let transformerUpdateNode = (e) => { 
+      const nodes = this.transformer.nodes();
+      if (nodes.length > 0) {
+        // 遍历所有节点并触发修改事件
+        for (const node of nodes) {
+          const elementId = node.id();
+          if (elementId) {
+            this.onElementModified(elementId, e);
+          }
+        }
+      }
+    };
+
     // 监听变换器的变换事件
     this.transformer.on('transform dragmove', (e) => {
-      // console.log('transform');
-      // 获取当前变换的节点
-      const nodes = this.transformer.nodes();
-      if (nodes.length > 0) {
-        // 遍历所有节点并触发修改事件
-        for (const node of nodes) {
-          const elementId = node.id();
-          if (elementId) {
-            this.onElementModified(elementId, e);
-          }
-        }
-      }
+      transformerUpdateNode(e);
     });
-    
+
     // 监听变换器的变换结束事件
     this.transformer.on('transformend dragend', (e) => {
-      // 获取当前变换的节点
-      const nodes = this.transformer.nodes();
-      if (nodes.length > 0) {
-        // 遍历所有节点并触发修改事件
-        for (const node of nodes) {
-          const elementId = node.id();
-          if (elementId) {
-            this.onElementModified(elementId, e);
-          }
-        }
-      }
+      transformerUpdateNode(e);
     });
     
     // 将变换器添加到内容图层

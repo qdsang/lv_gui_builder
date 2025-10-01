@@ -21,14 +21,23 @@ export class ElementEventManager {
     if (!element) return;
     // console.log('onElementModified', id, options);
     
-    let node = element.object;
+    let node = element.group;
     
     if (!node) return;
     
-    const width = parseInt(node.width() * node.scaleX());
-    const height = parseInt(node.height() * node.scaleY());
+    const elementRect = element.group.getClientRect({
+      relativeTo: this.canvas.contentGroup  // 相对于图层坐标
+    });
+    const width = parseInt(elementRect.width);
+    const height = parseInt(elementRect.height);
+    // const x = parseInt(elementRect.x);
+    // const y = parseInt(elementRect.y);
+    // const width = parseInt(node.width() * node.scaleX());
+    // const height = parseInt(node.height() * node.scaleY());
     const x = parseInt(node.x());
     const y = parseInt(node.y());
+    // console.log('onElementModified', id, options, elementRect, width, height, x, y);
+
     // 使用新的事件系统触发事件
     this.canvas.eventSystem.emit('transform', {
       elementId: id,
