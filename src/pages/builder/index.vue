@@ -505,8 +505,8 @@
         }
         let data = { x: 0, y: 0, width: 100, height: 100 };
         if (options) {
-          data.x = options.x || 0;
-          data.y = options.y || 0;
+          data.x = parseInt(options.x) || 0;
+          data.y = parseInt(options.y) || 0;
         }
         console.log('handleCreator', type, parent_id, data);
         let widget = projectStore.createWidget({ type, parent: parent_id, data: data });

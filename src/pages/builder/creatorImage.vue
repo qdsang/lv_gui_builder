@@ -398,10 +398,13 @@ export default {
           height: 140px;
           overflow: hidden;
           position: relative;
+          display: flex;
+          justify-content: center;
+          align-items: center;
           
           img {
-            width: 100%;
-            height: 100%;
+            max-width: 100%;
+            max-height: 100%;
             object-fit: contain;
             transition: transform 0.3s ease;
           }

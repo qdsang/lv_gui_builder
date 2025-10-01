@@ -75,16 +75,14 @@ export default {
       this.$refs.canvasComponent?.resetView();
     },
     
-    // 将屏幕坐标转换为LVGL坐标
-    screenToLvglCoords(screenX, screenY) {
+    // 将屏幕坐标转换为Canvas坐标
+    screenToCanvasCoords(screenX, screenY) {
       const canvasComponent = this.$refs.canvasComponent;
       if (!canvasComponent) return { x: 0, y: 0 };
       
       const coords = canvasComponent.screenToCanvas(screenX, screenY);
-      // 转换为整数坐标
-      const lvglX = Math.round(coords.x * (this.screen.width / (this.screen.width || 480)));
-      const lvglY = Math.round(coords.y * (this.screen.height / (this.screen.height || 480)));
-      return { x: lvglX, y: lvglY };
+      console.log('screenToCanvasCoords', screenX, screenY, coords);
+      return coords;
     },
     
     handleDragOver(event) {
@@ -94,7 +92,8 @@ export default {
     
     // 处理拖放事件
     handleDrop(event) {
-      const coords = this.screenToLvglCoords(event.clientX, event.clientY);
+      console.log('handleDrop', event);
+      const coords = this.screenToCanvasCoords(event.clientX, event.clientY);
       
       try {
         // event.dataTransfer.effectAllowed == "copyMove"

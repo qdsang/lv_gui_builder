@@ -1,0 +1,122 @@
+{
+  "id": "default",
+  "name": "Demo3 Project",
+  "description": "LV Builder Demo",
+  "version": "1.0.0",
+  "versionCode": 1,
+  "author": "Qdsang",
+  "components": {
+    "screen": {
+      "parent": "",
+      "id": "screen",
+      "type": "screen",
+      "zindex": 0,
+      "cb": false,
+      "attributes": [
+        "x",
+        "y",
+        "width",
+        "height"
+      ],
+      "apis": [],
+      "styles": [
+        "MAIN.bg_color"
+      ],
+      "data": {
+        "width": 800,
+        "height": 480,
+        "x": 0,
+        "y": 0,
+        "MAIN.bg_img_src": "",
+        "MAIN.bg_color": "#c1c1c1"
+      },
+      "uuid": "f8068fc1-d4ed-4420-b522-6b13686f720b"
+    },
+    "obj_1": {
+      "parent": "screen",
+      "id": "obj_1",
+      "uuid": "024cceb4-2691-41ea-bc73-7fddfbed649c",
+      "type": "obj",
+      "zindex": 6,
+      "cb": false,
+      "attributes": [
+        "x",
+        "y",
+        "width",
+        "height"
+      ],
+      "apis": [],
+      "styles": [],
+      "data": {
+        "x": 52,
+        "y": 53,
+        "width": 105,
+        "height": 107
+      }
+    }
+  },
+  "animations": {
+    "timelines": [
+    ],
+    "sequences": []
+  },
+  "assets": {
+    "images": [
+    ],
+    "fonts": [
+      {
+        "id": "montserrat_14",
+        "name": "Montserrat 14",
+        "path": "lv.font_montserrat_14",
+        "value": ""
+      },
+      {
+        "id": "montserrat_16",
+        "name": "Montserrat 16",
+        "path": "lv.font_montserrat_16",
+        "value": ""
+      },
+      {
+        "id": "montserrat_18",
+        "name": "Montserrat 18",
+        "path": "lv.font_montserrat_18",
+        "value": ""
+      },
+      {
+        "id": "montserrat_20",
+        "name": "Montserrat 20",
+        "path": "lv.font_montserrat_20",
+        "value": ""
+      },
+      {
+        "id": "montserrat_22",
+        "name": "Montserrat 22",
+        "path": "lv.font_montserrat_22",
+        "value": ""
+      },
+      {
+        "id": "montserrat_24",
+        "name": "Montserrat 24",
+        "path": "lv.font_montserrat_24",
+        "value": ""
+      }
+    ],
+    "themes": []
+  },
+  "settings": {
+    "screen": {
+      "width": 800,
+      "height": 480
+    },
+    "output": {
+      "format": "python",
+      "path": "",
+      "prefix": "ui_"
+    },
+    "lvgl": {
+      "version": "8.3.0",
+      "colorDepth": 16,
+      "defaultFont": "montserrat_16"
+    }
+  }
+}

@@ -272,14 +272,12 @@ export class KonvaCanvas {
    * @returns {object} 画布坐标
    */
   screenToCanvas(screenX, screenY) {
-    // 使用Konva内置的getPointerPosition方法获取考虑了缩放和位置的坐标
-    const pointerPos = this.stage.getPointerPosition();
-    if (!pointerPos) return { x: 0, y: 0 };
-    
-    // 计算相对于内容组的位置
+    // 获取内容组的绝对位置
     const contentPos = this.contentGroup.absolutePosition();
-    const canvasX = (pointerPos.x - contentPos.x) / this.contentGroup.scaleX();
-    const canvasY = (pointerPos.y - contentPos.y) / this.contentGroup.scaleY();
+    
+    // 计算相对于内容组的位置，考虑缩放因素
+    const canvasX = (screenX - contentPos.x) / this.contentGroup.scaleX();
+    const canvasY = (screenY - contentPos.y) / this.contentGroup.scaleY();
     
     return { x: canvasX, y: canvasY };
   }

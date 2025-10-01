@@ -19,6 +19,7 @@
         "height"
       ],
       "styles": [
+        "MAIN.bg_op",
         "MAIN.bg_color",
         "MAIN.bg_img_src"
       ],
@@ -27,6 +28,7 @@
         "height": 170,
         "x": 0,
         "y": 0,
+        "MAIN.bg_op": 255,
         "MAIN.bg_color": "#202020",
         "MAIN.bg_img_src": "Auto Guage2.jpg"
       },
@@ -59,7 +61,7 @@
       "type": "img",
       "zindex": 4,
       "data": {
-        "x": 14,
+        "x": -20,
         "y": 5,
         "width": 283,
         "height": 12,
@@ -98,10 +100,10 @@
       "type": "bar",
       "zindex": 7,
       "data": {
-        "x": 32,
-        "y": 1,
-        "width": 260,
-        "height": 13,
+        "x": 287,
+        "y": 6,
+        "width": 21,
+        "height": 10,
         "INDICATOR.bg_img_src": "&ui_img_images_battery_indicator_png"
       },
       "attributes": [
@@ -111,6 +113,30 @@
         "width"
       ],
       "apis": [],
+      "styles": []
+    },
+    "ui_img_battery": {
+      "parent": "screen",
+      "id": "ui_img_battery",
+      "type": "img",
+      "zindex": 12,
+      "data": {
+        "x": 287,
+        "y": 6,
+        "width": 23,
+        "height": 12,
+        "src": "&ui_img_images_battery_bg_png",
+        "set_src": "battery bg.png"
+      },
+      "attributes": [
+        "y",
+        "x",
+        "height",
+        "width"
+      ],
+      "apis": [
+        "set_src"
+      ],
       "styles": []
     },
     "ui_compass_overlay": {
@@ -243,30 +269,6 @@
       ],
       "apis": [
         "set_text"
-      ],
-      "styles": []
-    },
-    "ui_img_battery": {
-      "parent": "screen",
-      "id": "ui_img_battery",
-      "type": "img",
-      "zindex": 12,
-      "data": {
-        "x": 295,
-        "y": 0,
-        "width": 23,
-        "height": 12,
-        "src": "&ui_img_images_battery_bg_png",
-        "set_src": "battery bg.png"
-      },
-      "attributes": [
-        "y",
-        "x",
-        "height",
-        "width"
-      ],
-      "apis": [
-        "set_src"
       ],
       "styles": []
     },

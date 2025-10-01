@@ -1,0 +1,145 @@
+{
+  "id": "default",
+  "name": "Demo3 Project",
+  "description": "LV Builder Demo",
+  "version": "1.0.0",
+  "versionCode": 1,
+  "author": "Qdsang",
+  "components": {
+    "screen": {
+      "parent": "",
+      "id": "screen",
+      "type": "screen",
+      "zindex": 0,
+      "cb": false,
+      "attributes": [
+        "x",
+        "y",
+        "width",
+        "height"
+      ],
+      "apis": [],
+      "styles": [
+        "MAIN.bg_color"
+      ],
+      "data": {
+        "width": 213,
+        "height": 149,
+        "x": 0,
+        "y": 0,
+        "MAIN.bg_img_src": "",
+        "MAIN.bg_color": "#c1c1c1"
+      },
+      "uuid": "f8068fc1-d4ed-4420-b522-6b13686f720b"
+    },
+    "btn_1": {
+      "parent": "screen",
+      "id": "btn_1",
+      "uuid": "5532a402-3191-41e5-bdff-1829c1fd28a2",
+      "type": "btn",
+      "zindex": 0,
+      "cb": false,
+      "attributes": [
+        "x",
+        "y",
+        "width",
+        "height"
+      ],
+      "apis": [],
+      "styles": [],
+      "data": {
+        "x": 63,
+        "y": 46,
+        "width": 106,
+        "height": 52
+      }
+    },
+    "label_1": {
+      "parent": "btn_1",
+      "id": "label_1",
+      "uuid": "21d28fb1-3bf9-4501-af76-ee60f838e5ce",
+      "type": "label",
+      "zindex": 0,
+      "cb": false,
+      "attributes": [
+        "x",
+        "y",
+        "width",
+        "height"
+      ],
+      "apis": [
+        "set_text"
+      ],
+      "styles": [],
+      "data": {
+        "x": 9,
+        "y": 3,
+        "width": 100,
+        "height": 100,
+        "set_text": "\"Click\""
+      }
+    }
+  },
+  "animations": {
+    "timelines": [],
+    "sequences": []
+  },
+  "assets": {
+    "images": [],
+    "fonts": [
+      {
+        "id": "montserrat_14",
+        "name": "Montserrat 14",
+        "path": "lv.font_montserrat_14",
+        "value": ""
+      },
+      {
+        "id": "montserrat_16",
+        "name": "Montserrat 16",
+        "path": "lv.font_montserrat_16",
+        "value": ""
+      },
+      {
+        "id": "montserrat_18",
+        "name": "Montserrat 18",
+        "path": "lv.font_montserrat_18",
+        "value": ""
+      },
+      {
+        "id": "montserrat_20",
+        "name": "Montserrat 20",
+        "path": "lv.font_montserrat_20",
+        "value": ""
+      },
+      {
+        "id": "montserrat_22",
+        "name": "Montserrat 22",
+        "path": "lv.font_montserrat_22",
+        "value": ""
+      },
+      {
+        "id": "montserrat_24",
+        "name": "Montserrat 24",
+        "path": "lv.font_montserrat_24",
+        "value": ""
+      }
+    ],
+    "themes": []
+  },
+  "settings": {
+    "screen": {
+      "width": 800,
+      "height": 480
+    },
+    "output": {
+      "format": "python",
+      "path": "",
+      "prefix": "ui_"
+    },
+    "lvgl": {
+      "version": "8.3.0",
+      "colorDepth": 16,
+      "defaultFont": "montserrat_16"
+    }
+  }
+}

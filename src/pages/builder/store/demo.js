@@ -36,5 +36,5 @@ export async function getDemoList() {
     await initDemo();
   }
   
-  return Object.keys(demos);
+  return Object.keys(demos).sort();
 }
