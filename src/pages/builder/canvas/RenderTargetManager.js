@@ -1,3 +1,5 @@
+import Konva from 'konva';
+
 /**
  * 渲染目标管理器
  * 负责管理KonvaCanvas中的渲染目标
@@ -39,7 +41,7 @@ export class RenderTargetManager {
     const renderCanvas = options.renderCanvas;
     
     // 创建Konva Image对象
-    const konvaImage = new this.canvas.Konva.Image({ // 修复：使用this.canvas.Konva而不是this.Konva
+    const konvaImage = new Konva.Image({
       x: 0,
       y: 0,
       image: renderCanvas,

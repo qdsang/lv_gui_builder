@@ -1,3 +1,4 @@
+import Konva from 'konva';
 import { PluginInterface } from './PluginInterface.js';
 
 /**
@@ -65,7 +66,7 @@ export class GridPlugin extends PluginInterface {
    */
   createGrid() {
     // 创建网格组
-    this.gridGroup = new this.canvas.Konva.Group({
+    this.gridGroup = new Konva.Group({
       name: 'gridGroup',
       x: 0,
       y: 0,
@@ -99,7 +100,7 @@ export class GridPlugin extends PluginInterface {
     
     // 绘制垂直线
     for (let x = 0; x <= stageWidth; x += gridSize) {
-      const line = new this.canvas.Konva.Line({
+      const line = new Konva.Line({
         points: [x, 0, x, stageHeight],
         stroke: this.currentMode.gridColor,
         strokeWidth: 1
@@ -110,7 +111,7 @@ export class GridPlugin extends PluginInterface {
     
     // 绘制水平线
     for (let y = 0; y <= stageHeight; y += gridSize) {
-      const line = new this.canvas.Konva.Line({
+      const line = new Konva.Line({
         points: [0, y, stageWidth, y],
         stroke: this.currentMode.gridColor,
         strokeWidth: 1

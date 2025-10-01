@@ -1,3 +1,4 @@
+import Konva from 'konva';
 import { PluginInterface } from './PluginInterface.js';
 
 /**
@@ -105,9 +106,9 @@ export class RulerPlugin extends PluginInterface {
     const topChildren = this.topMarksGroup.getChildren();
     for (let i = 0; i < topChildren.length; i++) {
       const child = topChildren[i];
-      if (child instanceof this.canvas.Konva.Text) {
+      if (child instanceof Konva.Text) {
         child.fill(this.currentMode.textColor);
-      } else if (child instanceof this.canvas.Konva.Line) {
+      } else if (child instanceof Konva.Line) {
         child.stroke(this.currentMode.rulerColor);
       }
     }
@@ -115,9 +116,9 @@ export class RulerPlugin extends PluginInterface {
     const leftChildren = this.leftMarksGroup.getChildren();
     for (let i = 0; i < leftChildren.length; i++) {
       const child = leftChildren[i];
-      if (child instanceof this.canvas.Konva.Text) {
+      if (child instanceof Konva.Text) {
         child.fill(this.currentMode.textColor);
-      } else if (child instanceof this.canvas.Konva.Line) {
+      } else if (child instanceof Konva.Line) {
         child.stroke(this.currentMode.rulerColor);
       }
     }
@@ -143,7 +144,7 @@ export class RulerPlugin extends PluginInterface {
    */
   createRulers() {
     // 创建标尺组
-    this.rulerGroup = new this.canvas.Konva.Group({
+    this.rulerGroup = new Konva.Group({
       name: 'rulerGroup',
       x: 0,
       y: 0,
@@ -151,7 +152,7 @@ export class RulerPlugin extends PluginInterface {
     });
 
     // 创建顶部标尺背景
-    this.topRuler = new this.canvas.Konva.Rect({
+    this.topRuler = new Konva.Rect({
       x: 0, // 改为0，占满整个宽度
       y: 0,
       width: this.canvas.stage.width(), // 改为完整宽度
@@ -161,7 +162,7 @@ export class RulerPlugin extends PluginInterface {
     });
 
     // 创建左侧标尺背景
-    this.leftRuler = new this.canvas.Konva.Rect({
+    this.leftRuler = new Konva.Rect({
       x: 0,
       y: 0, // 改为0，占满整个高度
       width: this.rulerSize,
@@ -171,14 +172,14 @@ export class RulerPlugin extends PluginInterface {
     });
     
     // 为顶部标尺添加底部边框线
-    this.topRulerBorder = new this.canvas.Konva.Line({
+    this.topRulerBorder = new Konva.Line({
       points: [0, this.rulerSize, this.canvas.stage.width(), this.rulerSize],
       stroke: this.currentMode.rulerColor,
       strokeWidth: 1
     });
     
     // 为左侧标尺添加右边框线
-    this.leftRulerBorder = new this.canvas.Konva.Line({
+    this.leftRulerBorder = new Konva.Line({
       points: [this.rulerSize, 0, this.rulerSize, this.canvas.stage.height()],
       stroke: this.currentMode.rulerColor,
       strokeWidth: 1
@@ -191,12 +192,12 @@ export class RulerPlugin extends PluginInterface {
     this.rulerGroup.add(this.leftRulerBorder); // 添加左侧标尺右边框
 
     // 创建标尺标记组
-    this.topMarksGroup = new this.canvas.Konva.Group({
+    this.topMarksGroup = new Konva.Group({
       x: 0, // 改为0
       y: 0
     });
     
-    this.leftMarksGroup = new this.canvas.Konva.Group({
+    this.leftMarksGroup = new Konva.Group({
       x: 0,
       y: 0 // 改为0
     });
@@ -205,7 +206,7 @@ export class RulerPlugin extends PluginInterface {
     this.rulerGroup.add(this.leftMarksGroup);
 
     // 创建高亮区域
-    this.topHighlight = new this.canvas.Konva.Rect({
+    this.topHighlight = new Konva.Rect({
       x: 0, // 改为0
       y: 0,
       width: 0,
@@ -214,7 +215,7 @@ export class RulerPlugin extends PluginInterface {
       visible: false
     });
 
-    this.leftHighlight = new this.canvas.Konva.Rect({
+    this.leftHighlight = new Konva.Rect({
       x: 0,
       y: 0, // 改为0
       width: this.rulerSize,
@@ -227,7 +228,7 @@ export class RulerPlugin extends PluginInterface {
     this.rulerGroup.add(this.leftHighlight);
 
     // 创建左上角覆盖层（半透明正方形）
-    this.cornerCover = new this.canvas.Konva.Rect({
+    this.cornerCover = new Konva.Rect({
       x: 0,
       y: 0,
       width: this.rulerSize,
@@ -291,13 +292,13 @@ export class RulerPlugin extends PluginInterface {
       
       // 确保标记在可视范围内
       if (x >= 0 && x <= stageWidth) {
-        const mark = new this.canvas.Konva.Line({
+        const mark = new Konva.Line({
           points: [x, this.rulerSize - 5, x, this.rulerSize],
           stroke: this.currentMode.rulerColor,
           strokeWidth: 1
         });
         
-        const text = new this.canvas.Konva.Text({
+        const text = new Konva.Text({
           x: x - 8,
           y: 2,
           text: value,
@@ -319,13 +320,13 @@ export class RulerPlugin extends PluginInterface {
       
       // 确保标记在可视范围内
       if (x >= 0 && x <= stageWidth) {
-        const mark = new this.canvas.Konva.Line({
+        const mark = new Konva.Line({
           points: [x, this.rulerSize - 5, x, this.rulerSize],
           stroke: this.currentMode.rulerColor,
           strokeWidth: 1
         });
         
-        const text = new this.canvas.Konva.Text({
+        const text = new Konva.Text({
           x: x - 8,
           y: 2,
           text: value,
@@ -352,13 +353,13 @@ export class RulerPlugin extends PluginInterface {
       
       // 确保标记在可视范围内
       if (y >= 0 && y <= stageHeight) {
-        const mark = new this.canvas.Konva.Line({
+        const mark = new Konva.Line({
           points: [this.rulerSize - 5, y, this.rulerSize, y],
           stroke: this.currentMode.rulerColor,
           strokeWidth: 1
         });
         
-        const text = new this.canvas.Konva.Text({
+        const text = new Konva.Text({
           x: 2,
           y: y + 2,
           text: value,
@@ -380,13 +381,13 @@ export class RulerPlugin extends PluginInterface {
       
       // 确保标记在可视范围内
       if (y >= 0 && y <= stageHeight) {
-        const mark = new this.canvas.Konva.Line({
+        const mark = new Konva.Line({
           points: [this.rulerSize - 5, y, this.rulerSize, y],
           stroke: this.currentMode.rulerColor,
           strokeWidth: 1
         });
         
-        const text = new this.canvas.Konva.Text({
+        const text = new Konva.Text({
           x: 2,
           y: y + 2,
           text: value,
@@ -500,7 +501,7 @@ export class RulerPlugin extends PluginInterface {
     
     // 显示顶部标尺的开始和结束数字
     if (!this.topStartLabel) {
-      this.topStartLabel = new this.canvas.Konva.Text({
+      this.topStartLabel = new Konva.Text({
         x: elementPos.x,
         y: this.rulerSize/2,
         text: parseInt(startX),
@@ -524,7 +525,7 @@ export class RulerPlugin extends PluginInterface {
     }
     
     if (!this.topEndLabel) {
-      this.topEndLabel = new this.canvas.Konva.Text({
+      this.topEndLabel = new Konva.Text({
         x: elementPos.x + width,
         y: this.rulerSize/2,
         text: parseInt(endX),
@@ -548,7 +549,7 @@ export class RulerPlugin extends PluginInterface {
     }
     
     if (!this.leftStartLabel) {
-      this.leftStartLabel = new this.canvas.Konva.Text({
+      this.leftStartLabel = new Konva.Text({
         x: this.rulerSize/2,
         y: elementPos.y,
         text: parseInt(startY),
@@ -572,7 +573,7 @@ export class RulerPlugin extends PluginInterface {
     }
     
     if (!this.leftEndLabel) {
-      this.leftEndLabel = new this.canvas.Konva.Text({
+      this.leftEndLabel = new Konva.Text({
         x: this.rulerSize/2,
         y: elementPos.y + height,
         text: parseInt(endY),

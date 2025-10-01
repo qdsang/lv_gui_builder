@@ -1,3 +1,5 @@
+import Konva from 'konva';
+
 /**
  * 事件管理器
  * 负责处理KonvaCanvas的各种事件
@@ -271,7 +273,7 @@ export class EventManager {
         };
         
         // 创建选择框
-        this.canvas.selectionRect = new this.canvas.Konva.Rect({
+        this.canvas.selectionRect = new Konva.Rect({
           x: pointerPos.x,
           y: pointerPos.y,
           width: 0,

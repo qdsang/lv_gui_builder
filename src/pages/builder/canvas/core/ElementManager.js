@@ -62,7 +62,7 @@ export class ElementManager {
    * @returns {object} 屏幕组件对象
    */
   createComponent(id, options, parentId) {
-    console.log('createComponent', id, options, parentId);
+    // console.log('createComponent', id, options, parentId);
     // 创建屏幕组
     const componentGroup = new CanvasComponentGroup({
       x: options.x || 0,
@@ -74,7 +74,7 @@ export class ElementManager {
     });
 
     // 创建透明的组件占位符
-    const placeholder = new this.canvas.Konva.Rect({
+    const placeholder = new Konva.Rect({
       x: 0,
       y: 0,
       width: options.width || 0,
@@ -88,7 +88,7 @@ export class ElementManager {
 
     const title = options.type === 'screen' ? id : '';
     // 创建ID文本（放在屏幕框外的左上角上方）
-    const titleText = new this.canvas.Konva.Text({
+    const titleText = new Konva.Text({
       x: 0,
       y: -20, // 放在屏幕框上方
       text: title,
@@ -98,7 +98,7 @@ export class ElementManager {
     });
 
     // 创建组件组（用于放置屏幕内的组件）
-    const componentChild = new this.canvas.Konva.Group({
+    const componentChild = new Konva.Group({
       x: 0,
       y: 0,
       draggable: false,
@@ -163,7 +163,7 @@ export class ElementManager {
     } = options;
     
     // 创建屏幕组
-    const screenGroup = new this.canvas.Konva.Group({
+    const screenGroup = new Konva.Group({
       x: options.x || 0,
       y: options.y || 0,
       width: width,
@@ -172,7 +172,7 @@ export class ElementManager {
     });
 
     // 创建半透明黑色
-    const placeholder = new this.canvas.Konva.Rect({
+    const placeholder = new Konva.Rect({
       x: 0,
       y: 0,
       width: width,
@@ -184,7 +184,7 @@ export class ElementManager {
     });
 
     // 创建ID文本（放在屏幕框外的左上角上方）
-    const titleText = new this.canvas.Konva.Text({
+    const titleText = new Konva.Text({
       x: 0,
       y: -20, // 放在屏幕框上方
       text: id,
@@ -194,7 +194,7 @@ export class ElementManager {
     });
 
     // 创建组件组（用于放置屏幕内的组件）
-    const componentChild = new this.canvas.Konva.Group({
+    const componentChild = new Konva.Group({
       x: 0,
       y: 0,
       draggable: false
@@ -242,7 +242,7 @@ export class ElementManager {
     }
     
     // 创建透明的组件占位符
-    const placeholder = new this.canvas.Konva.Rect({
+    const placeholder = new Konva.Rect({
       x: options.x || 0,
       y: options.y || 0,
       width: options.width || 100,

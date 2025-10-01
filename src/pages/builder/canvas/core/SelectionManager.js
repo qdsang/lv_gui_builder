@@ -1,3 +1,5 @@
+import Konva from 'konva';
+
 /**
  * 选择管理器
  * 负责管理KonvaCanvas中的元素选择功能
@@ -352,7 +354,7 @@ export class SelectionManager {
     }
     
     // 创建尺寸标签背景（半透明黑色）
-    const labelBackground = new this.canvas.Konva.Rect({
+    const labelBackground = new Konva.Rect({
       x: 0,
       y: 0,
       width: 60,
@@ -362,7 +364,7 @@ export class SelectionManager {
     });
     
     // 创建尺寸标签文本（白色）
-    const labelText = new this.canvas.Konva.Text({
+    const labelText = new Konva.Text({
       x: 0,
       y: 0,
       text: `${parseInt(width)}x${parseInt(height)}`,
@@ -383,7 +385,7 @@ export class SelectionManager {
     labelText.y((labelBackground.height() - textHeight) / 2);
     
     // 创建尺寸标签组
-    const sizeLabelGroup = new this.canvas.Konva.Group({
+    const sizeLabelGroup = new Konva.Group({
       x: 0,
       y: 0
     });
