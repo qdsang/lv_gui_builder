@@ -176,7 +176,7 @@ export default {
       //   this.createElement(widget);
       // }
       
-      canvasObject.centerView({ fit: true, padding: 40 });
+      this.centerView();
     },
     createElement(widget) {
       if (widget.type == 'screen') return;
@@ -213,9 +213,9 @@ export default {
     },
     centerView() {
       const canvasObject = this.getCanvasObject();
-      setTimeout(() => {
-        canvasObject.centerView({ fit: true, padding: 40 });
-      }, 100);
+      // setTimeout(() => {
+        canvasObject.centerView({ fit: true, padding: 80 });
+      // }, 100);
     },
     deleteElement(screenid, id) {
       const canvasObject = this.getCanvasObject();

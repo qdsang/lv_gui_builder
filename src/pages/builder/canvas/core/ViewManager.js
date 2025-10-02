@@ -20,7 +20,7 @@ export class ViewManager {
   centerView(options = {}) {
     if (!this.canvas.contentGroup || !this.canvas.screenGroup) return;
 
-    const { fit = true, padding = 40 } = options;
+    const { fit = true, padding = 80 } = options;
     
     this.canvas.resetView();
 

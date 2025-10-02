@@ -91,7 +91,7 @@
       <template #left-bottom>
         <el-tabs type="card" v-model="activeTabLeft">
           <el-tab-pane label="Screen" name="screen">
-            <el-tag class="widget-name">{{ selectNodeId }}</el-tag>
+            <!-- <el-tag class="widget-name">{{ selectNodeId }}</el-tag> -->
             <creator-tree :node-key="selectNodeId" @event="handleTreeEvent"></creator-tree>
           </el-tab-pane>
         </el-tabs>
@@ -635,7 +635,7 @@
         } else {
           ids = [id];
         }
-        
+
         if (id) {
           let info = projectStore.getWidgetById(id);
           this.$refs.simulator.activeFrame(info);

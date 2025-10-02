@@ -679,6 +679,10 @@ export class RulerPlugin extends PluginInterface {
       this.updateRulerSize();
     });
 
+    this.canvas.eventSystem.on('viewChange', (e) => {
+      this.updateRulerSize();
+    });
+
     // 监听主题变化事件
     this.handleThemeChange = () => {
       this.updateTheme();

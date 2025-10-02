@@ -444,8 +444,8 @@ export class KonvaCanvas {
     this.eventSystem.emit('viewChange', { theme: isDark ? 'dark' : 'light' });
   }
   
-  centerView() {
-    this.viewManager.centerView();
+  centerView(options) {
+    this.viewManager.centerView(options);
   }
   
   /**

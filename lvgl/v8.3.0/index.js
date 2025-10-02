@@ -104,6 +104,10 @@ export async function simulatorScreenSize({ width, height }) {
   // console.log('ScreenSize');
   await new Promise(resolve => setTimeout(resolve, 100));
   
+  // TODO: 临时处理
+  if (width < 1024) width = 1024;
+  if (height < 900) height = 900;
+
   /* Run init script */
   mp_js_do_str(envCode.EnvInitCode(width, height).join('\n'));
 
