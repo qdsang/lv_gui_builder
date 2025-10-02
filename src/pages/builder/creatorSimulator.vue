@@ -69,15 +69,13 @@ export default {
     // });
   },
   methods: {
-    
-    // 重置视图
-    resetView() {
-      this.$refs.canvasComponent?.resetView();
+    getCanvasObject() {
+      return this.$refs.canvasComponent?.getCanvasObject();
     },
     
     // 将屏幕坐标转换为Canvas坐标
     screenToCanvasCoords(screenX, screenY) {
-      const canvasComponent = this.$refs.canvasComponent;
+      const canvasComponent = this.getCanvasObject();
       if (!canvasComponent) return { x: 0, y: 0 };
       
       const coords = canvasComponent.screenToCanvas(screenX, screenY);
@@ -140,9 +138,8 @@ export default {
       // await this.loadScreen();
     },
     async loadScreen({ width, height}) {
-    // 初始化LVGL渲染目标
-      const canvasComponent = this.$refs.canvasComponent;
-      const canvasObject = canvasComponent.getCanvasObject();
+      // 初始化LVGL渲染目标
+      const canvasObject = this.getCanvasObject();
       if (!canvasObject) {
         await new Promise(r => setTimeout(r, 100));
         this.$nextTick(() => this.loadScreen());
@@ -184,8 +181,7 @@ export default {
     createElement(widget) {
       if (widget.type == 'screen') return;
 
-      const canvasComponent = this.$refs.canvasComponent;
-      const canvasObject = canvasComponent.getCanvasObject();
+      const canvasObject = this.getCanvasObject();
       let data = widget.data;
       let component = {
         id: widget.id,
@@ -200,8 +196,7 @@ export default {
       canvasObject.createElement(component.id, component, component.parent);
     },
     updateElementAttr(widget) {
-      const canvasComponent = this.$refs.canvasComponent;
-      const canvasObject = canvasComponent.getCanvasObject();
+      const canvasObject = this.getCanvasObject();
       canvasObject.updateElement(widget.id, {
         x: widget.data.x,
         y: widget.data.y,
@@ -211,27 +206,24 @@ export default {
       });
     },
     updateView() {
-      const canvasComponent = this.$refs.canvasComponent;
-      const canvasObject = canvasComponent.getCanvasObject();
+      const canvasObject = this.getCanvasObject();
       setTimeout(() => {
         canvasObject.updateView();
       }, 100);
     },
     centerView() {
-      const canvasComponent = this.$refs.canvasComponent;
-      const canvasObject = canvasComponent.getCanvasObject();
+      const canvasObject = this.getCanvasObject();
       setTimeout(() => {
         canvasObject.centerView({ fit: true, padding: 40 });
       }, 100);
     },
     deleteElement(screenid, id) {
-      const canvasComponent = this.$refs.canvasComponent;
-      const canvasObject = canvasComponent.getCanvasObject();
+      const canvasObject = this.getCanvasObject();
       canvasObject.deselectElement(id);
       canvasObject.removeElement(id);
     },
     activeFrame(info) {
-      const canvasObject = this.$refs.canvasComponent.getCanvasObject();
+      const canvasObject = this.getCanvasObject();
       canvasObject.selectElement(info.id);
 
       if (info.type == 'screen') {

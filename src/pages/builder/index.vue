@@ -31,26 +31,26 @@
           <el-menu-item index="font">
             <el-link href="#/lv/font" target="_blank">
               <el-icon><Link /></el-icon>
-              Font
+              LVGL Font Tool
             </el-link>
           </el-menu-item>
           <el-menu-item index="image">
             <el-link href="#/lv/image" target="_blank">
               <el-icon><Link /></el-icon>
-              image
+              LVGL Image Tool
             </el-link>
           </el-menu-item>
 
           <el-menu-item index="docs">
             <el-link href="https://docs.lvgl.io/master/index.html" target="_blank">
               <el-icon><Link /></el-icon>
-              Documentation
+              LVGL Doc
             </el-link>
           </el-menu-item>
           <el-menu-item index="examples">
             <el-link href="https://sim.lvgl.io/v8.3/micropython/ports/javascript/index.html" target="_blank">
               <el-icon><Monitor /></el-icon>
-              Simulator
+              LVGL Simulator
             </el-link>
           </el-menu-item>
         </el-menu>
@@ -598,6 +598,8 @@
           // }
         } else if (event == 'click') {
           this.activeNode(id);
+        } else if (event == 'active') {
+          this.activeNode(data);
         } else if (event == 'sort') {
           let change = projectStore.updateWidgetTreeIndex();
           for (const item of change) {
@@ -629,12 +631,15 @@
         let ids = [];
         if (Array.isArray(id)) {
           ids = id;
-          id = ids[0];
+          id = ids[ids.length - 1];
         } else {
           ids = [id];
         }
-        let info = projectStore.getWidgetById(id);
-        this.$refs.simulator.activeFrame(info);
+        
+        if (id) {
+          let info = projectStore.getWidgetById(id);
+          this.$refs.simulator.activeFrame(info);
+        }
 
         if (this.selectNodeId == id) {
           return;

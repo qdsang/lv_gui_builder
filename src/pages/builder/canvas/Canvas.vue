@@ -48,14 +48,7 @@ const updateCanvasSize = () => {
     lastHeight = height;
     
     // 更新画布尺寸
-    konvaCanvas.value.stage.width(width);
-    konvaCanvas.value.stage.height(height);
-    konvaCanvas.value.options.width = width;
-    konvaCanvas.value.options.height = height;
-    konvaCanvas.value.layer.batchDraw();
-    
-    // 通知插件画布尺寸已更新
-    konvaCanvas.value.eventSystem.emit('canvasResize', { width, height });
+    konvaCanvas.value.updateCanvasSize(width, height);
   }
 };
 
@@ -72,8 +65,6 @@ onMounted(() => {
   lastHeight = height;
   
   konvaCanvas.value = new KonvaCanvas(container, {
-    width: width,
-    height: height,
     isDark: isDark.value
   });
   
@@ -183,28 +174,8 @@ watch(() => isDark.value, (newVal) => {
     dispatchThemeChangeEvent();
   };
   
-  // 暴露方法给父组件
-  defineExpose({
-    // 重置视图
-    resetView() {
-    if (konvaCanvas.value) {
-      konvaCanvas.value.resetView();
-    }
-  },
-  
-  // 将屏幕坐标转换为画布坐标
-  screenToCanvas(screenX, screenY) {
-    if (konvaCanvas.value) {
-      return konvaCanvas.value.screenToCanvas(screenX, screenY);
-    }
-    return { x: 0, y: 0 };
-  },
-  
-  // 设置缩放级别
-  setScale(scale, zoomPoint) {
-    // Konva的缩放通过鼠标滚轮事件处理
-  },
-  
+// 暴露方法给父组件
+defineExpose({
   // 获取Canvas元素
   getCanvasObject() {
     // 为了兼容现有代码，返回konvaCanvas
@@ -214,114 +185,6 @@ watch(() => isDark.value, (newVal) => {
     return null;
   },
   
-  // 获取插件实例
-  getPlugin(name) {
-    if (konvaCanvas.value && konvaCanvas.value.pluginManager) {
-      return konvaCanvas.value.pluginManager.getPlugin(name);
-    }
-    return null;
-  },
-  
-  // 创建元素
-  createElement(id, options) {
-    if (konvaCanvas.value) {
-      return konvaCanvas.value.createElement(id, options);
-    }
-    return null;
-  },
-  
-  // 获取元素
-  getElement(id) {
-    if (konvaCanvas.value) {
-      return konvaCanvas.value.getElement(id);
-    }
-    return null;
-  },
-  
-  // 删除元素
-  removeElement(id) {
-    if (konvaCanvas.value) {
-      konvaCanvas.value.removeElement(id);
-    }
-  },
-  
-  // 为屏幕元素创建渲染目标
-  createRenderTarget(screenId, options) {
-    if (konvaCanvas.value) {
-      return konvaCanvas.value.createRenderTarget(screenId, options);
-    }
-    return null;
-  },
-  
-  // 获取渲染Canvas
-  getRenderCanvas(screenId) {
-    if (konvaCanvas.value) {
-      return konvaCanvas.value.getRenderCanvas(screenId);
-    }
-    return null;
-  },
-  
-  // 激活渲染目标显示
-  activateRenderTargetDisplay(screenId) {
-    if (konvaCanvas.value) {
-      return konvaCanvas.value.activateRenderTargetDisplay(screenId);
-    }
-  },
-  
-  // 更新渲染目标尺寸
-  updateRenderTargetSize(screenId, options) {
-    if (konvaCanvas.value) {
-      konvaCanvas.value.updateRenderTargetSize(screenId, options);
-    }
-  },
-  
-  // 更新渲染目标显示
-  updateRenderDisplay(screenId) {
-    if (konvaCanvas.value) {
-      konvaCanvas.value.updateRenderDisplay(screenId);
-    }
-  },
-  
-  // 为屏幕元素添加组件
-  addComponent(screenId, component) {
-    if (konvaCanvas.value) {
-      // 这个方法现在通过createElement处理
-      return konvaCanvas.value.createElement(component.id, component, screenId);
-    }
-  },
-  
-  // 更新元素属性
-  updateElement(id, properties) {
-    if (konvaCanvas.value) {
-      konvaCanvas.value.updateElement(id, properties);
-    }
-  },
-  
-  // 清空屏幕元素的组件
-  clearScreenComponents(screenId) {
-    if (konvaCanvas.value) {
-      konvaCanvas.value.clearScreenComponents(screenId);
-    }
-  },
-  
-  // 更新画布尺寸
-  updateView() {
-    updateCanvasSize();
-  },
-  
-  // 对齐选中元素
-  alignElements(alignment) {
-    if (konvaCanvas.value) {
-      konvaCanvas.value.alignElements(alignment);
-    }
-  },
-  
-  // 分布选中元素
-  distributeElements(distribution) {
-    if (konvaCanvas.value) {
-      konvaCanvas.value.distributeElements(distribution);
-    }
-  }
 });
 </script>
 

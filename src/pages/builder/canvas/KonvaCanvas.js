@@ -126,6 +126,18 @@ export class KonvaCanvas {
     this.drawContent();
   }
   
+  updateCanvasSize(width, height) {
+    // 更新画布尺寸
+    this.stage.width(width);
+    this.stage.height(height);
+    this.options.width = width;
+    this.options.height = height;
+    this.layer.batchDraw();
+
+    // 通知插件画布尺寸已更新
+    this.eventSystem.emit('canvasResize', { width, height });
+  }
+
   /**
    * 初始化内容组
    */
