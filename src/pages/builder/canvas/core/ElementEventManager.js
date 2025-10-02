@@ -34,8 +34,15 @@ export class ElementEventManager {
     // const y = parseInt(elementRect.y);
     // const width = parseInt(node.width() * node.scaleX());
     // const height = parseInt(node.height() * node.scaleY());
-    const x = parseInt(node.x());
-    const y = parseInt(node.y());
+    let x = parseInt(node.x());
+    let y = parseInt(node.y());
+
+    // TODO: temp
+    if (element.type === 'screen') {
+      x = 0;
+      y = 0;
+    }
+
     // console.log('onElementModified', id, options, elementRect, width, height, x, y);
 
     // 使用新的事件系统触发事件

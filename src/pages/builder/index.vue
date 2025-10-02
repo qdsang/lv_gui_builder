@@ -6,7 +6,9 @@
           <h1 class="logo-text">
             <span class="logo-brand">LV</span>
             <el-divider direction="vertical" />
-            <span class="logo-product">Builder</span>
+            <span class="logo-product">
+              <el-link href="https://github.com/qdsang/lv_gui_builder" target="_blank">Builder</el-link>
+            </span>
           </h1>
         </div>
 
@@ -885,6 +887,10 @@
           color: var(--el-text-color-regular);
           font-weight: 500;
           font-size: 20px;
+          :deep(.el-link) {
+            color: var(--el-text-color-regular);
+            font-size: 20px;
+          }
         }
 
         :deep(.el-divider--vertical) {
