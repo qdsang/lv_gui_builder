@@ -274,7 +274,7 @@ export class SelectionManager {
       node = element.group;
     }
     const elementRect = element.group.getClientRect({
-      relativeTo: this.canvas.contentGroup  // 相对于图层坐标
+      relativeTo: this.canvas.layer  // 相对于图层坐标
     });
     const x = elementRect.x;
     const y = elementRect.y;
@@ -312,25 +312,8 @@ export class SelectionManager {
       // 计算标签位置（底部居中）
       const scale = this.canvas.scale;
       
-      const contentX = this.canvas.contentGroup ? this.canvas.contentGroup.x() : 0;
-      const contentY = this.canvas.contentGroup ? this.canvas.contentGroup.y() : 0;
-      
-      // 使用元素的绝对坐标来计算标签位置
-      let absoluteX = x;
-      let absoluteY = y;
-      
-      // 如果是屏幕内元素，需要加上屏幕的位置
-      if (element.screenId && element.screenId !== element.id) {
-        const screenElement = this.canvas.elements.get(element.screenId);
-        if (screenElement && screenElement.group) {
-          absoluteX = screenElement.group.x() + x;
-          absoluteY = screenElement.group.y() + y;
-        }
-      }
-      
-      // 标签位置应该是元素绝对位置加上偏移量
-      const labelX = absoluteX * scale + contentX + (width * scale / 2) - (background.width() / 2);
-      const labelY = absoluteY * scale + contentY + height * scale + 5;
+      const labelX = x + (width * scale / 2) - (background.width() / 2);
+      const labelY = y + height * scale + 5;
       
       labelGroup.x(labelX);
       labelGroup.y(labelY);

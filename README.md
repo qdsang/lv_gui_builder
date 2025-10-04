@@ -92,6 +92,7 @@ v3
 - https://sim.lvgl.io/v8.3/micropython/ports/javascript/index.html
 - https://github.com/nishad2m8/T-Display-S3-YT/tree/master
 - https://github.com/peterhinch/micropython-font-to-py/blob/master/font_to_py.py
+- https://github.com/nishad2m8/T-Display-S3-YT
 
 
 ## Contribution

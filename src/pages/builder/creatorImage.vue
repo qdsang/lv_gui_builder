@@ -26,13 +26,13 @@
     >
       <div class="image-card">
         <div class="image-preview" @click="handleImagePreview(item)">
-          <img :src="item.content" :alt="item.name" />
+          <img :src="item.content" :alt="item.name" :title="item.name" />
         </div>
         
         <!-- Hover时显示的图片信息 -->
         <div class="image-hover-info" v-if="false">
           <div class="info-content">
-            <div class="info-row">
+            <div class="info-row" :title="item.name">
               <span class="info-label">Title:</span>
               <span class="info-value">{{ item.name }}</span>
             </div>

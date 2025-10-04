@@ -16,7 +16,11 @@ export async function initDemo() {
   // 原有的初始化逻辑
   for (let demo in demos) {
     const key = `lvgl_project_${demo}`;
-    localStorage.setItem(key, demos[demo]);
+    try {
+      localStorage.setItem(key, demos[demo]);
+    } catch (e) {
+      console.error(e);
+    }
   }
 }
 
@@ -27,7 +31,11 @@ export async function initDemoProject(id) {
   }
   
   const key = `lvgl_project_${id}`;
-  localStorage.setItem(key, demos[id]);
+  try {
+    localStorage.setItem(key, demos[id]);
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 export async function getDemoList() {

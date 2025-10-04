@@ -317,13 +317,17 @@ class ProjectStore {
     if (!this.currentProject) return;
     
     const key = `lvgl_project_${this.currentProject}`;
-    localStorage.setItem(key, JSON.stringify(this.projectData));
+    try {
+      localStorage.setItem(key, JSON.stringify(this.projectData));
+    } catch (e) {
+      console.error(e);
+    }
     dispatch_data_changed_event();
   }
 
   // 资源管理方法
   addAsset(type, asset) {
-    const id = 'asset://' + type + '/' + (asset.fileName || Date.now().toString());
+    const id = 'asset://' + type + '/' + (asset.fileName || asset.name || Date.now().toString());
     const assetWithId = { id, ...asset };
     
     if (!Array.isArray(this.projectData.assets[type])) {
@@ -483,8 +487,8 @@ class ProjectStore {
     let type = file.type || file.raw.type;
     let content = file.base64 || await imgToBase64(file.raw);
     
-    type = 'image/jpeg';
-    content = await convertImage(content.toString(), type);
+    // type = 'image/jpeg';
+    // content = await convertImage(content.toString(), type);
 
     let imgInfo = await imgGetInfo(content.toString());
     
