@@ -456,20 +456,18 @@ export class RulerPlugin extends PluginInterface {
     const viewportY = this.canvas.viewportY;
     
     let x = element.object.x(), y = element.object.y();
-    if (element.type == 'screen') {
-      x = element.group.x();
-      y = element.group.y();
-    } else {
-      const pelement = this.canvas.elements.get(element.screenId);
-      x += pelement.group.x();
-      y += pelement.group.y();
-    }
+
+    const elementRect = element.group.getClientRect({
+      relativeTo: this.canvas.layer
+    });
+    x = elementRect.x;
+    y = elementRect.y;
 
     // 使用坐标转换工具将元素坐标转换为画布坐标
-    const elementPos = this.canvas.coordinateUtils.elementToCanvas(x, y);
+    const elementPos = elementRect; //this.canvas.coordinateUtils.elementToCanvas(x, y);
     
-    const width = element.object.width() * element.object.scaleX() * scale;
-    const height = element.object.height() * element.object.scaleY() * scale;
+    const width = elementRect.width; //element.object.width() * element.object.scaleX() * scale;
+    const height = elementRect.height; //element.object.height() * element.object.scaleY() * scale;
     
     // 计算元素在标尺上的起始和结束位置
     let startX = element.object.x();

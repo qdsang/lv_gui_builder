@@ -8,6 +8,19 @@ class CanvasComponentGroup extends Konva.Group {
       ? namedRect.getClientRect(config) 
       : super.getClientRect(config);
   }
+
+  updateSize() {
+    let node = this;
+    let width = node.width() * node.scaleX();
+    let height = node.height() * node.scaleY();
+    width = parseInt(width);
+    height = parseInt(height);
+    // console.log('update size', this.id(), width, height, node.scaleX(), node.scaleY())
+
+    this.setAttrs({ width, height, scaleX: 1, scaleY: 1 });
+    const namedRect = this.findOne('.placeholder');
+    namedRect.setAttrs({ width, height });
+  }
 }
 
 /**

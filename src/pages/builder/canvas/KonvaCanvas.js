@@ -193,6 +193,17 @@ export class KonvaCanvas {
       }
     };
 
+    // 监听元素的变换结束事件, 结束后将缩放更新为宽高
+    let transformerUpdateSize = (e) => { 
+      const nodes = this.transformer.nodes();
+      if (nodes.length > 0) {
+        // 遍历所有节点并触发修改事件
+        for (const node of nodes) {
+          node.updateSize();
+        }
+      }
+    };
+
     // 监听变换器的变换事件
     this.transformer.on('transform dragmove', (e) => {
       transformerUpdateNode(e);
@@ -200,6 +211,7 @@ export class KonvaCanvas {
 
     // 监听变换器的变换结束事件
     this.transformer.on('transformend dragend', (e) => {
+      transformerUpdateSize(e);
       transformerUpdateNode(e);
     });
     

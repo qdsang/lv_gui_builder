@@ -25,15 +25,15 @@ export class ElementEventManager {
     
     if (!node) return;
     
-    const elementRect = element.group.getClientRect({
+    const elementRect = element.object.getClientRect({
       relativeTo: this.canvas.contentGroup  // 相对于图层坐标
     });
-    const width = parseInt(elementRect.width);
-    const height = parseInt(elementRect.height);
+    // const width = parseInt(elementRect.width);
+    // const height = parseInt(elementRect.height);
     // const x = parseInt(elementRect.x);
     // const y = parseInt(elementRect.y);
-    // const width = parseInt(node.width() * node.scaleX());
-    // const height = parseInt(node.height() * node.scaleY());
+    const width = parseInt(node.width() * node.scaleX());
+    const height = parseInt(node.height() * node.scaleY());
     let x = parseInt(node.x());
     let y = parseInt(node.y());
 
